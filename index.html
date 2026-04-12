@@ -1,1 +1,428 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<title>Orbit Crash</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#0a0a0f;color:#fff;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;max-width:480px;margin:0 auto}
+.header{background:#12122a;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #1e1e3a}
+.logo{font-size:16px;font-weight:700;color:#fff}
+.coins{background:#2a1f00;border:1px solid #5c3d00;border-radius:20px;padding:5px 12px;color:#f5a623;font-size:13px;font-weight:600}
+.nav{display:flex;background:#12122a;border-bottom:1px solid #1e1e3a}
+.nav-btn{flex:1;padding:10px 4px;text-align:center;font-size:11px;color:#555;cursor:pointer;border:none;background:none}
+.nav-btn.active{color:#5b9cf6;border-bottom:2px solid #5b9cf6}
+.screen{display:none;padding:12px}
+.screen.active{display:block}
+.crash-box{background:#0d0d1f;border:1px solid #1e1e3a;border-radius:14px;padding:20px;text-align:center;margin-bottom:12px}
+.mult{font-size:52px;font-weight:800;line-height:1;letter-spacing:-2px}
+.mult.wait{color:#555}
+.mult.run{color:#00e676}
+.mult.crash{color:#ff1744}
+.status{font-size:12px;color:#555;margin-top:6px}
+.prog-wrap{height:4px;background:#1e1e3a;border-radius:2px;margin-top:12px}
+.prog-fill{height:4px;border-radius:2px;background:#00e676;width:0%;transition:width 0.1s}
+.result-box{border-radius:10px;padding:10px;text-align:center;font-size:13px;font-weight:600;margin-bottom:10px}
+.result-win{background:#003300;color:#00e676}
+.result-lose{background:#330000;color:#ff5252}
+.row2{display:flex;gap:8px;margin-bottom:8px}
+.inp-group{flex:1}
+.inp-label{font-size:11px;color:#555;margin-bottom:4px}
+.inp{width:100%;background:#1a1a2e;border:1px solid #2a2a4a;border-radius:8px;padding:8px 10px;color:#fff;font-size:14px;font-weight:600;outline:none}
+.qrow{display:flex;gap:5px;margin-bottom:10px}
+.qb{flex:1;background:#1a1a2e;border:1px solid #2a2a4a;border-radius:6px;padding:6px 2px;text-align:center;color:#888;font-size:11px;cursor:pointer}
+.qb:hover{background:#2a2a4e}
+.btn{width:100%;padding:13px;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;border:none;color:#fff}
+.btn-green{background:#00c853}
+.btn-green:disabled{background:#1a1a2e;color:#444;cursor:not-allowed}
+.btn-red{background:#c62828}
+.pills{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:10px}
+.pill{padding:3px 9px;border-radius:10px;font-size:10px;font-weight:600}
+.pill-g{background:#003300;color:#00e676}
+.pill-r{background:#330000;color:#ff5252}
+.pill-y{background:#332200;color:#ffa000}
+.pack-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px}
+.pack{background:#1a1a2e;border:1px solid #2a2a4a;border-radius:12px;padding:12px;text-align:center;cursor:pointer}
+.pack:hover{border-color:#5b9cf6}
+.pack.hot{border-color:#f5a623}
+.pack-coins{color:#f5a623;font-size:14px;font-weight:700}
+.pack-price{color:#888;font-size:11px;margin-top:2px}
+.pack-bonus{color:#00e676;font-size:10px;margin-top:2px}
+.hot-badge{background:#332200;color:#f5a623;font-size:9px;padding:2px 6px;border-radius:6px;display:inline-block;margin-bottom:3px}
+.sec-title{font-size:13px;font-weight:600;color:#aaa;margin-bottom:8px}
+.crypto-row{display:flex;gap:5px;flex-wrap:wrap}
+.crypto-chip{background:#1a1a2e;border:1px solid #2a2a4a;border-radius:6px;padding:6px 10px;color:#aaa;font-size:11px;cursor:pointer}
+.crypto-chip:hover{border-color:#5b9cf6;color:#fff}
+.bal-card{background:#12122a;border:1px solid #1e1e3a;border-radius:14px;padding:20px;text-align:center;margin-bottom:12px}
+.bal-label{font-size:12px;color:#555}
+.bal-amount{font-size:32px;font-weight:800;margin:4px 0}
+.bal-usd{font-size:13px;color:#f5a623}
+.wal-btns{display:flex;gap:8px;margin-bottom:16px}
+.wal-btn{flex:1;background:#1a1a2e;border:1px solid #2a2a4a;border-radius:10px;padding:10px;text-align:center;color:#aaa;font-size:12px;cursor:pointer}
+.wal-btn:hover{border-color:#5b9cf6;color:#fff}
+.tx-item{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid #1a1a2e}
+.tx-name{font-size:13px;color:#aaa}
+.tx-time{font-size:10px;color:#444}
+.tx-pos{color:#00e676;font-size:13px;font-weight:600}
+.tx-neg{color:#ff5252;font-size:13px;font-weight:600}
+.hist-item{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #1a1a2e}
+.loading{text-align:center;padding:40px 0;color:#555;font-size:14px}
+.withdraw-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:100;align-items:flex-end;justify-content:center}
+.withdraw-modal.open{display:flex}
+.modal-box{background:#12122a;border-radius:20px 20px 0 0;padding:24px 20px 32px;width:100%;max-width:480px}
+.modal-title{font-size:16px;font-weight:700;margin-bottom:4px}
+.modal-sub{font-size:12px;color:#555;margin-bottom:16px}
+.modal-label{font-size:12px;color:#888;margin-bottom:6px}
+.modal-inp{width:100%;background:#1a1a2e;border:1px solid #2a2a4a;border-radius:8px;padding:10px 12px;color:#fff;font-size:13px;outline:none;margin-bottom:12px}
+.btn-cancel{width:100%;padding:11px;border-radius:10px;font-size:13px;cursor:pointer;border:1px solid #2a2a4a;background:transparent;color:#888;margin-top:8px}
+.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#1a1a2e;border:1px solid #2a2a4a;border-radius:10px;padding:10px 20px;font-size:13px;color:#fff;z-index:200;opacity:0;transition:opacity 0.3s}
+.toast.show{opacity:1}
+</style>
+</head>
+<body>
 
+<div class="header">
+  <div class="logo">🚀 Orbit Crash</div>
+  <div class="coins" id="coin-display">🪙 ...</div>
+</div>
+<div class="nav">
+  <button class="nav-btn active" onclick="showScreen('game')">🎮 Play</button>
+  <button class="nav-btn" onclick="showScreen('shop')">🛒 Shop</button>
+  <button class="nav-btn" onclick="showScreen('wallet')">👛 Wallet</button>
+  <button class="nav-btn" onclick="showScreen('history')">📊 History</button>
+</div>
+
+<!-- GAME -->
+<div id="screen-game" class="screen active">
+  <div class="crash-box">
+    <div class="mult wait" id="mult">1.00x</div>
+    <div class="status" id="status">Loading...</div>
+    <div class="prog-wrap"><div class="prog-fill" id="prog"></div></div>
+  </div>
+  <div id="result-area"></div>
+  <div class="row2">
+    <div class="inp-group">
+      <div class="inp-label">Bet amount</div>
+      <input class="inp" type="number" id="bet" value="50" min="10">
+    </div>
+    <div class="inp-group">
+      <div class="inp-label">Auto cash-out</div>
+      <input class="inp" type="number" id="auto" value="2.00" step="0.1" min="1.1">
+    </div>
+  </div>
+  <div class="qrow">
+    <div class="qb" onclick="document.getElementById('bet').value=50">50</div>
+    <div class="qb" onclick="document.getElementById('bet').value=100">100</div>
+    <div class="qb" onclick="document.getElementById('bet').value=250">250</div>
+    <div class="qb" onclick="document.getElementById('bet').value=500">500</div>
+    <div class="qb" onclick="document.getElementById('bet').value=1000">1K</div>
+  </div>
+  <button class="btn btn-green" id="action-btn" onclick="handleAction()" disabled>Loading...</button>
+</div>
+
+<!-- SHOP -->
+<div id="screen-shop" class="screen">
+  <div class="sec-title">Coin packs</div>
+  <div class="pack-grid">
+    <div class="pack" onclick="buyPack(500,1)"><div class="pack-coins">🪙 500</div><div class="pack-price">$1.00</div></div>
+    <div class="pack hot" onclick="buyPack(1200,2)"><div class="hot-badge">🔥 Popular</div><div class="pack-coins">🪙 1,200</div><div class="pack-price">$2.00</div><div class="pack-bonus">+20% bonus</div></div>
+    <div class="pack" onclick="buyPack(3500,5)"><div class="pack-coins">🪙 3,500</div><div class="pack-price">$5.00</div><div class="pack-bonus">+40% bonus</div></div>
+    <div class="pack" onclick="buyPack(8000,10)"><div class="pack-coins">🪙 8,000</div><div class="pack-price">$10.00</div><div class="pack-bonus">+60% bonus</div></div>
+  </div>
+  <div class="sec-title">Pay with crypto</div>
+  <div class="crypto-row">
+    <div class="crypto-chip">₿ Bitcoin</div>
+    <div class="crypto-chip">Ξ Ethereum</div>
+    <div class="crypto-chip">₮ USDT</div>
+    <div class="crypto-chip">◎ Solana</div>
+    <div class="crypto-chip">⬡ BNB</div>
+  </div>
+  <div style="font-size:11px;color:#444;margin-top:12px;text-align:center;">Powered by NOWPayments · Instant</div>
+</div>
+
+<!-- WALLET -->
+<div id="screen-wallet" class="screen">
+  <div class="bal-card">
+    <div class="bal-label">Your balance</div>
+    <div class="bal-amount" id="wal-coins">... 🪙</div>
+    <div class="bal-usd" id="wal-usd">≈ $... USD</div>
+  </div>
+  <div class="wal-btns">
+    <div class="wal-btn" onclick="openWithdraw()">💸 Withdraw</div>
+    <div class="wal-btn" onclick="showScreen('shop')">🛒 Buy coins</div>
+  </div>
+  <div class="sec-title">Transactions</div>
+  <div id="tx-list"><div class="loading">Loading...</div></div>
+</div>
+
+<!-- HISTORY -->
+<div id="screen-history" class="screen">
+  <div class="sec-title">Recent crashes</div>
+  <div class="pills" id="pill-row"></div>
+  <div id="hist-list"><div class="loading">No games yet</div></div>
+</div>
+
+<!-- WITHDRAW MODAL -->
+<div class="withdraw-modal" id="w-modal" onclick="closeModal(event)">
+  <div class="modal-box">
+    <div class="modal-title">Withdraw coins</div>
+    <div class="modal-sub">Min 500 coins · Rate: 500 coins = $1.00</div>
+    <div class="modal-label">Amount to withdraw</div>
+    <input class="modal-inp" type="number" id="w-amount" placeholder="500" min="500">
+    <div class="modal-label">Your wallet address</div>
+    <input class="modal-inp" type="text" id="w-addr" placeholder="0x... or bc1...">
+    <div class="modal-label">Network</div>
+    <div class="crypto-row" style="margin-bottom:16px" id="net-row">
+      <div class="crypto-chip" onclick="selNet(this,'btc')">₿ BTC</div>
+      <div class="crypto-chip" onclick="selNet(this,'eth')">Ξ ETH</div>
+      <div class="crypto-chip" onclick="selNet(this,'usdt')">₮ USDT</div>
+      <div class="crypto-chip" onclick="selNet(this,'sol')">◎ SOL</div>
+    </div>
+    <button class="btn btn-green" onclick="submitWithdraw()">Request withdrawal</button>
+    <button class="btn-cancel" onclick="document.getElementById('w-modal').classList.remove('open')">Cancel</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const SERVER = 'https://crash-casino-production.up.railway.app';
+const tg = window.Telegram?.WebApp;
+if(tg){ tg.ready(); tg.expand(); }
+
+let coins = 0;
+let gameState = 'idle';
+let currentMult = 1.00;
+let currentBet = 0;
+let cashedOut = false;
+let gameInterval = null;
+let crashPoint = 1;
+let selectedNet = null;
+let localHistory = [];
+let localTx = [];
+let initData = tg?.initData || '';
+
+function fmt(n){ return Number(n).toLocaleString(); }
+
+function toast(msg){
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  setTimeout(()=>el.classList.remove('show'), 2500);
+}
+
+function updateCoins(){
+  document.getElementById('coin-display').textContent = '🪙 ' + fmt(coins);
+  document.getElementById('wal-coins').textContent = fmt(coins) + ' 🪙';
+  document.getElementById('wal-usd').textContent = '≈ $' + (coins/500).toFixed(2) + ' USD';
+}
+
+async function loadUser(){
+  try {
+    const res = await fetch(SERVER+'/api/user', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({initData})
+    });
+    const data = await res.json();
+    if(data.coins !== undefined){
+      coins = data.coins;
+      updateCoins();
+      document.getElementById('status').textContent = 'Ready to play!';
+      document.getElementById('action-btn').disabled = false;
+      document.getElementById('action-btn').textContent = 'Place Bet';
+    }
+  } catch(e){
+    coins = 1000;
+    updateCoins();
+    document.getElementById('status').textContent = 'Ready (offline mode)';
+    document.getElementById('action-btn').disabled = false;
+    document.getElementById('action-btn').textContent = 'Place Bet';
+  }
+}
+
+function showScreen(name){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('screen-'+name).classList.add('active');
+  const idx = ['game','shop','wallet','history'].indexOf(name);
+  document.querySelectorAll('.nav-btn')[idx].classList.add('active');
+  if(name==='wallet') renderTx();
+  if(name==='history') renderHistory();
+}
+
+function genCrash(){
+  const r = Math.random();
+  if(r<0.40) return parseFloat((1+Math.random()*0.8).toFixed(2));
+  if(r<0.70) return parseFloat((1.8+Math.random()*1.5).toFixed(2));
+  if(r<0.90) return parseFloat((3.3+Math.random()*4).toFixed(2));
+  return parseFloat((7+Math.random()*13).toFixed(2));
+}
+
+function handleAction(){
+  if(gameState==='idle') startBet();
+  else if(gameState==='running' && currentBet>0 && !cashedOut) cashOut();
+}
+
+function startBet(){
+  const amt = parseInt(document.getElementById('bet').value)||50;
+  if(amt>coins){ toast('Not enough coins!'); return; }
+  if(amt<10){ toast('Minimum bet is 10 coins'); return; }
+  currentBet=amt; coins-=amt; cashedOut=false;
+  updateCoins();
+  crashPoint=genCrash();
+  gameState='countdown';
+  document.getElementById('action-btn').disabled=true;
+  document.getElementById('action-btn').textContent='Starting...';
+  document.getElementById('result-area').innerHTML='';
+  document.getElementById('mult').className='mult wait';
+  document.getElementById('prog').style.width='0%';
+  document.getElementById('prog').style.background='#00e676';
+  let c=3;
+  document.getElementById('status').textContent='Starting in '+c+'...';
+  const cd=setInterval(()=>{
+    c--;
+    if(c<=0){ clearInterval(cd); runGame(); }
+    else document.getElementById('status').textContent='Starting in '+c+'...';
+  },700);
+}
+
+function runGame(){
+  gameState='running'; currentMult=1.00;
+  document.getElementById('mult').className='mult run';
+  document.getElementById('action-btn').disabled=false;
+  document.getElementById('action-btn').className='btn btn-red';
+  document.getElementById('action-btn').textContent='💸 Cash Out';
+  const start=Date.now();
+  gameInterval=setInterval(()=>{
+    const e=(Date.now()-start)/1000;
+    currentMult=parseFloat((Math.pow(1.06,e*10)).toFixed(2));
+    if(currentMult<1) currentMult=1.00;
+    document.getElementById('mult').textContent=currentMult.toFixed(2)+'x';
+    const p=Math.min((currentMult-1)/(crashPoint-1)*100,100);
+    document.getElementById('prog').style.width=p+'%';
+    document.getElementById('status').textContent='🚀 Flying · Bet: '+fmt(currentBet)+' 🪙';
+    const auto=parseFloat(document.getElementById('auto').value)||2;
+    if(!cashedOut && currentMult>=auto) cashOut();
+    if(currentMult>=crashPoint) doCrash();
+  },80);
+}
+
+function cashOut(){
+  if(cashedOut||gameState!=='running') return;
+  cashedOut=true;
+  const win=Math.floor(currentBet*currentMult);
+  const profit=win-currentBet;
+  coins+=win; updateCoins();
+  localTx.unshift({label:'Win ×'+currentMult.toFixed(2),time:'Just now',delta:'+'+fmt(profit)+' 🪙',pos:true});
+  document.getElementById('action-btn').disabled=true;
+  document.getElementById('action-btn').textContent='Cashed out!';
+  document.getElementById('status').textContent='Cashed out at '+currentMult.toFixed(2)+'x';
+  showResult('🎉 Won '+fmt(win)+' 🪙  (profit +'+fmt(profit)+')',true);
+  saveBet(currentBet, currentMult);
+}
+
+function doCrash(){
+  clearInterval(gameInterval);
+  gameState='idle';
+  const f=crashPoint.toFixed(2);
+  localHistory.unshift(parseFloat(f));
+  if(localHistory.length>20) localHistory.pop();
+  document.getElementById('mult').textContent=f+'x';
+  document.getElementById('mult').className='mult crash';
+  document.getElementById('status').textContent='💥 Crashed at '+f+'x';
+  document.getElementById('prog').style.width='100%';
+  document.getElementById('prog').style.background='#ff1744';
+  document.getElementById('action-btn').className='btn btn-green';
+  document.getElementById('action-btn').textContent='Place Bet';
+  document.getElementById('action-btn').disabled=false;
+  if(!cashedOut && currentBet>0){
+    localTx.unshift({label:'Loss · crashed ×'+f,time:'Just now',delta:'-'+fmt(currentBet)+' 🪙',pos:false});
+    showResult('💥 Crashed at '+f+'x — lost '+fmt(currentBet)+' 🪙',false);
+    saveBet(currentBet, null);
+  }
+}
+
+async function saveBet(bet, cashedOutAt){
+  try {
+    await fetch(SERVER+'/api/bet', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({initData, betAmount:bet, cashedOutAt})
+    });
+  } catch(e){ console.log('Could not save bet'); }
+}
+
+function showResult(msg,win){
+  document.getElementById('result-area').innerHTML=
+    '<div class="result-box '+(win?'result-win':'result-lose')+'">'+msg+'</div>';
+}
+
+function buyPack(c,price){
+  coins+=c; updateCoins();
+  localTx.unshift({label:'Bought '+fmt(c)+' coins',time:'Just now',delta:'+'+fmt(c)+' 🪙',pos:true});
+  toast('+'+fmt(c)+' coins added! Demo mode — payment coming soon.');
+}
+
+function renderTx(){
+  const el=document.getElementById('tx-list');
+  if(!localTx.length){
+    el.innerHTML='<div class="loading">No transactions yet</div>';
+    return;
+  }
+  el.innerHTML=localTx.map(t=>`
+    <div class="tx-item">
+      <div><div class="tx-name">${t.label}</div><div class="tx-time">${t.time}</div></div>
+      <div class="${t.pos?'tx-pos':'tx-neg'}">${t.delta}</div>
+    </div>`).join('');
+}
+
+function renderHistory(){
+  const pr=document.getElementById('pill-row');
+  const hl=document.getElementById('hist-list');
+  if(!localHistory.length){
+    pr.innerHTML='';
+    hl.innerHTML='<div class="loading">No games yet — play first!</div>';
+    return;
+  }
+  pr.innerHTML=localHistory.map(m=>{
+    const c=m<1.5?'pill-r':m<3?'pill-y':'pill-g';
+    return `<span class="pill ${c}">${m.toFixed(2)}x</span>`;
+  }).join('');
+  hl.innerHTML=localHistory.map(m=>{
+    const c=m<1.5?'pill-r':m<3?'pill-y':'pill-g';
+    return `<div class="hist-item"><span style="color:#555;font-size:12px;">Crash game</span><span class="pill ${c}">${m.toFixed(2)}x</span></div>`;
+  }).join('');
+}
+
+function openWithdraw(){ document.getElementById('w-modal').classList.add('open'); }
+function closeModal(e){ if(e.target===document.getElementById('w-modal')) document.getElementById('w-modal').classList.remove('open'); }
+
+function selNet(el,net){
+  selectedNet=net;
+  document.querySelectorAll('#net-row .crypto-chip').forEach(c=>c.style.borderColor='');
+  el.style.borderColor='#5b9cf6';
+}
+
+function submitWithdraw(){
+  const amt=parseInt(document.getElementById('w-amount').value)||0;
+  const addr=document.getElementById('w-addr').value.trim();
+  if(amt<500){ toast('Minimum withdrawal is 500 coins.'); return; }
+  if(amt>coins){ toast('Not enough coins.'); return; }
+  if(!addr){ toast('Please enter your wallet address.'); return; }
+  if(!selectedNet){ toast('Please select a network.'); return; }
+  coins-=amt; updateCoins();
+  const usd=(amt/500).toFixed(2);
+  localTx.unshift({label:'Withdrawal ('+selectedNet.toUpperCase()+')',time:'Just now',delta:'-'+fmt(amt)+' 🪙',pos:false});
+  document.getElementById('w-modal').classList.remove('open');
+  document.getElementById('w-amount').value='';
+  document.getElementById('w-addr').value='';
+  toast('Withdrawal of $'+usd+' requested!');
+}
+
+loadUser();
+</script>
+</body>
+</html>
