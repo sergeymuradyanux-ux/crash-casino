@@ -5,144 +5,144 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 <title>Orbit Crash</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
 <style>
-/* ══ TOKENS ══ */
+/* ══ DUEL.COM DESIGN TOKENS ══ */
 :root{
-  --bg:#1a1035;--bg2:#241548;--bg3:#2e1a5c;--card:#1e1242;
-  --border:#4a2d8a;
-  --gold:#f4c842;--gold-dk:#c9921a;--gold-sh:#7a4f00;
-  --blue:#4fc3f7;--blue-dk:#0277bd;--blue-sh:#01447a;
-  --green:#66bb6a;--green-dk:#2e7d32;--green-sh:#1b4d1e;
-  --red:#ef5350;--red-dk:#b71c1c;--red-sh:#6a0f0f;
-  --purple:#7c4dff;
-  --text:#ffffff;--text2:#c8b8ff;--text3:#8878bb;
-  --r-sm:10px;--r-md:14px;--r-lg:20px;--r-xl:28px;
+  --bg:       #0b0e17;
+  --bg2:      #111520;
+  --bg3:      #171c2d;
+  --card:     #141824;
+  --card2:    #1a2030;
+  --border:   #1e2535;
+  --border2:  #252d40;
+  --blue:     #4f6ef7;
+  --blue-dk:  #3454d1;
+  --blue-sh:  #1a2a6e;
+  --green:    #22c55e;
+  --green-dk: #15803d;
+  --red:      #ef4444;
+  --red-dk:   #991b1b;
+  --gold:     #f4b942;
+  --gold-dk:  #b8861f;
+  --purple:   #7c3aed;
+  --text:     #e8eaf2;
+  --text2:    #8892a4;
+  --text3:    #4a5568;
+  --r-sm:     6px;
+  --r-md:     10px;
+  --r-lg:     14px;
+  --r-xl:     20px;
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;overflow:hidden}
 body{
-  font-family:'Nunito',system-ui,sans-serif;
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Inter',sans-serif;
   background:var(--bg);color:var(--text);
   max-width:480px;margin:0 auto;
   display:flex;flex-direction:column;height:100vh;
-  background-image:radial-gradient(ellipse 80% 40% at 50% 0%,rgba(124,77,255,0.18) 0%,transparent 70%);
 }
 
-/* ══ 3D BUTTONS — FIXED READABILITY ══ */
-.cr-btn{
+/* ══ BUTTONS ══ */
+.btn{
   display:inline-flex;align-items:center;justify-content:center;gap:8px;
-  border:none;cursor:pointer;border-radius:var(--r-xl);
-  font-family:'Lilita One',sans-serif;font-weight:400;
-  transition:transform 0.08s,box-shadow 0.08s;
-  position:relative;
-  min-height:52px;padding:0 20px;font-size:18px;
+  border:none;cursor:pointer;border-radius:var(--r-lg);
+  font-weight:700;font-family:inherit;
+  transition:all 0.12s;
+  min-height:48px;padding:0 20px;font-size:15px;
   -webkit-user-select:none;user-select:none;
-  letter-spacing:0.5px;
+  letter-spacing:0.2px;
 }
-.cr-btn:active{transform:translateY(3px)!important}
+.btn:active{transform:scale(0.97);opacity:0.9}
+.btn:disabled{opacity:0.4;cursor:not-allowed;transform:none}
 
-/* GOLD btn — dark text (readable on bright gold) */
-.cr-btn-gold{
-  background:linear-gradient(180deg,#ffe566 0%,#f4c842 45%,#c9921a 100%);
-  color:#4a2400;
-  text-shadow:0 1px 0 rgba(255,220,100,0.6);
-  border-top:2px solid rgba(255,255,200,0.5);
-  box-shadow:0 5px 0 #7a4f00,0 7px 14px rgba(0,0,0,0.45);
+.btn-primary{
+  background:var(--blue);color:#fff;
+  box-shadow:0 2px 12px rgba(79,110,247,0.3);
 }
-.cr-btn-gold:active{box-shadow:0 2px 0 #7a4f00,0 3px 6px rgba(0,0,0,0.4)}
+.btn-primary:active{background:var(--blue-dk)}
 
-/* BLUE btn — WHITE text (fixed readability) */
-.cr-btn-blue{
-  background:linear-gradient(180deg,#80d8ff 0%,#29b6f6 45%,#0277bd 100%);
-  color:#ffffff;
-  text-shadow:0 2px 4px rgba(0,60,120,0.9),0 1px 0 rgba(0,0,0,0.5);
-  border-top:2px solid rgba(255,255,255,0.4);
-  box-shadow:0 5px 0 #01447a,0 7px 14px rgba(0,0,0,0.45);
+.btn-success{
+  background:var(--green);color:#fff;
+  box-shadow:0 2px 12px rgba(34,197,94,0.25);
 }
-.cr-btn-blue:active{box-shadow:0 2px 0 #01447a}
+.btn-success:active{background:var(--green-dk)}
 
-/* GREEN btn — WHITE text */
-.cr-btn-green{
-  background:linear-gradient(180deg,#a5d6a7 0%,#66bb6a 45%,#2e7d32 100%);
-  color:#ffffff;
-  text-shadow:0 2px 4px rgba(0,60,20,0.9),0 1px 0 rgba(0,0,0,0.5);
-  border-top:2px solid rgba(255,255,255,0.4);
-  box-shadow:0 5px 0 #1b4d1e,0 7px 14px rgba(0,0,0,0.45);
+.btn-danger{
+  background:var(--red);color:#fff;
+  box-shadow:0 2px 16px rgba(239,68,68,0.4);
 }
-.cr-btn-green:active{box-shadow:0 2px 0 #1b4d1e}
+.btn-danger:active{background:var(--red-dk)}
+/* Pulsing glow on cashout */
+.btn-danger{animation:cashglow 1.2s infinite}
+@keyframes cashglow{
+  0%,100%{box-shadow:0 2px 16px rgba(239,68,68,0.4)}
+  50%{box-shadow:0 2px 28px rgba(239,68,68,0.7),0 0 0 3px rgba(239,68,68,0.15)}
+}
+.btn-danger:active{animation:none;box-shadow:0 1px 6px rgba(239,68,68,0.3)}
 
-/* RED btn — WHITE text, pulse */
-.cr-btn-red{
-  background:linear-gradient(180deg,#ff8a80 0%,#ef5350 45%,#b71c1c 100%);
-  color:#ffffff;
-  text-shadow:0 2px 4px rgba(100,0,0,0.9),0 1px 0 rgba(0,0,0,0.5);
-  border-top:2px solid rgba(255,200,200,0.4);
-  box-shadow:0 5px 0 #6a0f0f,0 7px 14px rgba(0,0,0,0.45);
-  animation:redpulse 0.7s infinite;
+.btn-gold{
+  background:var(--gold);color:#1a1000;font-weight:800;
+  box-shadow:0 2px 12px rgba(244,185,66,0.25);
 }
-@keyframes redpulse{
-  0%,100%{box-shadow:0 5px 0 #6a0f0f,0 0 0 rgba(239,83,80,0)}
-  50%{box-shadow:0 5px 0 #6a0f0f,0 0 22px rgba(239,83,80,0.55)}
-}
-.cr-btn-red:active{box-shadow:0 2px 0 #6a0f0f;animation:none}
+.btn-gold:active{background:var(--gold-dk);color:#fff}
 
-/* PURPLE btn */
-.cr-btn-purple{
-  background:linear-gradient(180deg,#b39ddb 0%,#7c4dff 45%,#4527a0 100%);
-  color:#ffffff;
-  text-shadow:0 2px 4px rgba(30,0,80,0.9),0 1px 0 rgba(0,0,0,0.5);
-  border-top:2px solid rgba(255,255,255,0.3);
-  box-shadow:0 5px 0 #311b92,0 7px 14px rgba(0,0,0,0.45);
+.btn-ghost{
+  background:transparent;color:var(--text2);
+  border:1px solid var(--border2);font-size:13px;min-height:38px;
 }
-.cr-btn-purple:active{box-shadow:0 2px 0 #311b92}
+.btn-ghost:active{background:var(--card2)}
 
-/* GHOST — always readable */
-.cr-btn-ghost{
-  background:rgba(255,255,255,0.07);
-  border:2px solid rgba(255,255,255,0.18);
-  color:var(--text2);font-size:14px;min-height:44px;
-  box-shadow:none;font-family:'Nunito',sans-serif;font-weight:900;
-  text-shadow:none;
-}
-.cr-btn-ghost:active{background:rgba(255,255,255,0.12)}
-
-.cr-btn-disabled{
-  background:rgba(255,255,255,0.05);
-  color:var(--text3);cursor:not-allowed;
-  box-shadow:none;text-shadow:none;
+.btn-ghost-active{
+  background:var(--card2);color:var(--text);
+  border:1px solid var(--blue);font-size:13px;min-height:38px;
 }
 
-/* ══ CR CARD ══ */
-.cr-card{
-  background:linear-gradient(180deg,var(--bg2) 0%,var(--card) 100%);
+.btn-off{
+  background:var(--card);color:var(--text3);cursor:not-allowed;
+  border:1px solid var(--border);
+}
+
+/* Quick bet chips */
+.chip{
+  padding:6px 12px;border-radius:var(--r-sm);
+  background:var(--card2);border:1px solid var(--border2);
+  color:var(--text2);font-size:13px;font-weight:700;
+  cursor:pointer;transition:all 0.12s;
+}
+.chip:active{background:var(--blue);color:#fff;border-color:var(--blue)}
+
+/* ══ CARD ══ */
+.card{
+  background:var(--card);
   border-radius:var(--r-lg);
-  border:2px solid var(--border);
-  box-shadow:0 4px 16px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.07);
+  border:1px solid var(--border);
 }
 
-/* ══ CR AVATAR ══ */
-.cr-avatar{
-  border-radius:50%;border:3px solid var(--gold);
-  box-shadow:0 0 0 1px var(--gold-dk),0 3px 8px rgba(0,0,0,0.5);
+/* ══ AVATAR ══ */
+.avatar{
+  border-radius:50%;
+  border:2px solid var(--border2);
   display:flex;align-items:center;justify-content:center;
-  font-weight:900;font-family:'Lilita One',sans-serif;
-  background:linear-gradient(135deg,var(--bg3) 0%,var(--bg2) 100%);
+  font-weight:800;font-size:13px;
+  background:var(--card2);
   flex-shrink:0;overflow:hidden;
+  color:var(--text);
 }
 
-/* ══ PILL / BADGE ══ */
-.cr-pill{
-  display:inline-flex;align-items:center;gap:4px;
-  border-radius:20px;padding:4px 11px;
-  font-size:12px;font-weight:800;
-  border:1px solid rgba(255,255,255,0.15);
-  font-family:'Nunito',sans-serif;
+/* ══ PILL ══ */
+.pill{
+  display:inline-flex;align-items:center;gap:3px;
+  border-radius:20px;padding:3px 10px;
+  font-size:12px;font-weight:700;
+  border:1px solid transparent;
 }
-.pill-gold{background:rgba(244,200,66,0.15);color:var(--gold);border-color:var(--gold-dk)}
-.pill-green{background:rgba(102,187,106,0.15);color:#a5d6a7;border-color:var(--green-dk)}
-.pill-red{background:rgba(239,83,80,0.15);color:#ff8a80;border-color:var(--red-dk)}
-.pill-blue{background:rgba(79,195,247,0.15);color:#b3e5fc;border-color:var(--blue-dk)}
+.pill-green{background:rgba(34,197,94,0.12);color:#86efac;border-color:rgba(34,197,94,0.25)}
+.pill-red{background:rgba(239,68,68,0.12);color:#fca5a5;border-color:rgba(239,68,68,0.25)}
+.pill-gold{background:rgba(244,185,66,0.12);color:#fcd34d;border-color:rgba(244,185,66,0.25)}
+.pill-blue{background:rgba(79,110,247,0.12);color:#a5b4fc;border-color:rgba(79,110,247,0.25)}
+
+/* ══ LABEL ══ */
+.label{font-size:11px;font-weight:700;color:var(--text3);letter-spacing:0.6px;text-transform:uppercase}
 
 /* ══ LAYOUT ══ */
 .page{display:none;flex:1;overflow-y:auto;padding-bottom:16px;background:var(--bg)}
@@ -151,247 +151,287 @@ body{
 /* ══ TOP HUD ══ */
 .top-hud{
   display:flex;align-items:center;justify-content:space-between;
-  padding:8px 12px;flex-shrink:0;
-  background:linear-gradient(180deg,rgba(36,21,72,0.98) 0%,rgba(26,16,53,0.95) 100%);
-  border-bottom:2px solid var(--border);
+  padding:10px 14px;flex-shrink:0;
+  background:var(--bg2);
+  border-bottom:1px solid var(--border);
 }
 .hud-logo{
-  font-family:'Lilita One',sans-serif;font-size:20px;color:var(--gold);
-  text-shadow:0 2px 4px rgba(0,0,0,0.5),0 0 20px rgba(244,200,66,0.3);
-  letter-spacing:1px;display:flex;align-items:center;gap:8px;
+  font-size:17px;font-weight:800;color:var(--text);
+  display:flex;align-items:center;gap:8px;letter-spacing:-0.3px;
 }
+.hud-logo span{color:var(--blue)}
 .hud-bal{
-  display:flex;align-items:center;gap:6px;
-  background:rgba(0,0,0,0.3);
-  border:2px solid var(--gold-dk);border-radius:var(--r-xl);
-  padding:5px 6px 5px 12px;cursor:pointer;
-  box-shadow:0 3px 0 var(--gold-sh),inset 0 1px 0 rgba(255,255,255,0.08);
+  display:flex;align-items:center;gap:8px;
+  background:var(--card);border:1px solid var(--border2);
+  border-radius:var(--r-lg);padding:6px 8px 6px 12px;
+  cursor:pointer;transition:border-color 0.15s;
 }
-.hud-bal-num{font-size:16px;font-weight:900;color:var(--gold);font-family:'Lilita One',sans-serif}
+.hud-bal:hover{border-color:var(--blue)}
+.hud-bal-num{font-size:15px;font-weight:800;color:var(--gold)}
 .hud-plus{
-  width:26px;height:26px;border-radius:50%;
-  background:linear-gradient(180deg,#ffe566,var(--gold));
-  border:2px solid var(--gold-dk);
-  box-shadow:0 2px 0 var(--gold-sh);
-  font-size:18px;font-weight:900;color:#4a2400;
-  display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;
+  width:26px;height:26px;border-radius:var(--r-sm);
+  background:var(--blue);border:none;
+  color:#fff;font-size:16px;font-weight:800;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;flex-shrink:0;
+  box-shadow:0 2px 8px rgba(79,110,247,0.4);
 }
 
-/* ══ GAME ══ */
+/* ══ GAME CANVAS ══ */
 .game-wrap{
-  margin:8px 10px 0;border-radius:var(--r-lg);overflow:hidden;
-  position:relative;border:2px solid var(--border);
-  box-shadow:0 4px 20px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.05);
-  background:#08061a;flex-shrink:0;
+  margin:10px 12px 0;border-radius:var(--r-lg);
+  overflow:hidden;position:relative;
+  border:1px solid var(--border);
+  background:#080b14;flex-shrink:0;
 }
 canvas#gc{position:absolute;inset:0;width:100%;height:100%}
-.mult-overlay{position:absolute;top:8px;left:0;right:0;text-align:center;pointer-events:none;z-index:5}
-.mn{font-family:'Lilita One',sans-serif;font-size:60px;line-height:1;letter-spacing:-1px}
+.mult-overlay{
+  position:absolute;top:10px;left:0;right:0;
+  text-align:center;pointer-events:none;z-index:5;
+}
+.mn{font-size:58px;font-weight:900;line-height:1;letter-spacing:-2px}
 .mn.wait{color:rgba(255,255,255,0.1)}
-.mn.cd{color:var(--gold);text-shadow:0 0 30px rgba(244,200,66,0.6),0 3px 0 var(--gold-sh);font-size:80px}
-.mn.run{color:#00ff88;text-shadow:0 0 30px rgba(0,255,136,0.5),0 2px 0 #005533}
-.mn.crash{color:var(--red);text-shadow:0 0 30px rgba(239,83,80,0.6),0 2px 0 var(--red-sh)}
-.ms{font-size:12px;color:var(--text3);margin-top:2px;font-weight:800;letter-spacing:0.5px}
+.mn.cd{color:var(--text);font-size:72px}
+.mn.run{color:var(--green);text-shadow:0 0 24px rgba(34,197,94,0.4)}
+.mn.crash{color:var(--red);text-shadow:0 0 24px rgba(239,68,68,0.4)}
+.ms{font-size:11px;color:var(--text3);margin-top:3px;font-weight:600;letter-spacing:0.5px}
 
 /* ══ HISTORY BAR ══ */
-.hist-bar{display:flex;gap:6px;padding:6px 10px;overflow-x:auto;flex-shrink:0;align-items:center}
+.hist-bar{
+  display:flex;gap:5px;padding:6px 12px;
+  overflow-x:auto;flex-shrink:0;align-items:center;
+}
 .hist-bar::-webkit-scrollbar{display:none}
 
-/* ══ RESULT ══ */
-.rb{margin:6px 10px;padding:10px 14px;border-radius:var(--r-md);text-align:center;font-size:14px;font-weight:800;display:none;font-family:'Lilita One',sans-serif;letter-spacing:0.5px}
+/* ══ RESULT BANNER ══ */
+.rb{
+  margin:6px 12px;padding:10px 14px;
+  border-radius:var(--r-md);text-align:center;
+  font-size:14px;font-weight:700;display:none;
+}
 .rb.show{display:block}
-.rb-w{background:rgba(102,187,106,0.2);color:#c8e6c9;border:2px solid var(--green-dk)}
-.rb-l{background:rgba(239,83,80,0.2);color:#ffcdd2;border:2px solid var(--red-dk)}
+.rb-w{background:rgba(34,197,94,0.1);color:#86efac;border:1px solid rgba(34,197,94,0.2)}
+.rb-l{background:rgba(239,68,68,0.1);color:#fca5a5;border:1px solid rgba(239,68,68,0.2)}
 
 /* ══ PLAYERS ══ */
-.pl-wrap{flex:1;display:flex;flex-direction:column;overflow:hidden;min-height:0;margin:0 10px}
-.pl-tabs{display:flex;gap:4px;padding:6px 0;flex-shrink:0}
-.ptab{
-  flex:1;padding:8px 4px;text-align:center;font-size:12px;font-weight:800;
-  color:var(--text3);cursor:pointer;border:2px solid transparent;
-  border-radius:var(--r-md);background:transparent;transition:all 0.15s;
-  min-height:36px;font-family:'Nunito',sans-serif;letter-spacing:0.3px;
+.pl-wrap{flex:1;display:flex;flex-direction:column;overflow:hidden;min-height:0;margin:0 12px}
+.pl-tabs{display:flex;gap:2px;padding:6px 0;flex-shrink:0;
+  background:var(--card);border-radius:var(--r-md);padding:4px;
+  border:1px solid var(--border);margin-top:8px;
 }
-.ptab.active{color:var(--gold);background:rgba(244,200,66,0.1);border-color:var(--gold-dk)}
-.pl-list{flex:1;overflow-y:auto;padding:0 2px}
-.pl-list::-webkit-scrollbar{width:3px}
+.ptab{
+  flex:1;padding:7px 4px;text-align:center;
+  font-size:12px;font-weight:700;color:var(--text3);
+  cursor:pointer;border:none;border-radius:var(--r-sm);
+  background:transparent;transition:all 0.15s;min-height:34px;
+  letter-spacing:0.3px;
+}
+.ptab.active{background:var(--bg2);color:var(--text);border:1px solid var(--border2)}
+.pl-list{flex:1;overflow-y:auto;padding:0 2px;margin-top:6px}
+.pl-list::-webkit-scrollbar{width:2px}
 .pl-list::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
 .pr{
-  display:flex;align-items:center;gap:8px;padding:7px 10px;margin-bottom:4px;
-  border-radius:var(--r-md);background:rgba(255,255,255,0.03);
-  border:1px solid rgba(255,255,255,0.06);min-height:44px;
+  display:flex;align-items:center;gap:8px;
+  padding:8px 10px;margin-bottom:3px;
+  border-radius:var(--r-md);
+  background:var(--card);border:1px solid var(--border);
+  min-height:44px;transition:border-color 0.1s;
 }
-.pnm{font-size:13px;font-weight:800;flex:1;color:var(--text)}
-.pbt{font-size:11px;color:var(--text3);margin-top:1px}
-.pmlt{font-weight:900;margin-left:3px}
-.ppz{font-size:13px;font-weight:900;min-width:44px;text-align:right}
-.pw{color:#69f0ae;text-shadow:0 0 8px rgba(105,240,174,0.4)}
-.plz{color:#ff5252}
-.pp{color:var(--text3);font-size:17px}
+.pnm{font-size:13px;font-weight:700;flex:1;color:var(--text)}
+.pbt{font-size:11px;color:var(--text3);margin-top:2px}
+.pmlt{font-weight:800;margin-left:3px}
+.ppz{font-size:13px;font-weight:800;min-width:44px;text-align:right}
+.pw{color:var(--green)}
+.plz{color:var(--red)}
+.pp{color:var(--text3);font-size:16px}
 
 /* ══ ACTION AREA ══ */
 .act-area{
-  flex-shrink:0;padding:8px 10px 10px;
-  background:linear-gradient(0deg,rgba(26,16,53,0.98) 0%,rgba(36,21,72,0.95) 100%);
-  border-top:2px solid var(--border);
+  flex-shrink:0;padding:8px 12px 12px;
+  background:var(--bg2);
+  border-top:1px solid var(--border);
 }
 .placed-row{display:none;justify-content:space-between;align-items:center;margin-bottom:6px}
 .placed-row.show{display:flex}
-.placed-lbl{font-size:12px;color:var(--text3);font-weight:800}
-.placed-val{font-size:14px;font-weight:900;color:var(--gold);font-family:'Lilita One',sans-serif}
-#mbtn{width:100%;font-family:'Lilita One',sans-serif;letter-spacing:1px;font-size:20px;min-height:56px}
+.placed-lbl{font-size:12px;color:var(--text3);font-weight:600}
+.placed-val{font-size:13px;font-weight:800;color:var(--gold)}
+#mbtn{width:100%;font-size:17px;min-height:52px;font-weight:800;letter-spacing:0.3px}
 
-/* ══ BOTTOM NAV — CR STYLE ══ */
+/* ══ BOTTOM NAV ══ */
 .nav{
   display:flex;flex-shrink:0;
-  background:linear-gradient(0deg,#0f0920 0%,#1a1035 100%);
-  border-top:2px solid var(--border);
+  background:var(--bg2);
+  border-top:1px solid var(--border);
   padding-bottom:env(safe-area-inset-bottom);
 }
 .nb{
   flex:1;display:flex;flex-direction:column;align-items:center;
-  padding:8px 4px 10px;cursor:pointer;border:none;background:none;
-  color:var(--text3);font-size:9px;font-weight:900;gap:4px;
+  padding:9px 4px 11px;cursor:pointer;border:none;background:none;
+  color:var(--text3);font-size:9px;font-weight:700;gap:4px;
   min-height:56px;transition:color 0.15s;
-  letter-spacing:0.8px;text-transform:uppercase;
-  font-family:'Nunito',sans-serif;
+  letter-spacing:0.5px;text-transform:uppercase;
 }
-.nb.active{color:var(--gold)}
-.nb.active .nav-icon-svg path,.nb.active .nav-icon-svg circle,.nb.active .nav-icon-svg rect,.nb.active .nav-icon-svg polygon,.nb.active .nav-icon-svg ellipse{
-  opacity:1;
-}
-.nav-icon-svg{width:28px;height:28px;flex-shrink:0}
-.nb .nav-icon-svg *{transition:all 0.15s}
+.nb.active{color:var(--blue)}
+.nb.active .ni-svg{filter:brightness(0) saturate(100%) invert(40%) sepia(80%) saturate(500%) hue-rotate(210deg) brightness(110%)}
+.ni-svg{width:26px;height:26px;flex-shrink:0;opacity:0.6;transition:all 0.15s}
+.nb.active .ni-svg{opacity:1}
 .niw{position:relative;display:flex}
 .nbdg{
   position:absolute;top:-4px;right:-6px;
   background:var(--red);color:#fff;border-radius:10px;
-  font-size:9px;padding:1px 5px;font-weight:900;
-  border:2px solid var(--bg);
+  font-size:9px;padding:1px 5px;font-weight:800;
+  border:2px solid var(--bg2);
 }
 
 /* ══ MODALS ══ */
-.ov{display:none;position:fixed;inset:0;background:rgba(8,6,26,0.92);z-index:500;align-items:flex-end;justify-content:center}
+.ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:500;align-items:flex-end;justify-content:center;backdrop-filter:blur(4px)}
 .ov.open{display:flex}
 .sh{
-  background:linear-gradient(180deg,var(--bg3) 0%,var(--bg2) 100%);
-  border-radius:var(--r-xl) var(--r-xl) 0 0;
+  background:var(--bg2);border-radius:20px 20px 0 0;
   padding:16px 16px 40px;width:100%;max-width:480px;position:relative;
-  border-top:3px solid var(--gold-dk);
-  border-left:2px solid var(--border);border-right:2px solid var(--border);
-  box-shadow:0 -8px 40px rgba(0,0,0,0.6);
+  border-top:1px solid var(--border2);
 }
-.sh-hnd{width:40px;height:5px;border-radius:3px;background:rgba(255,255,255,0.15);margin:0 auto 14px}
-.sh-ttl{font-family:'Lilita One',sans-serif;font-size:22px;text-align:center;margin-bottom:14px;color:var(--gold);text-shadow:0 2px 4px rgba(0,0,0,0.4);letter-spacing:1px}
-.sh-cls{position:absolute;top:14px;right:14px;width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,0.08);border:2px solid rgba(255,255,255,0.12);color:var(--text3);font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.sh-hnd{width:36px;height:4px;border-radius:2px;background:var(--border2);margin:0 auto 14px}
+.sh-ttl{font-size:17px;font-weight:800;margin-bottom:14px;color:var(--text);display:flex;align-items:center;gap:8px}
+.sh-cls{
+  position:absolute;top:14px;right:14px;width:30px;height:30px;
+  border-radius:var(--r-sm);background:var(--card);
+  border:1px solid var(--border2);color:var(--text3);font-size:14px;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+}
 
-/* ══ BET MODAL ══ */
-.bet-bal{display:flex;align-items:center;gap:8px;background:rgba(244,200,66,0.08);border:2px solid var(--gold-dk);border-radius:var(--r-xl);padding:7px 8px 7px 14px;width:fit-content;margin:0 auto 16px;box-shadow:0 2px 0 var(--gold-sh)}
-.bet-bal span{font-size:16px;font-weight:900;color:var(--gold);font-family:'Lilita One',sans-serif}
-.bet-inp-row{display:flex;align-items:center;justify-content:center;gap:0;margin-bottom:14px}
-/* hide default spinners */
+/* BET MODAL — DUEL STYLE */
+.seg-tabs{display:flex;background:var(--card);border-radius:var(--r-md);border:1px solid var(--border);overflow:hidden;margin-bottom:16px}
+.seg-tab{flex:1;padding:10px;text-align:center;font-size:14px;font-weight:700;cursor:pointer;color:var(--text3);border:none;background:transparent;transition:all 0.15s}
+.seg-tab.active{background:var(--bg2);color:var(--text);border-bottom:2px solid var(--blue)}
+
+.bet-section-label{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.bet-bal-show{font-size:13px;color:var(--text3);font-weight:700}
+.bet-bal-show span{color:var(--gold);font-weight:800}
+
+.bet-inp-wrap{
+  display:flex;align-items:center;
+  background:var(--card);border:1px solid var(--border2);
+  border-radius:var(--r-md);padding:0 12px;
+  margin-bottom:10px;transition:border-color 0.15s;
+}
+.bet-inp-wrap:focus-within{border-color:var(--blue)}
+.bet-ico{
+  width:26px;height:26px;border-radius:50%;
+  background:var(--blue);display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;margin-right:10px;
+}
+.bet-inp{
+  flex:1;background:transparent;border:none;
+  color:var(--text);font-size:22px;font-weight:800;
+  outline:none;padding:14px 0;
+  -webkit-appearance:none;-moz-appearance:textfield;
+}
 .bet-inp::-webkit-outer-spin-button,
 .bet-inp::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
-.bet-inp{-moz-appearance:textfield}
-.bet-inp-wrap{position:relative;display:flex;align-items:center}
-.bet-inp{
-  font-family:'Lilita One',sans-serif;font-size:52px;
-  width:160px;background:transparent;border:none;
-  border-bottom:3px solid var(--purple);color:var(--text);
-  text-align:center;outline:none;padding:2px 8px;
+.bet-inp::placeholder{color:var(--text3)}
+.bet-quick{display:flex;gap:6px;margin-bottom:14px}
+
+/* AUTO CASHOUT ROW */
+.auto-section{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:var(--r-md);padding:12px 14px;margin-bottom:16px;
 }
-.bet-inp:focus{border-bottom-color:var(--blue)}
-.bet-inp::placeholder{color:rgba(255,255,255,0.1)}
-/* Custom stepper arrows */
-.inp-arrows{display:flex;flex-direction:column;gap:3px;margin-left:6px}
-.inp-arr{
-  width:28px;height:28px;
-  background:rgba(124,77,255,0.25);
-  border:2px solid rgba(124,77,255,0.5);
-  border-radius:8px;cursor:pointer;
-  display:flex;align-items:center;justify-content:center;
-  transition:all 0.1s;
-}
-.inp-arr:active{background:rgba(124,77,255,0.5);transform:scale(0.92)}
-.bet-unit{font-size:18px;color:var(--text3);font-weight:800;margin-left:8px;font-family:'Nunito',sans-serif}
-.bet-add-row{display:flex;gap:8px;margin-bottom:6px}
-.abtn{
-  flex:1;padding:12px 4px;
-  background:rgba(124,77,255,0.15);border:2px solid rgba(124,77,255,0.4);
-  border-radius:var(--r-md);color:#d1b3ff;font-size:14px;font-weight:900;
-  cursor:pointer;transition:all 0.12s;min-height:44px;
-  font-family:'Nunito',sans-serif;
-  text-shadow:0 1px 3px rgba(0,0,0,0.5);
-}
-.abtn:active{background:rgba(124,77,255,0.35);transform:scale(0.96)}
-.bet-hint{text-align:center;font-size:12px;color:var(--text3);font-weight:800;margin-bottom:14px;font-family:'Nunito',sans-serif}
-.auto-row{display:flex;align-items:center;gap:10px;padding:12px 14px;background:rgba(0,0,0,0.25);border:2px solid rgba(255,255,255,0.07);border-radius:var(--r-md);margin-bottom:16px}
-.auto-lbl{flex:1;font-size:14px;color:var(--text2);font-weight:800;font-family:'Nunito',sans-serif}
+.auto-row{display:flex;align-items:center;gap:10px}
+.auto-lbl{flex:1;font-size:14px;font-weight:700;color:var(--text2)}
 .auto-ctrl{display:flex;align-items:center;gap:8px}
-.auto-val{font-size:16px;font-weight:900;min-width:52px;text-align:center;color:var(--gold);font-family:'Lilita One',sans-serif}
-.acb{width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,0.08);border:2px solid rgba(255,255,255,0.15);color:var(--text);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:'Nunito',sans-serif;font-weight:900}
-.tog{width:48px;height:28px;border-radius:14px;background:rgba(255,255,255,0.1);border:2px solid rgba(255,255,255,0.15);cursor:pointer;position:relative;transition:all 0.2s;flex-shrink:0}
-.tog.on{background:var(--green-dk);border-color:var(--green)}
-.tog::after{content:'';position:absolute;top:2px;left:2px;width:20px;height:20px;background:#fff;border-radius:50%;transition:transform 0.2s;box-shadow:0 2px 4px rgba(0,0,0,0.3)}
-.tog.on::after{transform:translateX(20px)}
+.auto-val{font-size:16px;font-weight:800;min-width:52px;text-align:center;color:var(--text)}
+.acb{
+  width:30px;height:30px;border-radius:var(--r-sm);
+  background:var(--bg);border:1px solid var(--border2);
+  color:var(--text);font-size:18px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:background 0.12s;
+}
+.acb:active{background:var(--card2)}
+.tog{
+  width:44px;height:26px;border-radius:13px;
+  background:var(--border2);cursor:pointer;position:relative;
+  transition:all 0.2s;flex-shrink:0;
+}
+.tog.on{background:var(--blue)}
+.tog::after{
+  content:'';position:absolute;top:3px;left:3px;
+  width:20px;height:20px;background:#fff;border-radius:50%;
+  transition:transform 0.2s;box-shadow:0 1px 3px rgba(0,0,0,0.3);
+}
+.tog.on::after{transform:translateX(18px)}
 
-/* ══ TOPUP ══ */
+/* TOPUP */
 .tp-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px}
-.tpc{background:rgba(244,200,66,0.06);border:2px solid rgba(244,200,66,0.2);border-radius:var(--r-md);padding:14px 6px;text-align:center;cursor:pointer;transition:all 0.15s;min-height:64px;display:flex;flex-direction:column;justify-content:center}
-.tpc.sel,.tpc:active{background:rgba(244,200,66,0.15);border-color:var(--gold);box-shadow:0 0 12px rgba(244,200,66,0.2)}
-.tpa{font-size:15px;font-weight:900;color:var(--gold);font-family:'Lilita One',sans-serif}
-.tpu{font-size:10px;color:var(--text3);margin-top:3px;font-weight:700}
+.tpc{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:var(--r-md);padding:14px 6px;text-align:center;
+  cursor:pointer;transition:all 0.15s;min-height:64px;
+  display:flex;flex-direction:column;justify-content:center;
+}
+.tpc.sel,.tpc:active{border-color:var(--blue);background:rgba(79,110,247,0.08)}
+.tpa{font-size:14px;font-weight:800;color:var(--gold)}
+.tpu{font-size:10px;color:var(--text3);margin-top:3px;font-weight:600}
 
-/* ══ DAILY ══ */
-.dico{font-size:64px;text-align:center;display:block;margin:0 0 10px}
-.drbox{display:flex;align-items:center;justify-content:center;gap:12px;background:rgba(244,200,66,0.08);border:2px solid var(--gold-dk);border-radius:var(--r-lg);padding:16px;margin-bottom:14px;box-shadow:0 3px 0 var(--gold-sh)}
+/* DAILY */
+.drbox{display:flex;align-items:center;justify-content:center;gap:12px;background:var(--card);border:1px solid var(--border2);border-radius:var(--r-lg);padding:16px;margin-bottom:14px}
 .strow{display:flex;gap:6px;justify-content:center;margin-bottom:18px}
-.sdot{width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,0.06);border:2px solid rgba(255,255,255,0.12);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:900;color:var(--text3);font-family:'Nunito',sans-serif}
-.sdot.done{background:var(--gold);color:#4a2400;border-color:var(--gold-dk);box-shadow:0 2px 0 var(--gold-sh)}
-.sdot.today{background:var(--purple);color:#fff;border-color:#9c6fff;box-shadow:0 0 12px rgba(124,77,255,0.4)}
+.sdot{width:34px;height:34px;border-radius:50%;background:var(--card);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:var(--text3)}
+.sdot.done{background:var(--gold);color:#1a1000;border-color:var(--gold-dk)}
+.sdot.today{background:var(--blue);color:#fff;border-color:var(--blue-dk)}
 
-/* ══ PAGES ══ */
-.pg-ttl{font-family:'Lilita One',sans-serif;font-size:22px;padding:14px 14px 10px;color:var(--gold);letter-spacing:1px;text-shadow:0 2px 4px rgba(0,0,0,0.4);display:flex;align-items:center;gap:10px}
+/* PAGES */
+.pg-ttl{font-size:18px;font-weight:800;padding:14px 14px 10px;color:var(--text);display:flex;align-items:center;gap:10px;letter-spacing:-0.3px}
 
 /* TASK CARD */
-.tc{margin:0 10px 8px;padding:12px 14px;display:flex;align-items:center;gap:12px;min-height:64px}
-.task-ico-wrap{
-  width:48px;height:48px;border-radius:14px;flex-shrink:0;
-  background:linear-gradient(135deg,var(--bg3),rgba(26,16,53,0.8));
-  border:2px solid var(--border);
-  display:flex;align-items:center;justify-content:center;
-  box-shadow:0 3px 0 rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.08);
-}
-.tnm{font-size:14px;font-weight:800;color:var(--text);font-family:'Nunito',sans-serif}
-.trw{font-size:12px;color:var(--gold);font-weight:700;margin-top:2px;font-family:'Nunito',sans-serif}
-.tbtn{min-height:40px;padding:0 16px;font-size:14px}
+.tc{margin:0 12px 8px;padding:12px 14px;display:flex;align-items:center;gap:12px;min-height:60px}
+.task-ico-wrap{width:44px;height:44px;border-radius:var(--r-md);flex-shrink:0;background:var(--card2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center}
+.tnm{font-size:14px;font-weight:700;color:var(--text)}
+.trw{font-size:12px;color:var(--gold);font-weight:600;margin-top:2px}
 
 /* LEADERBOARD */
-.lbr{margin:0 10px 6px;padding:11px 14px;display:flex;align-items:center;gap:10px;min-height:56px}
-.lbrk{font-family:'Lilita One',sans-serif;font-size:18px;width:28px;text-align:center;flex-shrink:0}
-.lbnm{flex:1;font-size:14px;font-weight:800;color:var(--text);font-family:'Nunito',sans-serif}
-.lbsc{font-size:14px;font-weight:900;color:var(--gold);font-family:'Lilita One',sans-serif}
+.lbr{margin:0 12px 6px;padding:11px 14px;display:flex;align-items:center;gap:10px;min-height:52px}
+.lbrk{font-size:16px;font-weight:800;width:28px;text-align:center;flex-shrink:0;color:var(--text2)}
+.lbnm{flex:1;font-size:13px;font-weight:700;color:var(--text)}
+.lbsc{font-size:14px;font-weight:800;color:var(--gold)}
 
 /* PROFILE */
 .ph{padding:16px 14px 0;text-align:center}
-.pav-wrap{width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,var(--bg3),var(--bg2));border:4px solid var(--gold);box-shadow:0 0 0 2px var(--gold-dk),0 4px 16px rgba(0,0,0,0.5),0 0 24px rgba(244,200,66,0.2);display:flex;align-items:center;justify-content:center;font-family:'Lilita One',sans-serif;font-size:30px;margin:0 auto 10px;color:var(--text)}
-.pnm{font-family:'Lilita One',sans-serif;font-size:20px;color:var(--gold);letter-spacing:0.5px}
-.sgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 10px}
-.scard{padding:14px;text-align:center;min-height:64px}
-.snum{font-family:'Lilita One',sans-serif;font-size:24px;color:var(--text)}
-.slbl{font-size:11px;color:var(--text3);font-weight:800;margin-top:3px;letter-spacing:0.5px;font-family:'Nunito',sans-serif}
-.icard{margin:0 10px;padding:16px}
-.ittl{font-family:'Lilita One',sans-serif;font-size:16px;color:var(--gold);margin-bottom:4px}
-.isub{font-size:12px;color:var(--text3);margin-bottom:12px;line-height:1.6;font-weight:700;font-family:'Nunito',sans-serif}
+.pav-wrap{width:72px;height:72px;border-radius:50%;background:var(--card2);border:2px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:800;margin:0 auto 10px;color:var(--text)}
+.pnm{font-size:18px;font-weight:800;color:var(--text);letter-spacing:-0.3px}
+.sgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 12px}
+.scard{padding:14px;text-align:center;min-height:60px}
+.snum{font-size:22px;font-weight:800;color:var(--text)}
+.slbl{font-size:11px;color:var(--text3);font-weight:700;margin-top:3px;letter-spacing:0.4px;text-transform:uppercase}
+.icard{margin:0 12px;padding:16px}
+.ittl{font-size:15px;font-weight:800;color:var(--text);margin-bottom:4px}
+.isub{font-size:12px;color:var(--text3);margin-bottom:12px;line-height:1.6;font-weight:600}
 .istats{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:12px}
-.ist{background:rgba(0,0,0,0.25);border-radius:var(--r-md);padding:12px;text-align:center;border:1px solid rgba(255,255,255,0.06)}
-.isnum{font-family:'Lilita One',sans-serif;font-size:22px;color:var(--text)}
-.islbl{font-size:10px;color:var(--text3);margin-top:2px;font-weight:800;font-family:'Nunito',sans-serif}
+.ist{background:var(--bg);border-radius:var(--r-md);padding:12px;text-align:center;border:1px solid var(--border)}
+.isnum{font-size:20px;font-weight:800;color:var(--text)}
+.islbl{font-size:10px;color:var(--text3);margin-top:2px;font-weight:700;text-transform:uppercase;letter-spacing:0.4px}
 .ibtns{display:flex;gap:8px}
-.ibtn{flex:1;min-height:48px;font-family:'Lilita One',sans-serif;letter-spacing:0.5px;font-size:16px}
-.cpbtn{width:48px;height:48px;border-radius:var(--r-md);background:rgba(255,255,255,0.06);border:2px solid rgba(255,255,255,0.12);color:var(--text2);font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ibtn{flex:1;min-height:46px;font-size:15px}
+.cpbtn{width:46px;height:46px;border-radius:var(--r-md);background:var(--card);border:1px solid var(--border2);color:var(--text2);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background 0.12s}
+.cpbtn:active{background:var(--card2)}
 
-.toast{position:fixed;top:70px;left:50%;transform:translateX(-50%);background:linear-gradient(180deg,var(--bg3),var(--bg2));border:2px solid var(--gold-dk);border-radius:var(--r-xl);padding:12px 22px;font-size:14px;font-weight:800;color:var(--gold);z-index:999;opacity:0;transition:opacity 0.3s;pointer-events:none;white-space:nowrap;box-shadow:0 4px 0 var(--gold-sh),0 8px 24px rgba(0,0,0,0.5);font-family:'Lilita One',sans-serif;letter-spacing:0.5px}
+/* TABLE STYLE */
+.bet-table{width:100%;margin:0 12px;width:calc(100% - 24px)}
+.bet-table-head{display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr;padding:8px 12px;border-bottom:1px solid var(--border)}
+.bet-table-head span{font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.4px}
+.bet-table-row{display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr;padding:9px 12px;border-bottom:1px solid var(--border);align-items:center;min-height:44px}
+.bet-table-row:hover{background:var(--card2)}
+
+.toast{
+  position:fixed;top:70px;left:50%;transform:translateX(-50%);
+  background:var(--card2);border:1px solid var(--border2);
+  border-radius:var(--r-lg);padding:11px 20px;
+  font-size:14px;font-weight:700;color:var(--text);
+  z-index:999;opacity:0;transition:opacity 0.3s;
+  pointer-events:none;white-space:nowrap;
+  box-shadow:0 8px 24px rgba(0,0,0,0.4);
+}
 .toast.show{opacity:1}
 ::-webkit-scrollbar{width:3px;height:3px}
 ::-webkit-scrollbar-track{background:transparent}
@@ -400,151 +440,124 @@ canvas#gc{position:absolute;inset:0;width:100%;height:100%}
 </head>
 <body>
 
-<!-- ══ SVG ICON DEFS ══ -->
+<!-- SVG ICONS -->
 <svg style="display:none" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <!-- ROCKET (Crash nav) -->
     <symbol id="ico-rocket" viewBox="0 0 28 28">
-      <path d="M14 2c0 0-2 3-3 7l3 3 3-3C16 5 14 2 14 2z" fill="#e0d0ff" stroke="#c8b8ff" stroke-width="0.5"/>
-      <path d="M11 9c0 5 3 9 3 9s3-4 3-9" fill="#b39ddb" stroke="#9c7fe8" stroke-width="0.5"/>
-      <circle cx="14" cy="10" r="2.5" fill="#80d8ff" stroke="#29b6f6" stroke-width="1"/>
-      <circle cx="14" cy="10" r="1" fill="#e8f5ff"/>
-      <path d="M11 9l-4 4 2 2z" fill="#9c6fff" stroke="#7c4dff" stroke-width="0.5"/>
-      <path d="M17 9l4 4-2 2z" fill="#9c6fff" stroke="#7c4dff" stroke-width="0.5"/>
-      <path d="M12 18c0 2.5 2 4 2 4s2-1.5 2-4l-2-1z" fill="#ff8f00"/>
-      <path d="M13 19c0 1.5 1 2.5 1 2.5s1-1 1-2.5l-1-.5z" fill="#ffe066"/>
+      <path d="M14 2c0 0-2 3-3 7l3 3 3-3C16 5 14 2 14 2z" fill="#a5b4fc"/>
+      <path d="M11 9c0 5 3 9 3 9s3-4 3-9" fill="#818cf8"/>
+      <circle cx="14" cy="10" r="2.5" fill="#60a5fa"/>
+      <circle cx="14" cy="10" r="1" fill="#e0f2fe"/>
+      <path d="M11 9l-4 4 2 2z" fill="#6366f1"/>
+      <path d="M17 9l4 4-2 2z" fill="#6366f1"/>
+      <path d="M12 18c0 2.5 2 4 2 4s2-1.5 2-4l-2-1z" fill="#f97316"/>
+      <path d="M13 19c0 1.5 1 2.5 1 2.5s1-1 1-2.5l-1-.5z" fill="#fed7aa"/>
     </symbol>
-
-    <!-- SWORDS (Tasks nav) -->
     <symbol id="ico-swords" viewBox="0 0 28 28">
-      <line x1="4" y1="24" x2="22" y2="6" stroke="#c8b8ff" stroke-width="2.5" stroke-linecap="round"/>
-      <path d="M20 4l4 4-1.5 1.5L22 8l-4-4z" fill="#e0d0ff"/>
-      <rect x="3" y="21.5" width="5" height="2" rx="1" transform="rotate(-45 5.5 22.5)" fill="#f4c842"/>
-      <path d="M4 4l-2 6 4-1z" fill="#ff8f00" opacity="0.7"/>
-      <line x1="24" y1="24" x2="6" y2="6" stroke="#c8b8ff" stroke-width="2.5" stroke-linecap="round"/>
-      <path d="M8 4L4 8l1.5 1.5L6 8l4-4z" fill="#e0d0ff"/>
-      <rect x="20" y="21.5" width="5" height="2" rx="1" transform="rotate(45 22.5 22.5)" fill="#f4c842"/>
+      <line x1="4" y1="24" x2="22" y2="6" stroke="#94a3b8" stroke-width="2.5" stroke-linecap="round"/>
+      <path d="M20 4l4 4-1.5 1.5L22 8l-4-4z" fill="#cbd5e1"/>
+      <rect x="3" y="21.5" width="5" height="2" rx="1" transform="rotate(-45 5.5 22.5)" fill="#f4b942"/>
+      <line x1="24" y1="24" x2="6" y2="6" stroke="#94a3b8" stroke-width="2.5" stroke-linecap="round"/>
+      <path d="M8 4L4 8l1.5 1.5L6 8l4-4z" fill="#cbd5e1"/>
+      <rect x="20" y="21.5" width="5" height="2" rx="1" transform="rotate(45 22.5 22.5)" fill="#f4b942"/>
     </symbol>
-
-    <!-- TROPHY (Top nav) -->
     <symbol id="ico-trophy" viewBox="0 0 28 28">
-      <path d="M8 3h12v9c0 4-2.7 7-6 7s-6-3-6-7V3z" fill="#f4c842" stroke="#c9921a" stroke-width="1"/>
-      <path d="M9 3.5h10v7c0 3-2.2 5.5-5 5.5s-5-2.5-5-5.5z" fill="#ffe566"/>
-      <path d="M8 5H4c0 0 0 5 4 5z" fill="#f4c842" stroke="#c9921a" stroke-width="0.8"/>
-      <path d="M20 5h4c0 0 0 5-4 5z" fill="#f4c842" stroke="#c9921a" stroke-width="0.8"/>
-      <rect x="12" y="19" width="4" height="3" fill="#c9921a"/>
-      <rect x="9" y="22" width="10" height="3" rx="1.5" fill="#c9921a" stroke="#7a4f00" stroke-width="0.8"/>
-      <rect x="10" y="22.5" width="8" height="2" rx="1" fill="#f4c842"/>
-      <circle cx="14" cy="10" r="2" fill="#ff8f00"/>
-      <path d="M13 10l1-2.5 1 2.5-.8-.6z" fill="#ffe066"/>
+      <path d="M8 3h12v9c0 4-2.7 7-6 7s-6-3-6-7V3z" fill="#f4b942" stroke="#b8861f" stroke-width="1"/>
+      <path d="M9 3.5h10v7c0 3-2.2 5.5-5 5.5s-5-2.5-5-5.5z" fill="#fcd34d"/>
+      <path d="M8 5H4c0 0 0 5 4 5z" fill="#f4b942" stroke="#b8861f" stroke-width="0.8"/>
+      <path d="M20 5h4c0 0 0 5-4 5z" fill="#f4b942" stroke="#b8861f" stroke-width="0.8"/>
+      <rect x="12" y="19" width="4" height="3" fill="#b8861f"/>
+      <rect x="9" y="22" width="10" height="3" rx="1.5" fill="#b8861f"/>
+      <rect x="10" y="22.5" width="8" height="2" rx="1" fill="#f4b942"/>
+      <circle cx="14" cy="10" r="2" fill="#f97316"/>
     </symbol>
-
-    <!-- PERSON (Profile nav) -->
     <symbol id="ico-person" viewBox="0 0 28 28">
-      <circle cx="14" cy="9" r="5" fill="#9c6fff" stroke="#7c4dff" stroke-width="1"/>
-      <circle cx="14" cy="9" r="3.5" fill="#b39ddb"/>
-      <circle cx="12.5" cy="8" r="0.8" fill="#4a0080"/>
-      <circle cx="15.5" cy="8" r="0.8" fill="#4a0080"/>
-      <path d="M12.5 10.5c0.4 0.8 1.6 0.8 2 0" stroke="#7c4dff" stroke-width="0.8" fill="none" stroke-linecap="round"/>
-      <path d="M5 26c0-5 4-8 9-8s9 3 9 8" fill="#7c4dff" stroke="#5e35b1" stroke-width="1"/>
-      <path d="M7 26c0-3.5 3.1-6 7-6s7 2.5 7 6" fill="#9c6fff"/>
+      <circle cx="14" cy="9" r="5" fill="#6366f1"/>
+      <circle cx="14" cy="9" r="3.5" fill="#818cf8"/>
+      <circle cx="12.5" cy="8" r="0.8" fill="#312e81"/>
+      <circle cx="15.5" cy="8" r="0.8" fill="#312e81"/>
+      <path d="M12.5 10.5c.4.8 1.6.8 2 0" stroke="#4338ca" stroke-width="0.8" fill="none" stroke-linecap="round"/>
+      <path d="M5 26c0-5 4-8 9-8s9 3 9 8" fill="#6366f1"/>
+      <path d="M7 26c0-3.5 3.1-6 7-6s7 2.5 7 6" fill="#818cf8"/>
     </symbol>
-
-    <!-- CALENDAR (task) -->
     <symbol id="ico-calendar" viewBox="0 0 28 28">
-      <rect x="3" y="5" width="22" height="20" rx="3" fill="#4a2d8a" stroke="#7c4dff" stroke-width="1.5"/>
-      <rect x="3" y="5" width="22" height="7" rx="3" fill="#7c4dff"/>
-      <rect x="3" y="9" width="22" height="3" fill="#7c4dff"/>
-      <circle cx="9" cy="4" r="2" fill="#9c6fff" stroke="#7c4dff" stroke-width="1"/>
-      <circle cx="19" cy="4" r="2" fill="#9c6fff" stroke="#7c4dff" stroke-width="1"/>
-      <rect x="7" y="14" width="4" height="3" rx="1" fill="#f4c842"/>
-      <rect x="12" y="14" width="4" height="3" rx="1" fill="#80d8ff"/>
-      <rect x="17" y="14" width="4" height="3" rx="1" fill="#80d8ff"/>
-      <rect x="7" y="19" width="4" height="3" rx="1" fill="#80d8ff"/>
-      <rect x="12" y="19" width="4" height="3" rx="1" fill="#80d8ff"/>
-      <text x="14" y="10.5" text-anchor="middle" font-size="5" fill="white" font-weight="bold" font-family="sans-serif">APR</text>
+      <rect x="3" y="5" width="22" height="20" rx="3" fill="#1e2535" stroke="#4f6ef7" stroke-width="1.5"/>
+      <rect x="3" y="5" width="22" height="7" rx="3" fill="#4f6ef7"/>
+      <rect x="3" y="9" width="22" height="3" fill="#4f6ef7"/>
+      <circle cx="9" cy="4" r="2" fill="#818cf8" stroke="#4f6ef7" stroke-width="1"/>
+      <circle cx="19" cy="4" r="2" fill="#818cf8" stroke="#4f6ef7" stroke-width="1"/>
+      <rect x="7" y="14" width="4" height="3" rx="1" fill="#f4b942"/>
+      <rect x="12" y="14" width="4" height="3" rx="1" fill="#60a5fa"/>
+      <rect x="17" y="14" width="4" height="3" rx="1" fill="#60a5fa"/>
+      <rect x="7" y="19" width="4" height="3" rx="1" fill="#60a5fa"/>
+      <rect x="12" y="19" width="4" height="3" rx="1" fill="#60a5fa"/>
     </symbol>
-
-    <!-- FRIENDS (task) -->
     <symbol id="ico-friends" viewBox="0 0 28 28">
-      <circle cx="10" cy="9" r="4" fill="#9c6fff" stroke="#7c4dff" stroke-width="1"/>
-      <circle cx="10" cy="9" r="2.8" fill="#b39ddb"/>
-      <path d="M2 24c0-4.4 3.6-7 8-7s8 2.6 8 7" fill="#7c4dff" stroke="#5e35b1" stroke-width="1"/>
-      <path d="M4 24c0-2.8 2.7-5 6-5s6 2.2 6 5" fill="#9c6fff"/>
-      <circle cx="20" cy="8" r="3.5" fill="#f4c842" stroke="#c9921a" stroke-width="1"/>
-      <circle cx="20" cy="8" r="2.3" fill="#ffe566"/>
-      <path d="M14.5 23c0-3.5 2.5-6 5.5-6s5.5 2.5 5.5 6" fill="#f4c842" stroke="#c9921a" stroke-width="1"/>
-      <path d="M16 23c0-2 1.8-4 4-4s4 2 4 4" fill="#ffe566"/>
+      <circle cx="10" cy="9" r="4" fill="#6366f1"/>
+      <circle cx="10" cy="9" r="2.8" fill="#818cf8"/>
+      <path d="M2 24c0-4.4 3.6-7 8-7s8 2.6 8 7" fill="#6366f1"/>
+      <path d="M4 24c0-2.8 2.7-5 6-5s6 2.2 6 5" fill="#818cf8"/>
+      <circle cx="20" cy="8" r="3.5" fill="#f4b942"/>
+      <circle cx="20" cy="8" r="2.3" fill="#fcd34d"/>
+      <path d="M14.5 23c0-3.5 2.5-6 5.5-6s5.5 2.5 5.5 6" fill="#f4b942"/>
+      <path d="M16 23c0-2 1.8-4 4-4s4 2 4 4" fill="#fcd34d"/>
     </symbol>
-
-    <!-- GAMEPAD (task) -->
     <symbol id="ico-gamepad" viewBox="0 0 28 28">
-      <rect x="3" y="9" width="22" height="13" rx="6" fill="#2e1a5c" stroke="#7c4dff" stroke-width="1.5"/>
-      <rect x="3" y="9" width="22" height="13" rx="6" fill="url(#gpad-grad)" opacity="0.5"/>
-      <rect x="9" y="14" width="6" height="2" rx="1" fill="#9c6fff"/>
-      <rect x="11" y="12" width="2" height="6" rx="1" fill="#9c6fff"/>
-      <circle cx="19" cy="13.5" r="1.3" fill="#66bb6a" stroke="#2e7d32" stroke-width="0.5"/>
-      <circle cx="21.5" cy="15.5" r="1.3" fill="#ef5350" stroke="#b71c1c" stroke-width="0.5"/>
-      <circle cx="19" cy="17.5" r="1.3" fill="#f4c842" stroke="#c9921a" stroke-width="0.5"/>
-      <circle cx="16.5" cy="15.5" r="1.3" fill="#80d8ff" stroke="#0277bd" stroke-width="0.5"/>
-      <ellipse cx="7" cy="15.5" rx="2" ry="1" fill="#7c4dff"/>
+      <rect x="3" y="9" width="22" height="13" rx="6" fill="#1e2535" stroke="#4f6ef7" stroke-width="1.5"/>
+      <rect x="9" y="14" width="6" height="2" rx="1" fill="#818cf8"/>
+      <rect x="11" y="12" width="2" height="6" rx="1" fill="#818cf8"/>
+      <circle cx="19" cy="13.5" r="1.3" fill="#22c55e"/>
+      <circle cx="21.5" cy="15.5" r="1.3" fill="#ef4444"/>
+      <circle cx="19" cy="17.5" r="1.3" fill="#f4b942"/>
+      <circle cx="16.5" cy="15.5" r="1.3" fill="#60a5fa"/>
+      <ellipse cx="7" cy="15.5" rx="2" ry="1" fill="#6366f1"/>
     </symbol>
-
-    <!-- COIN BAG (task) -->
     <symbol id="ico-coinbag" viewBox="0 0 28 28">
-      <path d="M14 5c-2 0-5 2-5 2l1 3h8l1-3c0 0-3-2-5-2z" fill="#f4c842" stroke="#c9921a" stroke-width="1"/>
-      <ellipse cx="14" cy="17" rx="8" ry="9" fill="#f4c842" stroke="#c9921a" stroke-width="1.5"/>
-      <ellipse cx="14" cy="16" rx="6.5" ry="7.5" fill="#ffe566"/>
-      <text x="14" y="19" text-anchor="middle" font-size="10" fill="#c9921a" font-weight="bold" font-family="sans-serif">$</text>
-      <ellipse cx="14" cy="10" rx="3" ry="1.5" fill="#ffe566"/>
+      <path d="M14 5c-2 0-5 2-5 2l1 3h8l1-3c0 0-3-2-5-2z" fill="#f4b942" stroke="#b8861f" stroke-width="1"/>
+      <ellipse cx="14" cy="17" rx="8" ry="9" fill="#f4b942" stroke="#b8861f" stroke-width="1.5"/>
+      <ellipse cx="14" cy="16" rx="6.5" ry="7.5" fill="#fcd34d"/>
+      <text x="14" y="20" text-anchor="middle" font-size="11" fill="#b8861f" font-weight="bold" font-family="sans-serif">$</text>
     </symbol>
-
-    <!-- FLAME (task) -->
     <symbol id="ico-flame" viewBox="0 0 28 28">
-      <path d="M14 2c0 0-1 5-4 8 0 0 0-3-2-4 0 0-2 4-1 8 1 5 5 9 7 9s6-4 7-9c1-4-1-8-1-8-2 1-2 4-2 4-3-3-4-8-4-8z" fill="#ff8f00"/>
-      <path d="M14 5c0 0-0.5 4-3 6.5 0 0 0-2-1.5-3 0 0-1.5 3-0.5 6 0.7 2.5 3 5.5 5 5.5s4.3-3 5-5.5c1-3-0.5-6-0.5-6-1.5 1-1.5 3-1.5 3-2.5-2.5-3-6.5-3-6.5z" fill="#ff5722"/>
-      <path d="M14 9c0 0 0 3-2 5 0 0 0-1.5-1-2 0 0-1 2 0 4.5 0.5 1.5 2 3 3 3s2.5-1.5 3-3c1-2.5 0-4.5 0-4.5-1 0.5-1 2-1 2-2-2-2-5-2-5z" fill="#ffe066"/>
-      <circle cx="14" cy="19" r="2" fill="#fff3e0" opacity="0.6"/>
+      <path d="M14 2c0 0-1 5-4 8 0 0 0-3-2-4 0 0-2 4-1 8 1 5 5 9 7 9s6-4 7-9c1-4-1-8-1-8-2 1-2 4-2 4-3-3-4-8-4-8z" fill="#f97316"/>
+      <path d="M14 6c0 0-.5 4-3 6.5 0 0 0-2-1.5-3 0 0-1.5 3-.5 6 .7 2.5 3 5.5 5 5.5s4.3-3 5-5.5c1-3-.5-6-.5-6-1.5 1-1.5 3-1.5 3-2.5-2.5-3-6.5-3-6.5z" fill="#ef4444"/>
+      <path d="M14 10c0 0 0 3-2 5 0 0 0-1.5-1-2 0 0-1 2 0 4.5.5 1.5 2 3 3 3s2.5-1.5 3-3c1-2.5 0-4.5 0-4.5-1 .5-1 2-1 2-2-2-2-5-2-5z" fill="#fcd34d"/>
     </symbol>
-
-    <!-- STAR (reward) -->
     <symbol id="ico-star" viewBox="0 0 24 24">
-      <path d="M12 2l2.7 5.5 6 0.9-4.4 4.2 1.1 6-5.4-2.8-5.4 2.8 1.1-6L3.3 8.4l6-0.9z" fill="#f4c842" stroke="#c9921a" stroke-width="1"/>
+      <path d="M12 2l2.7 5.5 6 .9-4.4 4.2 1.1 6-5.4-2.8-5.4 2.8 1.1-6L3.3 8.4l6-.9z" fill="#f4b942" stroke="#b8861f" stroke-width="0.8"/>
     </symbol>
-
-    <linearGradient id="gpad-grad" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#fff" stop-opacity="0.1"/>
-      <stop offset="100%" stop-color="#000" stop-opacity="0.2"/>
-    </linearGradient>
   </defs>
 </svg>
 
-<!-- ══ TOP HUD ══ -->
+<!-- TOP HUD -->
 <div class="top-hud">
   <div class="hud-logo">
-    <svg width="22" height="22"><use href="#ico-rocket"/></svg>
-    ORBIT CRASH
+    <svg width="20" height="20"><use href="#ico-rocket"/></svg>
+    Orbit<span>Crash</span>
   </div>
   <div class="hud-bal" onclick="openSh('topup-ov')">
-    <svg width="18" height="18"><use href="#ico-star"/></svg>
+    <svg width="16" height="16"><use href="#ico-star"/></svg>
     <span class="hud-bal-num" id="stars-disp">...</span>
     <button class="hud-plus" onclick="event.stopPropagation();openSh('topup-ov')">+</button>
   </div>
 </div>
 
-<!-- ══ CRASH PAGE ══ -->
+<!-- CRASH PAGE -->
 <div id="crash-page" style="display:flex;flex-direction:column;flex:1;overflow:hidden;min-height:0">
   <div class="game-wrap" style="height:40vw;max-height:210px;min-height:130px">
     <canvas id="gc"></canvas>
     <div class="mult-overlay">
       <div class="mn wait" id="mn">1</div>
-      <div class="ms" id="ms">Waiting for bets…</div>
+      <div class="ms" id="ms">WAITING FOR BETS</div>
     </div>
   </div>
+
   <div class="hist-bar" id="hist-bar">
-    <span style="color:var(--text3);font-size:12px;font-weight:800">No rounds yet</span>
+    <span style="color:var(--text3);font-size:12px;font-weight:700">No rounds yet</span>
   </div>
+
   <div class="rb" id="rb"></div>
+
   <div class="pl-wrap">
     <div class="pl-tabs">
       <button class="ptab active" id="ptab-all" onclick="swTab('all')">All Bets</button>
@@ -552,115 +565,123 @@ canvas#gc{position:absolute;inset:0;width:100%;height:100%}
       <button class="ptab" id="ptab-top" onclick="swTab('top')">Top</button>
     </div>
     <div class="pl-list" id="pl-list">
-      <div style="padding:18px;text-align:center;color:var(--text3);font-size:13px;font-weight:800">Place a bet to join the round</div>
+      <div style="padding:18px;text-align:center;color:var(--text3);font-size:13px;font-weight:600">Place a bet to join the round</div>
     </div>
   </div>
+
   <div class="act-area">
     <div class="placed-row" id="placed-row">
       <span class="placed-lbl">Bet placed</span>
       <span class="placed-val" id="placed-val">⭐ 0</span>
     </div>
-    <button class="cr-btn cr-btn-disabled" id="mbtn" onclick="handleMain()">Loading…</button>
+    <button class="btn btn-off" id="mbtn" onclick="handleMain()">Loading…</button>
   </div>
 </div>
 
-<!-- ══ TASKS PAGE ══ -->
+<!-- TASKS PAGE -->
 <div id="page-tasks" class="page">
   <div class="pg-ttl">
-    <svg width="24" height="24"><use href="#ico-swords"/></svg>
+    <svg width="22" height="22"><use href="#ico-swords"/></svg>
     Tasks
   </div>
-  <div class="tc cr-card">
-    <div class="task-ico-wrap"><svg width="30" height="30"><use href="#ico-calendar"/></svg></div>
+  <div class="tc card">
+    <div class="task-ico-wrap"><svg width="28" height="28"><use href="#ico-calendar"/></svg></div>
     <div style="flex:1"><div class="tnm">Daily login</div><div class="trw">+1 ⭐ per day</div></div>
-    <button class="cr-btn cr-btn-blue tbtn" id="tdaily" onclick="claimDailyTask()">Claim</button>
+    <button class="btn btn-primary" id="tdaily" onclick="claimDailyTask()" style="min-height:38px;padding:0 16px;font-size:13px">Claim</button>
   </div>
-  <div class="tc cr-card">
-    <div class="task-ico-wrap"><svg width="30" height="30"><use href="#ico-friends"/></svg></div>
+  <div class="tc card">
+    <div class="task-ico-wrap"><svg width="28" height="28"><use href="#ico-friends"/></svg></div>
     <div style="flex:1"><div class="tnm">Invite a friend</div><div class="trw">+5 ⭐ per friend</div></div>
-    <button class="cr-btn cr-btn-blue tbtn" onclick="doInvite()">Invite</button>
+    <button class="btn btn-primary" onclick="doInvite()" style="min-height:38px;padding:0 16px;font-size:13px">Invite</button>
   </div>
-  <div class="tc cr-card">
-    <div class="task-ico-wrap"><svg width="30" height="30"><use href="#ico-gamepad"/></svg></div>
+  <div class="tc card">
+    <div class="task-ico-wrap"><svg width="28" height="28"><use href="#ico-gamepad"/></svg></div>
     <div style="flex:1"><div class="tnm">Play 5 rounds today</div><div class="trw">+3 ⭐ stars</div></div>
-    <button class="cr-btn cr-btn-ghost tbtn" id="trounds">0/5</button>
+    <button class="btn btn-ghost" id="trounds" style="min-height:38px;padding:0 14px;font-size:13px">0/5</button>
   </div>
-  <div class="tc cr-card">
-    <div class="task-ico-wrap"><svg width="30" height="30"><use href="#ico-coinbag"/></svg></div>
+  <div class="tc card">
+    <div class="task-ico-wrap"><svg width="28" height="28"><use href="#ico-coinbag"/></svg></div>
     <div style="flex:1"><div class="tnm">Win with ×3.00+</div><div class="trw">+5 ⭐ stars</div></div>
-    <button class="cr-btn cr-btn-gold tbtn" id="tbigwin" onclick="switchNav('crash')">Play</button>
+    <button class="btn btn-gold" id="tbigwin" onclick="switchNav('crash')" style="min-height:38px;padding:0 16px;font-size:13px">Play</button>
   </div>
-  <div class="tc cr-card">
-    <div class="task-ico-wrap"><svg width="30" height="30"><use href="#ico-flame"/></svg></div>
+  <div class="tc card">
+    <div class="task-ico-wrap"><svg width="28" height="28"><use href="#ico-flame"/></svg></div>
     <div style="flex:1"><div class="tnm">7-day streak</div><div class="trw">+10 ⭐ bonus</div></div>
-    <button class="cr-btn cr-btn-ghost tbtn" id="tstreak">Go</button>
+    <button class="btn btn-ghost" id="tstreak" style="min-height:38px;padding:0 14px;font-size:13px">Go</button>
   </div>
 </div>
 
-<!-- ══ LEADERBOARD PAGE ══ -->
+<!-- LEADERBOARD PAGE -->
 <div id="page-leaderboard" class="page">
   <div class="pg-ttl">
-    <svg width="24" height="24"><use href="#ico-trophy"/></svg>
+    <svg width="22" height="22"><use href="#ico-trophy"/></svg>
     Leaderboard
+  </div>
+  <!-- Table header -->
+  <div style="display:grid;grid-template-columns:28px 36px 1fr 80px;gap:8px;padding:6px 14px;border-bottom:1px solid var(--border);margin:0 12px">
+    <span class="label">#</span>
+    <span></span>
+    <span class="label">Player</span>
+    <span class="label" style="text-align:right">Stars</span>
   </div>
   <div id="lb-list"></div>
 </div>
 
-<!-- ══ PROFILE PAGE ══ -->
+<!-- PROFILE PAGE -->
 <div id="page-profile" class="page">
   <div class="ph">
     <div class="pav-wrap" id="pav">?</div>
     <div class="pnm" id="pnm">Player</div>
   </div>
   <div class="sgrid">
-    <div class="scard cr-card"><div class="snum" id="sg">0</div><div class="slbl">GAMES</div></div>
-    <div class="scard cr-card"><div class="snum" id="sb">—</div><div class="slbl">BEST MULT</div></div>
-    <div class="scard cr-card"><div class="snum" id="sw">0</div><div class="slbl">STARS WON</div></div>
-    <div class="scard cr-card"><div class="snum" id="ss">0</div><div class="slbl">STREAK</div></div>
+    <div class="scard card"><div class="snum" id="sg">0</div><div class="slbl">Games</div></div>
+    <div class="scard card"><div class="snum" id="sb">—</div><div class="slbl">Best Mult</div></div>
+    <div class="scard card"><div class="snum" id="sw">0</div><div class="slbl">Stars Won</div></div>
+    <div class="scard card"><div class="snum" id="ss">0</div><div class="slbl">Streak</div></div>
   </div>
-  <div class="icard cr-card">
-    <div class="ittl">Invite friends — earn 10%!</div>
+  <div class="icard card">
+    <div class="ittl">Invite friends — earn 10%</div>
     <div class="isub">Earn 10% from every deposit your friends make. Get ⭐5 per friend, up to 30/day.</div>
     <div class="istats">
-      <div class="ist"><div class="isnum" id="icnt">0</div><div class="islbl">INVITED</div></div>
-      <div class="ist"><div class="isnum" id="iern">0</div><div class="islbl">EARNED ⭐</div></div>
+      <div class="ist"><div class="isnum" id="icnt">0</div><div class="islbl">Invited</div></div>
+      <div class="ist"><div class="isnum" id="iern">0</div><div class="islbl">Earned ⭐</div></div>
     </div>
     <div class="ibtns">
-      <button class="cr-btn cr-btn-blue ibtn" onclick="doInvite()">Invite Friend</button>
+      <button class="btn btn-primary ibtn" onclick="doInvite()">Invite Friend</button>
       <button class="cpbtn" onclick="copyLink()">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-          <rect x="9" y="9" width="11" height="11" rx="2" stroke="#c8b8ff" stroke-width="2"/>
-          <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" stroke="#c8b8ff" stroke-width="2"/>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+          <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"></path>
         </svg>
       </button>
     </div>
   </div>
 </div>
 
-<!-- ══ BOTTOM NAV ══ -->
+<!-- BOTTOM NAV -->
 <nav class="nav">
   <button class="nb active" id="nav-crash" onclick="switchNav('crash')">
     <div class="niw">
-      <svg class="nav-icon-svg" viewBox="0 0 28 28">
-        <path d="M14 2c0 0-2 3-3 7l3 3 3-3C16 5 14 2 14 2z" fill="#e0d0ff"/>
-        <path d="M11 9c0 5 3 9 3 9s3-4 3-9" fill="#b39ddb"/>
-        <circle cx="14" cy="10" r="2.5" fill="#80d8ff"/>
-        <path d="M11 9l-4 4 2 2z" fill="#9c6fff"/>
-        <path d="M17 9l4 4-2 2z" fill="#9c6fff"/>
-        <path d="M12 18c0 2.5 2 4 2 4s2-1.5 2-4l-2-1z" fill="#ff8f00"/>
+      <svg class="ni-svg" viewBox="0 0 28 28">
+        <path d="M14 2c0 0-2 3-3 7l3 3 3-3C16 5 14 2 14 2z" fill="#94a3b8"/>
+        <path d="M11 9c0 5 3 9 3 9s3-4 3-9" fill="#64748b"/>
+        <circle cx="14" cy="10" r="2.5" fill="#7dd3fc"/>
+        <path d="M11 9l-4 4 2 2z" fill="#818cf8"/>
+        <path d="M17 9l4 4-2 2z" fill="#818cf8"/>
+        <path d="M12 18c0 2.5 2 4 2 4s2-1.5 2-4l-2-1z" fill="#f97316"/>
       </svg>
     </div>
     <span>CRASH</span>
   </button>
   <button class="nb" id="nav-tasks" onclick="switchNav('tasks')">
     <div class="niw">
-      <svg class="nav-icon-svg" viewBox="0 0 28 28">
-        <line x1="4" y1="24" x2="22" y2="6" stroke="#b39ddb" stroke-width="2.5" stroke-linecap="round"/>
-        <path d="M20 4l4 4-1.5 1.5L22 8l-4-4z" fill="#e0d0ff"/>
-        <rect x="2.5" y="21" width="5" height="2.5" rx="1.2" transform="rotate(-45 5 22.2)" fill="#f4c842"/>
-        <line x1="24" y1="24" x2="6" y2="6" stroke="#b39ddb" stroke-width="2.5" stroke-linecap="round"/>
-        <path d="M8 4L4 8l1.5 1.5L6 8l4-4z" fill="#e0d0ff"/>
-        <rect x="20.5" y="21" width="5" height="2.5" rx="1.2" transform="rotate(45 23 22.2)" fill="#f4c842"/>
+      <svg class="ni-svg" viewBox="0 0 28 28">
+        <line x1="4" y1="24" x2="22" y2="6" stroke="#64748b" stroke-width="2.5" stroke-linecap="round"/>
+        <path d="M20 4l4 4-1.5 1.5L22 8l-4-4z" fill="#94a3b8"/>
+        <rect x="2.5" y="21" width="5" height="2.5" rx="1.2" transform="rotate(-45 5 22.2)" fill="#f4b942"/>
+        <line x1="24" y1="24" x2="6" y2="6" stroke="#64748b" stroke-width="2.5" stroke-linecap="round"/>
+        <path d="M8 4L4 8l1.5 1.5L6 8l4-4z" fill="#94a3b8"/>
+        <rect x="20.5" y="21" width="5" height="2.5" rx="1.2" transform="rotate(45 23 22.2)" fill="#f4b942"/>
       </svg>
       <span class="nbdg">3</span>
     </div>
@@ -668,101 +689,93 @@ canvas#gc{position:absolute;inset:0;width:100%;height:100%}
   </button>
   <button class="nb" id="nav-leaderboard" onclick="switchNav('leaderboard')">
     <div class="niw">
-      <svg class="nav-icon-svg" viewBox="0 0 28 28">
-        <path d="M8 4h12v8c0 3.5-2.7 6.5-6 6.5S8 15.5 8 12V4z" fill="#f4c842" stroke="#c9921a" stroke-width="1"/>
-        <path d="M9 4.5h10v6.5c0 2.8-2.2 5-5 5s-5-2.2-5-5z" fill="#ffe566"/>
-        <path d="M8 6H4.5c0 0 .2 4.5 3.5 4.5z" fill="#f4c842" stroke="#c9921a" stroke-width="0.8"/>
-        <path d="M20 6h3.5c0 0-.2 4.5-3.5 4.5z" fill="#f4c842" stroke="#c9921a" stroke-width="0.8"/>
-        <rect x="12.5" y="18.5" width="3" height="2.5" fill="#c9921a"/>
-        <rect x="9.5" y="21" width="9" height="3" rx="1.5" fill="#c9921a" stroke="#7a4f00" stroke-width="0.8"/>
-        <rect x="10.5" y="21.5" width="7" height="2" rx="1" fill="#f4c842"/>
-        <path d="M13 8l1-2.5 1 2.5-.8-.6.8 2-.8-.5-.8.5.8-2z" fill="#ff8f00"/>
+      <svg class="ni-svg" viewBox="0 0 28 28">
+        <path d="M8 4h12v8c0 3.5-2.7 6.5-6 6.5S8 15.5 8 12V4z" fill="#f4b942" stroke="#b8861f" stroke-width="1"/>
+        <path d="M9 4.5h10v6.5c0 2.8-2.2 5-5 5s-5-2.2-5-5z" fill="#fcd34d"/>
+        <path d="M8 6H4.5c0 0 .2 4.5 3.5 4.5z" fill="#f4b942"/>
+        <path d="M20 6h3.5c0 0-.2 4.5-3.5 4.5z" fill="#f4b942"/>
+        <rect x="12.5" y="18.5" width="3" height="2.5" fill="#b8861f"/>
+        <rect x="9.5" y="21" width="9" height="3" rx="1.5" fill="#b8861f"/>
       </svg>
     </div>
     <span>TOP</span>
   </button>
   <button class="nb" id="nav-profile" onclick="switchNav('profile')">
     <div class="niw">
-      <svg class="nav-icon-svg" viewBox="0 0 28 28">
-        <circle cx="14" cy="9" r="5" fill="#9c6fff" stroke="#7c4dff" stroke-width="1"/>
-        <circle cx="14" cy="9" r="3.5" fill="#b39ddb"/>
-        <circle cx="12.5" cy="8.2" r="0.9" fill="#4a1082"/>
-        <circle cx="15.5" cy="8.2" r="0.9" fill="#4a1082"/>
-        <path d="M12.5 10.5c.4.8 1.6.8 2 0" stroke="#7c4dff" stroke-width="0.8" fill="none" stroke-linecap="round"/>
-        <path d="M5 26c0-5 4-8 9-8s9 3 9 8" fill="#7c4dff" stroke="#5e35b1" stroke-width="1"/>
-        <path d="M7 26c0-3.5 3.1-6 7-6s7 2.5 7 6" fill="#9c6fff"/>
+      <svg class="ni-svg" viewBox="0 0 28 28">
+        <circle cx="14" cy="9" r="5" fill="#64748b"/>
+        <circle cx="14" cy="9" r="3.5" fill="#94a3b8"/>
+        <path d="M5 26c0-5 4-8 9-8s9 3 9 8" fill="#64748b"/>
+        <path d="M7 26c0-3.5 3.1-6 7-6s7 2.5 7 6" fill="#94a3b8"/>
       </svg>
     </div>
     <span>PROFILE</span>
   </button>
 </nav>
 
-<!-- ══ BET MODAL ══ -->
+<!-- BET MODAL — DUEL STYLE -->
 <div class="ov" id="bet-ov" onclick="bgCl('bet-ov',event)">
   <div class="sh">
     <button class="sh-cls" onclick="closeSh('bet-ov')">✕</button>
     <div class="sh-hnd"></div>
-    <div class="sh-ttl">
-      <svg width="22" height="22" style="vertical-align:middle;margin-right:6px"><use href="#ico-star"/></svg>
-      New Bet
+
+    <!-- Manual / Auto tabs -->
+    <div class="seg-tabs">
+      <button class="seg-tab active" id="seg-manual" onclick="setSeg('manual')">Manual</button>
+      <button class="seg-tab" id="seg-auto" onclick="setSeg('auto')">Auto</button>
     </div>
-    <div class="bet-bal">
-      <svg width="18" height="18"><use href="#ico-star"/></svg>
-      <span id="mbal">0</span>
-      <button class="hud-plus" onclick="closeSh('bet-ov');openSh('topup-ov')">+</button>
+
+    <!-- Bet Amount -->
+    <div class="bet-section-label">
+      <span class="label">Bet Amount</span>
+      <span class="bet-bal-show">Balance: <span id="mbal">0</span> ⭐</span>
     </div>
-    <div class="bet-inp-row">
-      <div class="bet-inp-wrap">
-        <input class="bet-inp" type="number" id="binp"
-          placeholder="0" min="0" max="20000"
-          inputmode="numeric" oninput="clampB()">
-        <div class="inp-arrows">
-          <div class="inp-arr" onclick="stepBet(1)">
-            <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-              <path d="M2 8l4-5 4 5" fill="#c8b8ff" stroke="#c8b8ff" stroke-width="0.5" stroke-linejoin="round"/>
-            </svg>
-          </div>
-          <div class="inp-arr" onclick="stepBet(-1)">
-            <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-              <path d="M2 4l4 5 4-5" fill="#c8b8ff" stroke="#c8b8ff" stroke-width="0.5" stroke-linejoin="round"/>
-            </svg>
-          </div>
+    <div class="bet-inp-wrap">
+      <div class="bet-ico">
+        <svg width="14" height="14"><use href="#ico-star"/></svg>
+      </div>
+      <input class="bet-inp" type="number" id="binp"
+        placeholder="50" value="50" min="0" max="20000"
+        inputmode="numeric" oninput="clampB()">
+    </div>
+    <div class="bet-quick">
+      <button class="chip" onclick="halfBet()">½</button>
+      <button class="chip" onclick="doubleBet()">2×</button>
+      <button class="chip" onclick="addB(100)">+100</button>
+      <button class="chip" onclick="addB(500)">+500</button>
+      <button class="chip" onclick="maxBet()">MAX</button>
+    </div>
+
+    <!-- Auto cash-out -->
+    <div class="auto-section">
+      <div class="auto-row">
+        <span class="auto-lbl">Auto cash-out</span>
+        <div class="auto-ctrl">
+          <button class="acb" onclick="chAuto(-0.5)">−</button>
+          <span class="auto-val" id="aval">×2.00</span>
+          <button class="acb" onclick="chAuto(0.5)">+</button>
         </div>
+        <div class="tog on" id="atog" onclick="togAuto()"></div>
       </div>
-      <span class="bet-unit">stars</span>
     </div>
-    <div class="bet-add-row">
-      <button class="abtn" onclick="addB(100)">+100</button>
-      <button class="abtn" onclick="addB(500)">+500</button>
-      <button class="abtn" onclick="addB(2500)">+2,500</button>
-    </div>
-    <div class="bet-hint">Min 50 · Max 20,000 stars</div>
-    <div class="auto-row">
-      <span class="auto-lbl">Auto cash-out</span>
-      <div class="auto-ctrl">
-        <button class="acb" onclick="chAuto(-0.5)">−</button>
-        <span class="auto-val" id="aval">×2.00</span>
-        <button class="acb" onclick="chAuto(0.5)">+</button>
-      </div>
-      <div class="tog on" id="atog" onclick="togAuto()"></div>
-    </div>
-    <button class="cr-btn cr-btn-gold" onclick="confirmBet()"
-      style="width:100%;font-size:20px;min-height:56px;font-family:'Lilita One',sans-serif;letter-spacing:1px">
-      Place Bet
+
+    <button class="btn btn-primary" onclick="confirmBet()"
+      style="width:100%;font-size:17px;min-height:52px;font-weight:800">
+      Start Game
     </button>
   </div>
 </div>
 
-<!-- ══ TOPUP MODAL ══ -->
+<!-- TOPUP MODAL -->
 <div class="ov" id="topup-ov" onclick="bgCl('topup-ov',event)">
   <div class="sh">
     <button class="sh-cls" onclick="closeSh('topup-ov')">✕</button>
     <div class="sh-hnd"></div>
     <div class="sh-ttl">
-      <svg width="20" height="20" style="vertical-align:middle;margin-right:6px"><use href="#ico-star"/></svg>
+      <svg width="18" height="18"><use href="#ico-star"/></svg>
       Top Up Stars
     </div>
-    <div style="text-align:center;font-size:12px;color:var(--text3);font-weight:800;margin-bottom:14px;font-family:'Nunito',sans-serif">Telegram Stars · Instant payment</div>
+    <div style="font-size:12px;color:var(--text3);font-weight:600;margin-bottom:14px">Telegram Stars · Instant</div>
     <div class="tp-grid">
       <div class="tpc sel" onclick="selTP(100,this)"><div class="tpa">⭐ 100</div><div class="tpu">≈$1.30</div></div>
       <div class="tpc" onclick="selTP(200,this)"><div class="tpa">⭐ 200</div><div class="tpu">≈$2.60</div></div>
@@ -771,31 +784,31 @@ canvas#gc{position:absolute;inset:0;width:100%;height:100%}
       <div class="tpc" onclick="selTP(2000,this)"><div class="tpa">⭐ 2,000</div><div class="tpu">≈$26</div></div>
       <div class="tpc" onclick="selTP(5000,this)"><div class="tpa">⭐ 5,000</div><div class="tpu">≈$65</div></div>
     </div>
-    <button class="cr-btn cr-btn-gold" onclick="doTopup()"
-      style="width:100%;font-size:18px;min-height:54px;font-family:'Lilita One',sans-serif;letter-spacing:1px">
+    <button class="btn btn-gold" onclick="doTopup()"
+      style="width:100%;font-size:16px;min-height:50px;font-weight:800">
       Top Up ⭐ <span id="tplbl">100</span> Stars
     </button>
   </div>
 </div>
 
-<!-- ══ DAILY MODAL ══ -->
+<!-- DAILY MODAL -->
 <div class="ov" id="daily-ov">
   <div class="sh">
     <div class="sh-hnd"></div>
-    <span class="dico">🎁</span>
-    <div style="font-family:'Lilita One',sans-serif;font-size:24px;text-align:center;margin-bottom:4px;color:var(--gold);letter-spacing:1px">Daily Bonus!</div>
-    <div style="font-size:13px;color:var(--text3);font-weight:800;text-align:center;margin-bottom:16px;font-family:'Nunito',sans-serif">Open the app every day for free stars</div>
+    <div style="font-size:52px;text-align:center;margin-bottom:10px">🎁</div>
+    <div style="font-size:20px;font-weight:800;text-align:center;margin-bottom:4px;color:var(--text)">Daily Bonus</div>
+    <div style="font-size:13px;color:var(--text3);font-weight:600;text-align:center;margin-bottom:16px">Come back every day for free stars</div>
     <div class="drbox">
-      <svg width="30" height="30"><use href="#ico-star"/></svg>
-      <span style="font-family:'Lilita One',sans-serif;font-size:36px;color:var(--gold);text-shadow:0 2px 0 var(--gold-sh)" id="dnum">+1</span>
+      <svg width="28" height="28"><use href="#ico-star"/></svg>
+      <span style="font-size:34px;font-weight:900;color:var(--gold)" id="dnum">+1</span>
       <div>
-        <div style="font-size:15px;font-weight:900;color:var(--text);font-family:'Nunito',sans-serif">free star</div>
-        <div style="font-size:12px;color:var(--text3);font-weight:700;font-family:'Nunito',sans-serif">Day <span id="dday">1</span></div>
+        <div style="font-size:14px;font-weight:800;color:var(--text)">free star</div>
+        <div style="font-size:12px;color:var(--text3);font-weight:600">Day <span id="dday">1</span></div>
       </div>
     </div>
     <div class="strow" id="strow"></div>
-    <button class="cr-btn cr-btn-gold" onclick="claimDaily()"
-      style="width:100%;font-size:18px;min-height:54px;font-family:'Lilita One',sans-serif;letter-spacing:1px">
+    <button class="btn btn-gold" onclick="claimDaily()"
+      style="width:100%;font-size:16px;min-height:50px;font-weight:800">
       🎁 Claim Free Star
     </button>
   </div>
@@ -806,7 +819,7 @@ canvas#gc{position:absolute;inset:0;width:100%;height:100%}
 <script>
 const SERVER='https://crash-casino-production.up.railway.app';
 const tg=window.Telegram?.WebApp;
-if(tg){tg.ready();tg.expand();try{tg.setHeaderColor('#1a1035');}catch(e){}}
+if(tg){tg.ready();tg.expand();try{tg.setHeaderColor('#0b0e17');}catch(e){}}
 
 let stars=0,gameState='idle',currentMult=1;
 let myBet=0,myCashedOut=false,gameInterval=null,crashPoint=1;
@@ -825,9 +838,13 @@ function drawCanvas(){
   const W=gc.width,H=gc.height;
   const pad={l:34,b:20,r:12,t:10};
   const gW=W-pad.l-pad.r,gH=H-pad.t-pad.b;
-  ctx.strokeStyle='rgba(124,77,255,0.1)';ctx.lineWidth=1;
+  /* subtle grid */
+  ctx.strokeStyle='rgba(30,37,53,0.8)';ctx.lineWidth=1;
   for(let i=0;i<=4;i++){const y=pad.t+gH*(i/4);ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(W-pad.r,y);ctx.stroke();}
-  if(gameState==='idle'||gameState==='countdown'){ctx.font='30px serif';ctx.textAlign='center';ctx.fillText('🚀',W/2,H/2+10);return;}
+  for(let i=0;i<=4;i++){const x=pad.l+gW*(i/4);ctx.beginPath();ctx.moveTo(x,pad.t);ctx.lineTo(x,H-pad.b);ctx.stroke();}
+  if(gameState==='idle'||gameState==='countdown'){
+    ctx.font='28px serif';ctx.textAlign='center';ctx.fillText('🚀',W/2,H/2+8);return;
+  }
   if(points.length<2)return;
   const maxM=Math.max(currentMult,1.5);
   const scX=gW/Math.max(points.length-1,1);
@@ -835,14 +852,26 @@ function drawCanvas(){
   const px=i=>pad.l+i*scX;
   const py=m=>pad.t+gH-(m-1)*scY;
   const crashed=gameState==='crashed';
-  const lc=crashed?'#ef5350':'#69f0ae';
-  ctx.beginPath();ctx.moveTo(px(0),py(1));points.forEach((m,i)=>ctx.lineTo(px(i),py(m)));ctx.lineTo(px(points.length-1),H-pad.b);ctx.lineTo(px(0),H-pad.b);ctx.closePath();
-  const g=ctx.createLinearGradient(0,pad.t,0,H);g.addColorStop(0,crashed?'rgba(239,83,80,0.22)':'rgba(105,240,174,0.16)');g.addColorStop(1,'rgba(0,0,0,0)');ctx.fillStyle=g;ctx.fill();
-  ctx.beginPath();ctx.moveTo(px(0),py(1));points.forEach((m,i)=>ctx.lineTo(px(i),py(m)));ctx.strokeStyle=lc;ctx.lineWidth=3;ctx.lineJoin='round';ctx.shadowColor=lc;ctx.shadowBlur=8;ctx.stroke();ctx.shadowBlur=0;
-  ctx.fillStyle='rgba(200,184,255,0.3)';ctx.font='bold 10px sans-serif';ctx.textAlign='right';
-  for(let i=0;i<=3;i++){const m=1+(maxM-1)*(i/3);ctx.fillText(m.toFixed(1)+'×',pad.l-3,py(m)+3);}
+  const lc=crashed?'#ef4444':'#22c55e';
+  /* fill */
+  ctx.beginPath();ctx.moveTo(px(0),py(1));
+  points.forEach((m,i)=>ctx.lineTo(px(i),py(m)));
+  ctx.lineTo(px(points.length-1),H-pad.b);ctx.lineTo(px(0),H-pad.b);ctx.closePath();
+  const g=ctx.createLinearGradient(0,pad.t,0,H);
+  g.addColorStop(0,crashed?'rgba(239,68,68,0.18)':'rgba(34,197,94,0.14)');
+  g.addColorStop(1,'rgba(0,0,0,0)');
+  ctx.fillStyle=g;ctx.fill();
+  /* line */
+  ctx.beginPath();ctx.moveTo(px(0),py(1));
+  points.forEach((m,i)=>ctx.lineTo(px(i),py(m)));
+  ctx.strokeStyle=lc;ctx.lineWidth=2.5;ctx.lineJoin='round';
+  ctx.shadowColor=lc;ctx.shadowBlur=6;ctx.stroke();ctx.shadowBlur=0;
+  /* y labels */
+  ctx.fillStyle='rgba(148,163,184,0.4)';ctx.font='600 10px sans-serif';ctx.textAlign='right';
+  for(let i=0;i<=3;i++){const m=1+(maxM-1)*(i/3);ctx.fillText(m.toFixed(1)+'×',pad.l-4,py(m)+3);}
   const tx=px(points.length-1),ty=py(points[points.length-1]);
-  ctx.font='20px serif';ctx.textAlign='center';ctx.fillText(crashed?'💥':'🚀',tx,ty-(crashed?0:12));
+  ctx.font='18px serif';ctx.textAlign='center';
+  ctx.fillText(crashed?'💥':'🚀',tx,ty-(crashed?0:11));
 }
 
 function fmt(n){return Number(Math.round(n)).toLocaleString();}
@@ -853,26 +882,32 @@ function openSh(id){document.getElementById(id).classList.add('open');}
 function closeSh(id){document.getElementById(id).classList.remove('open');}
 function bgCl(id,e){if(e.target===document.getElementById(id))closeSh(id);}
 
+/* BUTTON STATE */
 function setBtn(type,text){
   const btn=document.getElementById('mbtn');
   const map={
-    place:'cr-btn cr-btn-blue',
-    wait:'cr-btn cr-btn-ghost',
-    cash:'cr-btn cr-btn-red',
-    won:'cr-btn cr-btn-green',
-    off:'cr-btn cr-btn-disabled'
+    place:'btn btn-primary',
+    wait:'btn btn-ghost',
+    cash:'btn btn-danger',
+    won:'btn btn-success',
+    off:'btn btn-off'
   };
   btn.className=map[type]||map.off;
-  btn.style.cssText='width:100%;font-family:\'Lilita One\',sans-serif;letter-spacing:1px;font-size:20px;min-height:56px';
+  btn.style.cssText='width:100%;font-size:17px;min-height:52px;font-weight:800;letter-spacing:0.2px';
   btn.disabled=(type==='off'||type==='wait');
+  btn.style.pointerEvents=(type==='off'||type==='wait')?'none':'all';
   btn.textContent=text;
 }
 
+/* NAV */
 function switchNav(name){
   document.querySelectorAll('.nb').forEach(b=>b.classList.remove('active'));
   document.getElementById('nav-'+name).classList.add('active');
   document.getElementById('crash-page').style.display=name==='crash'?'flex':'none';
-  ['tasks','leaderboard','profile'].forEach(p=>{const el=document.getElementById('page-'+p);if(el)el.classList.toggle('active',p===name);});
+  ['tasks','leaderboard','profile'].forEach(p=>{
+    const el=document.getElementById('page-'+p);
+    if(el)el.classList.toggle('active',p===name);
+  });
   if(name==='leaderboard')renderLB();
   if(name==='profile')renderProfile();
 }
@@ -883,30 +918,40 @@ function swTab(t){
   renderPlayers();
 }
 
+function setSeg(mode){
+  document.getElementById('seg-manual').classList.toggle('active',mode==='manual');
+  document.getElementById('seg-auto').classList.toggle('active',mode==='auto');
+  document.getElementById('atog').parentElement.parentElement.style.display=mode==='auto'?'none':'block';
+}
+
+/* MAIN BUTTON */
 function handleMain(){
   if(gameState==='running'&&myBet>0&&!myCashedOut){cashOut();return;}
   if((gameState==='idle'||gameState==='countdown')&&myBet===0){
-    document.getElementById('binp').value='';
+    document.getElementById('binp').value='50';
     openSh('bet-ov');
     setTimeout(()=>document.getElementById('binp').focus(),350);
   }
 }
 
-function clampB(){const i=document.getElementById('binp');let v=parseInt(i.value)||0;if(v>20000)i.value=20000;if(v<0)i.value=0;}
-function addB(n){const i=document.getElementById('binp');i.value=Math.min(20000,(parseInt(i.value)||0)+n);}
-function stepBet(dir){
+/* BET INPUT */
+function clampB(){
   const i=document.getElementById('binp');
-  const cur=parseInt(i.value)||0;
-  const step=cur>=1000?100:cur>=100?50:10;
-  i.value=Math.max(0,Math.min(20000,cur+dir*step));
+  let v=parseInt(i.value)||0;
+  if(v>20000)i.value=20000;
+  if(v<0)i.value=0;
 }
+function addB(n){const i=document.getElementById('binp');i.value=Math.min(20000,(parseInt(i.value)||0)+n);}
+function halfBet(){const i=document.getElementById('binp');i.value=Math.max(50,Math.floor((parseInt(i.value)||100)/2));}
+function doubleBet(){const i=document.getElementById('binp');i.value=Math.min(20000,(parseInt(i.value)||50)*2);}
+function maxBet(){document.getElementById('binp').value=Math.min(20000,stars);}
 function chAuto(d){autoMult=Math.max(1.1,Math.min(100,parseFloat((autoMult+d).toFixed(2))));document.getElementById('aval').textContent='×'+autoMult.toFixed(2);}
 function togAuto(){autoOn=!autoOn;document.getElementById('atog').classList.toggle('on',autoOn);}
 
 function confirmBet(){
   const amt=Math.min(20000,Math.max(0,parseInt(document.getElementById('binp').value)||0));
-  if(amt<50){toast('⚠️ Minimum bet is 50 stars');return;}
-  if(amt>stars){toast('⚠️ Not enough stars!');return;}
+  if(amt<50){toast('Minimum bet is 50 stars');return;}
+  if(amt>stars){toast('Not enough stars!');return;}
   closeSh('bet-ov');
   myBet=amt;stars-=myBet;updateStars();
   document.getElementById('placed-row').classList.add('show');
@@ -914,22 +959,24 @@ function confirmBet(){
   document.getElementById('rb').classList.remove('show');
   if(gameState==='running'){setBtn('cash','CASH OUT  ×'+currentMult.toFixed(2));}
   else{setBtn('wait','Bet placed — starting…');if(!gameInterval&&gameState==='idle')startCountdown();}
-  renderPlayers();toast('🎲 Bet ⭐'+fmt(myBet)+' placed!');
+  renderPlayers();toast('Bet ⭐'+fmt(myBet)+' placed!');
 }
 
+/* CASHOUT */
 function cashOut(){
   if(myCashedOut||gameState!=='running')return;
   myCashedOut=true;
   const win=Math.floor(myBet*currentMult);const profit=win-myBet;
   stars+=win;updateStars();starsWon+=Math.max(0,profit);
   if(currentMult>bestMult)bestMult=currentMult;
-  if(currentMult>=3){const b=document.getElementById('tbigwin');if(b&&b.textContent!=='Done'){b.className='cr-btn cr-btn-ghost';b.textContent='Done';stars+=5;updateStars();toast('🎉 +5 ⭐ Big win task!');}}
+  if(currentMult>=3){const b=document.getElementById('tbigwin');if(b&&b.textContent!=='Done'){b.className='btn btn-ghost';b.textContent='Done';stars+=5;updateStars();toast('+5 ⭐ Big win task!');}}
   setBtn('won','✅ Won ×'+currentMult.toFixed(2)+'!');
   document.getElementById('placed-row').classList.remove('show');
-  const rb=document.getElementById('rb');rb.className='rb rb-w show';rb.textContent='🏆 Cashed out ×'+currentMult.toFixed(2)+' — won ⭐'+fmt(win)+' (+'+fmt(profit)+')';
-  saveBet(myBet,currentMult);renderPlayers();toast('🏆 Won ⭐'+fmt(win)+'!');
+  const rb=document.getElementById('rb');rb.className='rb rb-w show';rb.textContent='Won ×'+currentMult.toFixed(2)+' — ⭐'+fmt(win)+' (+'+fmt(profit)+')';
+  saveBet(myBet,currentMult);renderPlayers();toast('Won ⭐'+fmt(win)+'!');
 }
 
+/* COUNTDOWN */
 function startCountdown(){
   crashPoint=genCrash();genFakePlayers();gameState='countdown';points=[];
   document.getElementById('rb').classList.remove('show');
@@ -945,8 +992,8 @@ function startRound(){
   gamesPlayed++;roundsToday++;
   const tr=document.getElementById('trounds');
   if(tr&&roundsToday<=5)tr.textContent=Math.min(roundsToday,5)+'/5';
-  if(roundsToday>=5&&tr&&tr.textContent!=='Done'){tr.className='cr-btn cr-btn-ghost';tr.textContent='Done';stars+=3;updateStars();}
-  document.getElementById('mn').className='mn run';document.getElementById('mn').textContent='1.00×';document.getElementById('ms').textContent='Flying…';
+  if(roundsToday>=5&&tr&&tr.textContent!=='Done'){tr.className='btn btn-ghost';tr.textContent='Done';stars+=3;updateStars();}
+  document.getElementById('mn').className='mn run';document.getElementById('mn').textContent='1.00×';document.getElementById('ms').textContent='FLYING';
   if(myBet>0&&!myCashedOut)setBtn('cash','CASH OUT  ×1.00');
   gameInterval=setInterval(tick,50);
 }
@@ -955,7 +1002,10 @@ function tick(){
   const e=(Date.now()-startTime)/1000;currentMult=parseFloat((Math.pow(1.06,e*10)).toFixed(2));if(currentMult<1)currentMult=1;
   points.push(currentMult);if(points.length>120)points=points.slice(-120);
   document.getElementById('mn').textContent=currentMult.toFixed(2)+'×';
-  if(myBet>0&&!myCashedOut){document.getElementById('mbtn').textContent='CASH OUT  ×'+currentMult.toFixed(2);if(autoOn&&currentMult>=autoMult)cashOut();}
+  if(myBet>0&&!myCashedOut){
+    document.getElementById('mbtn').textContent='CASH OUT  ×'+currentMult.toFixed(2);
+    if(autoOn&&currentMult>=autoMult)cashOut();
+  }
   fakePlayers.forEach(fp=>{if(!fp.cashedAt&&!fp.lost&&currentMult>=fp.autoOut)fp.cashedAt=currentMult;});
   renderPlayers();drawCanvas();if(currentMult>=crashPoint)doCrash();
 }
@@ -963,9 +1013,9 @@ function tick(){
 function doCrash(){
   clearInterval(gameInterval);gameInterval=null;gameState='crashed';
   const f=parseFloat(crashPoint.toFixed(2));crashHistory.unshift(f);if(crashHistory.length>15)crashHistory.pop();renderHistory();
-  document.getElementById('mn').textContent=f+'×';document.getElementById('mn').className='mn crash';document.getElementById('ms').textContent='Crashed!';
+  document.getElementById('mn').textContent=f+'×';document.getElementById('mn').className='mn crash';document.getElementById('ms').textContent='CRASHED';
   fakePlayers.forEach(fp=>{if(!fp.cashedAt)fp.lost=true;});
-  if(myBet>0&&!myCashedOut){const rb=document.getElementById('rb');rb.className='rb rb-l show';rb.textContent='💥 Crashed at ×'+f+' — lost ⭐'+fmt(myBet);saveBet(myBet,null);}
+  if(myBet>0&&!myCashedOut){const rb=document.getElementById('rb');rb.className='rb rb-l show';rb.textContent='Crashed at ×'+f+' — lost ⭐'+fmt(myBet);saveBet(myBet,null);}
   setBtn('place','Place Bet');document.getElementById('placed-row').classList.remove('show');
   renderPlayers();drawCanvas();
   setTimeout(()=>{myBet=0;myCashedOut=false;fakePlayers=[];renderPlayers();resetGame();},3200);
@@ -973,7 +1023,7 @@ function doCrash(){
 
 function resetGame(){
   gameState='idle';currentMult=1;points=[];
-  document.getElementById('mn').textContent='1';document.getElementById('mn').className='mn wait';document.getElementById('ms').textContent='Waiting for bets…';document.getElementById('rb').classList.remove('show');drawCanvas();
+  document.getElementById('mn').textContent='1';document.getElementById('mn').className='mn wait';document.getElementById('ms').textContent='WAITING FOR BETS';document.getElementById('rb').classList.remove('show');drawCanvas();
 }
 
 const PNAMES=['Aquver','StarRider','CryptoX','MoonAce','LuckyBet','NovaStar','CosmicPro','NebulaX','OrbitAce','PulsarBet','GalaxyX','RocketKing'];
@@ -984,38 +1034,42 @@ function genFakePlayers(){fakePlayers=[];for(let i=0;i<rnd(4,9);i++)fakePlayers.
 function renderPlayers(){
   const el=document.getElementById('pl-list');
   const all=[];
-  if(myBet>0)all.push({name:tg?.initDataUnsafe?.user?.first_name||'You',bet:myBet,color:'#7c4dff',cashedAt:myCashedOut?currentMult:null,lost:!myCashedOut&&gameState==='crashed',isMe:true});
+  if(myBet>0)all.push({name:tg?.initDataUnsafe?.user?.first_name||'You',bet:myBet,color:'#4f6ef7',cashedAt:myCashedOut?currentMult:null,lost:!myCashedOut&&gameState==='crashed',isMe:true});
   all.push(...fakePlayers);
-  if(!all.length){el.innerHTML='<div style="padding:18px;text-align:center;color:var(--text3);font-size:13px;font-weight:800">Place a bet to join</div>';return;}
+  if(!all.length){el.innerHTML='<div style="padding:18px;text-align:center;color:var(--text3);font-size:13px;font-weight:600">Place a bet to join</div>';return;}
   el.innerHTML=all.map(p=>{
     let prize,mc='var(--text3)';
-    if(p.cashedAt){prize=`<span class="ppz pw">+${fmt(Math.floor(p.bet*(p.cashedAt-1)))}</span>`;mc='#69f0ae';}
-    else if(p.lost||gameState==='crashed'){prize=`<span class="ppz plz">−${fmt(p.bet)}</span>`;mc='#ff5252';}
+    if(p.cashedAt){prize=`<span class="ppz pw">+${fmt(Math.floor(p.bet*(p.cashedAt-1)))}</span>`;mc='var(--green)';}
+    else if(p.lost||gameState==='crashed'){prize=`<span class="ppz plz">−${fmt(p.bet)}</span>`;mc='var(--red)';}
     else prize=`<span class="ppz pp">⭐</span>`;
     return `<div class="pr">
-      <div class="cr-avatar" style="width:32px;height:32px;font-size:12px;border-width:2px;background:${p.color}">${p.name[0]}</div>
-      <div style="flex:1;min-width:0"><div class="pnm">${p.name}${p.isMe?` <span style="color:var(--gold);font-size:10px;font-family:'Lilita One'">(YOU)</span>`:''}</div><div class="pbt">⭐${fmt(p.bet)}<span class="pmlt" style="color:${mc}">×${(p.cashedAt||currentMult).toFixed(2)}</span></div></div>
-      ${prize}</div>`;
+      <div class="avatar" style="width:28px;height:28px;font-size:11px;background:${p.color}">${p.name[0]}</div>
+      <div style="flex:1;min-width:0">
+        <div class="pnm">${p.name}${p.isMe?` <span style="color:var(--blue);font-size:10px;font-weight:800">(YOU)</span>`:''}</div>
+        <div class="pbt">⭐${fmt(p.bet)} <span class="pmlt" style="color:${mc}">×${(p.cashedAt||currentMult).toFixed(2)}</span></div>
+      </div>
+      ${prize}
+    </div>`;
   }).join('');
 }
 
 function renderHistory(){
   const el=document.getElementById('hist-bar');
-  if(!crashHistory.length){el.innerHTML='<span style="color:var(--text3);font-size:12px;font-weight:800">No rounds yet</span>';return;}
-  el.innerHTML=crashHistory.map(m=>{const c=m<1.5?'pill-red':m<3?'pill-gold':'pill-green';return `<span class="cr-pill ${c}">×${m.toFixed(2)}</span>`;}).join('');
+  if(!crashHistory.length){el.innerHTML='<span style="color:var(--text3);font-size:12px;font-weight:700">No rounds yet</span>';return;}
+  el.innerHTML=crashHistory.map(m=>{const c=m<1.5?'pill-red':m<3?'pill-gold':'pill-green';return `<span class="pill ${c}">×${m.toFixed(2)}</span>`;}).join('');
 }
 
 function renderLB(){
   const names=['RocketKing','MoonAce','StarRider','CryptoX','NovaStar','OrbitPro','GalaxyBet','NebulaX','PulsarAce','CosmicPro'];
   const myName=tg?.initDataUnsafe?.user?.first_name||'You';
-  const rows=[{name:myName,score:starsWon,color:'#7c4dff',me:true},...names.map((n,i)=>({name:n,score:rnd(200,9999),color:PCOLORS[i%PCOLORS.length]}))];
+  const rows=[{name:myName,score:starsWon,color:'#4f6ef7',me:true},...names.map((n,i)=>({name:n,score:rnd(200,9999),color:PCOLORS[i%PCOLORS.length]}))];
   rows.sort((a,b)=>b.score-a.score);
   document.getElementById('lb-list').innerHTML=rows.slice(0,10).map((r,i)=>`
-    <div class="lbr cr-card">
-      <div class="lbrk">${i===0?'🥇':i===1?'🥈':i===2?'🥉':i+1}</div>
-      <div class="cr-avatar" style="width:36px;height:36px;font-size:14px;border-width:2px;background:${r.color}">${r.name[0]}</div>
-      <div class="lbnm">${r.name}${r.me?` <span style="font-size:10px;color:var(--gold)">(YOU)</span>`:''}</div>
-      <div class="lbsc">⭐ ${fmt(r.score)}</div>
+    <div style="display:grid;grid-template-columns:28px 36px 1fr 80px;gap:8px;padding:9px 14px;border-bottom:1px solid var(--border);align-items:center;min-height:44px;margin:0 12px" class="card" style="margin:0 12px 4px">
+      <span style="font-size:14px;font-weight:800;color:var(--text3)">${i===0?'🥇':i===1?'🥈':i===2?'🥉':i+1}</span>
+      <div class="avatar" style="width:32px;height:32px;font-size:12px;background:${r.color}">${r.name[0]}</div>
+      <span style="font-size:13px;font-weight:700;color:var(--text)">${r.name}${r.me?` <span style="font-size:10px;color:var(--blue)">(YOU)</span>`:''}</span>
+      <span style="font-size:13px;font-weight:800;color:var(--gold);text-align:right">⭐ ${fmt(r.score)}</span>
     </div>`).join('');
 }
 
@@ -1028,13 +1082,13 @@ function renderProfile(){
 }
 
 function doInvite(){const uid=tg?.initDataUnsafe?.user?.id||'0';const link=`https://t.me/OrbitCrashBot?start=ref_${uid}`;try{tg.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(link)}&text=${encodeURIComponent('Play Orbit Crash — win Stars! '+link)}`);}catch(e){copyToClipboard(link);toast('Link copied!');}}
-function copyLink(){copyToClipboard(`https://t.me/OrbitCrashBot?start=ref_${tg?.initDataUnsafe?.user?.id||'0'}`);toast('🔗 Link copied!');}
+function copyLink(){copyToClipboard(`https://t.me/OrbitCrashBot?start=ref_${tg?.initDataUnsafe?.user?.id||'0'}`);toast('Link copied!');}
 function copyToClipboard(t){try{navigator.clipboard.writeText(t);}catch(e){const el=document.createElement('textarea');el.value=t;document.body.appendChild(el);el.select();document.execCommand('copy');document.body.removeChild(el);}}
 
 function checkDaily(){
   const uid=tg?.initDataUnsafe?.user?.id||'guest';const dk='orb_dl_'+uid,sk='orb_st_'+uid;
   const last=localStorage.getItem(dk),today=new Date().toDateString();
-  if(last===today){const b=document.getElementById('tdaily');b.className='cr-btn cr-btn-ghost tbtn';b.textContent='Done';b.disabled=true;return;}
+  if(last===today){const b=document.getElementById('tdaily');if(b){b.className='btn btn-ghost';b.textContent='Done';b.disabled=true;}return;}
   const prev=new Date(Date.now()-86400000).toDateString();
   let streak=parseInt(localStorage.getItem(sk)||'0');if(last!==prev)streak=0;
   const day=streak+1,reward=day>=7?3:day>=4?2:1;
@@ -1048,13 +1102,13 @@ function claimDaily(){
   let streak=parseInt(localStorage.getItem('orb_st_'+uid)||'0');const day=streak+1,reward=day>=7?3:day>=4?2:1;streak++;
   localStorage.setItem('orb_dl_'+uid,new Date().toDateString());localStorage.setItem('orb_st_'+uid,streak);
   stars+=reward;updateStars();closeSh('daily-ov');
-  const b=document.getElementById('tdaily');b.className='cr-btn cr-btn-ghost tbtn';b.textContent='Done';b.disabled=true;
-  setTimeout(()=>toast('🎁 Daily bonus +'+reward+' ⭐ (Day '+streak+')'),300);
+  const b=document.getElementById('tdaily');if(b){b.className='btn btn-ghost';b.textContent='Done';b.disabled=true;}
+  setTimeout(()=>toast('Daily bonus +'+reward+' ⭐ (Day '+streak+')'),300);
 }
 function claimDailyTask(){if(localStorage.getItem('orb_dl_'+(tg?.initDataUnsafe?.user?.id||'guest'))===new Date().toDateString()){toast('Already claimed today!');return;}checkDaily();}
 
 function selTP(n,el){topupSel=n;document.querySelectorAll('.tpc').forEach(c=>c.classList.remove('sel'));el.classList.add('sel');document.getElementById('tplbl').textContent=fmt(n);}
-function doTopup(){stars+=topupSel;updateStars();closeSh('topup-ov');toast('⭐ +'+fmt(topupSel)+' stars added!');}
+function doTopup(){stars+=topupSel;updateStars();closeSh('topup-ov');toast('+'+fmt(topupSel)+' ⭐ stars added!');}
 
 async function saveBet(bet,co){try{await fetch(SERVER+'/api/bet',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({initData,betAmount:bet,cashedOutAt:co})});}catch(e){}}
 
