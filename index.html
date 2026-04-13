@@ -12,155 +12,167 @@ body{background:#0f0f1a;color:#fff;font-family:-apple-system,BlinkMacSystemFont,
 .stars-bal{display:flex;align-items:center;gap:8px;background:#1e1e2e;border-radius:20px;padding:8px 14px}
 .stars-num{font-size:16px;font-weight:700}
 .plus-btn{width:28px;height:28px;background:#3b82f6;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;cursor:pointer;border:none;color:#fff}
-.game-area{margin:0 12px 12px;background:#0a0a14;border-radius:20px;padding:20px;text-align:center;position:relative;min-height:220px;overflow:hidden}
-.stars-bg{position:absolute;inset:0;overflow:hidden}
-.star-dot{position:absolute;width:3px;height:3px;background:#fff;border-radius:50%;opacity:0.4}
-.mult-display{font-size:80px;font-weight:800;line-height:1;position:relative;z-index:2;letter-spacing:-3px}
-.mult-display.wait{color:#fff}
+.game-area{margin:0 12px 0;background:#0a0a14;border-radius:20px;overflow:hidden;position:relative;height:220px}
+.stars-bg{position:absolute;inset:0}
+.star-dot{position:absolute;border-radius:50%;background:#fff}
+.rocket-wrap{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:2}
+.rocket-emoji{font-size:60px;transition:transform 0.1s;display:block;filter:drop-shadow(0 0 10px rgba(0,200,100,0.5))}
+.mult-overlay{position:absolute;top:16px;left:0;right:0;text-align:center;z-index:3}
+.mult-display{font-size:52px;font-weight:800;line-height:1;letter-spacing:-2px;text-shadow:0 0 20px currentColor}
+.mult-display.wait{color:rgba(255,255,255,0.3)}
 .mult-display.run{color:#00e676}
 .mult-display.crash{color:#ff4444}
-.game-status{font-size:13px;color:#666;margin-top:8px;position:relative;z-index:2}
-.prog-wrap{height:3px;background:#1e1e2e;border-radius:2px;margin-top:16px;position:relative;z-index:2}
-.prog-fill{height:3px;border-radius:2px;background:#00e676;width:0%;transition:width 0.1s}
-.mult-options{display:flex;gap:8px;margin:12px 12px 0;overflow-x:auto;padding-bottom:4px}
+.game-status{font-size:12px;color:#666;margin-top:4px}
+.prog-wrap{position:absolute;bottom:0;left:0;right:0;height:3px;background:#1a1a2a}
+.prog-fill{height:3px;background:#00e676;width:0%;transition:width 0.08s}
+.mult-options{display:flex;gap:8px;margin:10px 12px 0;overflow-x:auto;padding-bottom:4px}
 .mult-options::-webkit-scrollbar{display:none}
 .mult-opt{flex-shrink:0;padding:8px 18px;border-radius:20px;font-size:14px;font-weight:600;cursor:pointer;border:none;transition:all 0.15s}
-.mult-opt.waiting-opt{background:#fff;color:#000}
+.mult-opt.current{background:#fff;color:#000}
 .mult-opt.inactive{background:#1e1e2e;color:#888}
-.mult-opt.active-opt{background:#3b82f6;color:#fff}
-.players-box{margin:12px 12px 0;background:#1a1a2a;border-radius:16px;overflow:hidden}
-.players-header{display:flex;justify-content:space-between;padding:12px 16px;border-bottom:1px solid #2a2a3a;font-size:13px;color:#666}
+.mult-opt.active-sel{background:#3b82f6;color:#fff}
+.players-box{margin:10px 12px 0;background:#1a1a2a;border-radius:16px;overflow:hidden}
+.players-header{display:flex;justify-content:space-between;padding:10px 16px;border-bottom:1px solid #2a2a3a;font-size:12px;color:#555}
 .player-row{display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:1px solid #1e1e2e}
 .player-row:last-child{border-bottom:none}
-.player-avatar{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;flex-shrink:0;overflow:hidden}
-.player-avatar img{width:100%;height:100%;object-fit:cover}
-.player-name{font-size:14px;font-weight:600;flex:1}
-.player-bet{display:flex;align-items:center;gap:4px;font-size:13px;color:#aaa}
-.player-mult{font-size:12px;color:#666;margin-left:4px}
-.player-prize{font-size:15px}
-.prize-won{font-size:13px;font-weight:700;color:#00e676}
-.prize-lost{font-size:13px;color:#ff4444}
-.prize-pending{font-size:20px;opacity:0.6}
-.result-banner{margin:10px 12px 0;padding:12px 16px;border-radius:14px;text-align:center;font-size:15px;font-weight:700}
-.result-win{background:#003320;color:#00e676;border:1px solid #00e676}
-.result-lose{background:#1a0000;color:#ff4444;border:1px solid #ff4444}
-.action-wrap{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;padding:12px 16px 24px;background:#0f0f1a;border-top:1px solid #1e1e2e;z-index:100}
-.main-btn{width:100%;padding:16px;border-radius:14px;font-size:17px;font-weight:800;cursor:pointer;border:none;color:#fff;transition:all 0.15s}
+.player-avatar{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;flex-shrink:0}
+.player-name{font-size:14px;font-weight:600}
+.player-bet-info{font-size:12px;color:#888;display:flex;align-items:center;gap:4px;margin-top:2px}
+.player-mult-live{color:#00e676;font-weight:600}
+.player-mult-cashed{color:#00e676;font-weight:700}
+.player-mult-lost{color:#ff4444}
+.prize-star{font-size:20px;opacity:0.7}
+.prize-won-amt{color:#00e676;font-weight:700;font-size:13px}
+.prize-lost-x{color:#ff4444;font-size:18px}
+.result-banner{margin:8px 12px 0;padding:12px 16px;border-radius:14px;text-align:center;font-size:15px;font-weight:700;display:none}
+.result-banner.show{display:block}
+.result-win{background:#003320;color:#00e676;border:1px solid #005533}
+.result-lose{background:#1a0000;color:#ff4444;border:1px solid #440000}
+.action-wrap{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;padding:12px 16px 28px;background:#0f0f1a;border-top:1px solid #1e1e2e;z-index:100}
+.main-btn{width:100%;padding:17px;border-radius:16px;font-size:18px;font-weight:800;cursor:pointer;border:none;color:#fff;transition:all 0.1s;letter-spacing:0.2px}
 .main-btn:active{transform:scale(0.97)}
 .btn-blue{background:#3b82f6}
-.btn-green{background:#00c853}
-.btn-red{background:#e53935}
+.btn-green{background:#00a843}
+.btn-red{background:#e53935;animation:pulse 0.8s infinite}
 .btn-disabled{background:#1e1e2e;color:#444;cursor:not-allowed}
-.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:200;align-items:flex-end;justify-content:center}
+@keyframes pulse{0%,100%{background:#e53935}50%{background:#ff5252}}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:200;align-items:flex-end;justify-content:center}
 .modal-overlay.open{display:flex}
-.modal{background:#1a1a2a;border-radius:24px 24px 0 0;padding:24px 20px 36px;width:100%;max-width:480px}
-.modal-handle{width:40px;height:4px;background:#333;border-radius:2px;margin:0 auto 20px}
-.modal-title{font-size:18px;font-weight:700;text-align:center;margin-bottom:20px}
-.modal-close{position:absolute;top:20px;right:20px;width:32px;height:32px;background:#2a2a3a;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;color:#888;border:none}
-.modal-rel{position:relative}
-.stars-input-row{display:flex;align-items:center;justify-content:center;gap:16px;margin:20px 0}
-.stars-big{font-size:48px;font-weight:800}
-.stars-unit{font-size:24px;color:#666;font-weight:600}
-.quick-add{display:flex;gap:8px;justify-content:center;margin-bottom:16px}
-.qadd{padding:10px 20px;background:#2a2a3a;border-radius:20px;font-size:14px;font-weight:600;cursor:pointer;border:none;color:#fff}
-.qadd:hover{background:#3a3a4a}
-.bet-range{font-size:12px;color:#666;text-align:center;margin-bottom:20px}
-.auto-row{display:flex;align-items:center;gap:12px;margin-bottom:20px;padding:14px 16px;background:#0f0f1a;border-radius:12px}
+.modal{background:#1a1a2a;border-radius:24px 24px 0 0;padding:20px 20px 36px;width:100%;max-width:480px;position:relative}
+.modal-handle{width:40px;height:4px;background:#333;border-radius:2px;margin:0 auto 16px}
+.modal-title{font-size:18px;font-weight:700;text-align:center;margin-bottom:16px}
+.modal-close{position:absolute;top:16px;right:16px;width:32px;height:32px;background:#2a2a3a;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:15px;color:#888;border:none}
+.stars-input-row{display:flex;align-items:center;justify-content:center;gap:12px;margin:12px 0}
+.stars-big{font-size:44px;font-weight:800;min-width:120px;text-align:center}
+.bet-controls{display:flex;gap:8px;justify-content:center;margin-bottom:6px}
+.bet-ctrl-btn{display:flex;align-items:center;gap:6px;padding:10px 16px;background:#2a2a3a;border-radius:20px;font-size:14px;font-weight:600;cursor:pointer;border:none;color:#fff}
+.bet-ctrl-btn:active{background:#3a3a4a}
+.bet-ctrl-btn.minus{color:#ff6b6b}
+.bet-ctrl-btn.plus{color:#00e676}
+.bet-presets{display:flex;gap:6px;justify-content:center;margin-bottom:8px}
+.bpreset{padding:8px 14px;background:#222230;border-radius:16px;font-size:12px;font-weight:600;cursor:pointer;border:none;color:#888}
+.bpreset:active{background:#2a2a3a;color:#fff}
+.bet-range{font-size:12px;color:#444;text-align:center;margin-bottom:14px}
+.auto-row{display:flex;align-items:center;gap:10px;margin-bottom:16px;padding:12px 14px;background:#111120;border-radius:12px}
 .auto-label{flex:1;font-size:14px;color:#aaa}
+.auto-mult-ctrl{display:flex;align-items:center;gap:8px}
+.auto-mult-val{font-size:15px;font-weight:700;min-width:48px;text-align:center}
+.a-ctrl{width:30px;height:30px;background:#2a2a3a;border-radius:50%;border:none;color:#fff;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center}
 .auto-toggle{width:44px;height:26px;background:#333;border-radius:13px;cursor:pointer;position:relative;transition:background 0.2s;flex-shrink:0}
 .auto-toggle.on{background:#3b82f6}
 .auto-toggle::after{content:'';position:absolute;top:3px;left:3px;width:20px;height:20px;background:#fff;border-radius:50%;transition:transform 0.2s}
 .auto-toggle.on::after{transform:translateX(18px)}
-.auto-mult-row{display:flex;align-items:center;gap:12px}
-.auto-mult-val{font-size:16px;font-weight:700;min-width:50px;text-align:center}
-.mult-ctrl{width:32px;height:32px;background:#2a2a3a;border-radius:50%;border:none;color:#fff;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center}
-.topup-tabs{display:flex;gap:6px;margin-bottom:20px;overflow-x:auto}
+.topup-tabs{display:flex;gap:6px;margin-bottom:16px;overflow-x:auto}
 .topup-tabs::-webkit-scrollbar{display:none}
-.ttab{padding:8px 16px;border-radius:20px;font-size:13px;font-weight:600;cursor:pointer;border:none;white-space:nowrap;background:#2a2a3a;color:#888}
+.ttab{padding:8px 16px;border-radius:20px;font-size:13px;font-weight:600;cursor:pointer;border:none;white-space:nowrap;background:#2a2a3a;color:#888;transition:all 0.15s}
 .ttab.active{background:#3b82f6;color:#fff}
-.topup-amount{font-size:56px;font-weight:800;text-align:center;margin:16px 0 4px}
-.topup-sub{text-align:center;font-size:13px;color:#666;margin-bottom:8px}
-.topup-bonus{text-align:center;font-size:13px;color:#3b82f6;font-weight:600;margin-bottom:16px}
-.topup-presets{display:flex;gap:8px;justify-content:center;margin-bottom:20px}
+.topup-amount{font-size:52px;font-weight:800;text-align:center;margin:12px 0 4px}
+.topup-sub{text-align:center;font-size:13px;color:#666;margin-bottom:6px}
+.topup-bonus{text-align:center;font-size:13px;color:#3b82f6;font-weight:600;margin-bottom:14px;min-height:20px}
+.topup-presets{display:flex;gap:8px;justify-content:center;margin-bottom:16px}
 .tpreset{padding:10px 18px;background:#2a2a3a;border-radius:20px;font-size:13px;font-weight:600;cursor:pointer;border:none;color:#fff}
-.tpreset:hover{background:#3a3a4a}
 .topup-btn{width:100%;padding:16px;border-radius:14px;font-size:16px;font-weight:700;cursor:pointer;border:none;color:#fff;background:#3b82f6}
-.toast{position:fixed;top:80px;left:50%;transform:translateX(-50%);background:#1e1e2e;border:1px solid #2a2a3a;border-radius:12px;padding:12px 20px;font-size:14px;color:#fff;z-index:500;opacity:0;transition:opacity 0.3s;white-space:nowrap;pointer-events:none}
+.toast{position:fixed;top:70px;left:50%;transform:translateX(-50%);background:#1e1e2e;border:1px solid #2a2a3a;border-radius:12px;padding:12px 20px;font-size:14px;color:#fff;z-index:500;opacity:0;transition:opacity 0.3s;white-space:nowrap;pointer-events:none}
 .toast.show{opacity:1}
 </style>
 </head>
 <body>
 
-<!-- TOP BAR -->
 <div class="top-bar">
-  <div style="font-size:18px;font-weight:800;">🚀 Orbit Crash</div>
+  <div style="font-size:17px;font-weight:800;">🚀 Orbit Crash</div>
   <div class="stars-bal">
     <span style="font-size:18px;">⭐</span>
-    <span class="stars-num" id="stars-display">0</span>
+    <span class="stars-num" id="stars-display">...</span>
     <button class="plus-btn" onclick="openTopup()">+</button>
   </div>
 </div>
 
-<!-- GAME AREA -->
 <div class="game-area" id="game-area">
   <div class="stars-bg" id="stars-bg"></div>
-  <div class="mult-display wait" id="mult">1</div>
-  <div class="game-status" id="status">Waiting for bets...</div>
+  <div class="rocket-wrap" id="rocket-wrap">
+    <span class="rocket-emoji" id="rocket">🚀</span>
+  </div>
+  <div class="mult-overlay">
+    <div class="mult-display wait" id="mult">1</div>
+    <div class="game-status" id="status">Waiting for bets...</div>
+  </div>
   <div class="prog-wrap"><div class="prog-fill" id="prog"></div></div>
 </div>
 
-<!-- MULTIPLIER OPTIONS -->
 <div class="mult-options" id="mult-opts">
-  <div class="mult-opt waiting-opt" id="opt-wait">Waiting</div>
-  <div class="mult-opt inactive" id="opt-196" onclick="setAutoMult(1.96)">x1.96</div>
-  <div class="mult-opt inactive" id="opt-258" onclick="setAutoMult(2.58)">x2.58</div>
-  <div class="mult-opt inactive" id="opt-300" onclick="setAutoMult(3.00)">x3.00</div>
-  <div class="mult-opt inactive" id="opt-500" onclick="setAutoMult(5.00)">x5.00</div>
-  <div class="mult-opt inactive" id="opt-1000" onclick="setAutoMult(10.00)">x10.00</div>
+  <div class="mult-opt current" id="opt-current">Waiting</div>
+  <div class="mult-opt inactive" onclick="setAutoMult(1.5)">x1.50</div>
+  <div class="mult-opt inactive" onclick="setAutoMult(2)">x2.00</div>
+  <div class="mult-opt inactive" onclick="setAutoMult(3)">x3.00</div>
+  <div class="mult-opt inactive" onclick="setAutoMult(5)">x5.00</div>
+  <div class="mult-opt inactive" onclick="setAutoMult(10)">x10.00</div>
 </div>
 
-<!-- RESULT BANNER -->
-<div id="result-banner"></div>
+<div class="result-banner" id="result-banner"></div>
 
-<!-- LIVE PLAYERS -->
 <div class="players-box">
-  <div class="players-header">
-    <span>Player</span>
-    <span>Possible prize</span>
-  </div>
+  <div class="players-header"><span>Player</span><span>Possible prize</span></div>
   <div id="players-list">
-    <div style="padding:20px;text-align:center;color:#444;font-size:13px;">Place a bet to join the round</div>
+    <div style="padding:20px;text-align:center;color:#333;font-size:13px;">Place a bet to join the round</div>
   </div>
 </div>
 
-<!-- FIXED BOTTOM BUTTON -->
+<!-- FIXED CASH OUT BUTTON -->
 <div class="action-wrap">
   <button class="main-btn btn-disabled" id="main-btn" onclick="handleMain()" disabled>Loading...</button>
 </div>
 
 <!-- BET MODAL -->
-<div class="modal-overlay" id="bet-modal" onclick="closeModal('bet-modal',event)">
-  <div class="modal modal-rel">
-    <button class="modal-close" onclick="document.getElementById('bet-modal').classList.remove('open')">✕</button>
+<div class="modal-overlay" id="bet-modal" onclick="bgClose('bet-modal',event)">
+  <div class="modal">
+    <button class="modal-close" onclick="closeM('bet-modal')">✕</button>
     <div class="modal-handle"></div>
     <div class="modal-title">New bet</div>
     <div class="stars-input-row">
-      <span style="font-size:24px;">⭐</span>
+      <span style="font-size:22px;">⭐</span>
       <span class="stars-big" id="bet-display">0</span>
-      <span class="stars-unit">stars</span>
+      <span style="font-size:20px;color:#555;font-weight:600;">stars</span>
     </div>
-    <div class="quick-add">
-      <button class="qadd" onclick="addBet(100)">+100</button>
-      <button class="qadd" onclick="addBet(500)">+500</button>
-      <button class="qadd" onclick="addBet(2500)">+2,500</button>
+    <div class="bet-controls">
+      <button class="bet-ctrl-btn minus" onclick="changeBet(-500)">− 500</button>
+      <button class="bet-ctrl-btn minus" onclick="changeBet(-100)">− 100</button>
+      <button class="bet-ctrl-btn plus" onclick="changeBet(100)">+ 100</button>
+      <button class="bet-ctrl-btn plus" onclick="changeBet(500)">+ 500</button>
+    </div>
+    <div class="bet-presets">
+      <button class="bpreset" onclick="setBet(50)">50</button>
+      <button class="bpreset" onclick="setBet(100)">100</button>
+      <button class="bpreset" onclick="setBet(500)">500</button>
+      <button class="bpreset" onclick="setBet(1000)">1K</button>
+      <button class="bpreset" onclick="setBet(5000)">5K</button>
     </div>
     <div class="bet-range">From 50 to 20,000 stars</div>
     <div class="auto-row">
       <span class="auto-label">Auto cash-out</span>
-      <div class="auto-mult-row">
-        <button class="mult-ctrl" onclick="changeAutoMult(-0.5)">−</button>
+      <div class="auto-mult-ctrl">
+        <button class="a-ctrl" onclick="changeAutoMult(-0.5)">−</button>
         <span class="auto-mult-val" id="auto-mult-val">x2.00</span>
-        <button class="mult-ctrl" onclick="changeAutoMult(0.5)">+</button>
+        <button class="a-ctrl" onclick="changeAutoMult(0.5)">+</button>
       </div>
       <div class="auto-toggle on" id="auto-toggle" onclick="toggleAuto()"></div>
     </div>
@@ -168,20 +180,20 @@ body{background:#0f0f1a;color:#fff;font-family:-apple-system,BlinkMacSystemFont,
   </div>
 </div>
 
-<!-- TOP UP MODAL -->
-<div class="modal-overlay" id="topup-modal" onclick="closeModal('topup-modal',event)">
-  <div class="modal modal-rel">
-    <button class="modal-close" onclick="document.getElementById('topup-modal').classList.remove('open')">✕</button>
+<!-- TOPUP MODAL -->
+<div class="modal-overlay" id="topup-modal" onclick="bgClose('topup-modal',event)">
+  <div class="modal">
+    <button class="modal-close" onclick="closeM('topup-modal')">✕</button>
     <div class="modal-handle"></div>
     <div class="modal-title">Balance replenishment</div>
     <div class="topup-tabs">
       <button class="ttab active" onclick="setTopupMethod('stars',this)">⭐ Stars</button>
-      <button class="ttab" onclick="setTopupMethod('ton',this)">TON +20%</button>
+      <button class="ttab" onclick="setTopupMethod('ton',this)">◈ TON +20%</button>
       <button class="ttab" onclick="setTopupMethod('crypto',this)">💵 Crypto +15%</button>
     </div>
     <div class="topup-amount" id="topup-amount">200</div>
     <div class="topup-sub" id="topup-sub">≈ $2.60</div>
-    <div class="topup-bonus" id="topup-bonus" style="visibility:hidden">+bonus</div>
+    <div class="topup-bonus" id="topup-bonus"></div>
     <div class="topup-presets">
       <button class="tpreset" onclick="setTopupAmt(500)">+500</button>
       <button class="tpreset" onclick="setTopupAmt(2000)">+2,000</button>
@@ -194,198 +206,140 @@ body{background:#0f0f1a;color:#fff;font-family:-apple-system,BlinkMacSystemFont,
 <div class="toast" id="toast"></div>
 
 <script>
-const SERVER = 'https://crash-casino-production.up.railway.app';
-const tg = window.Telegram?.WebApp;
-if(tg){ tg.ready(); tg.expand(); tg.setHeaderColor('#0f0f1a'); }
+const SERVER='https://crash-casino-production.up.railway.app';
+const tg=window.Telegram?.WebApp;
+if(tg){tg.ready();tg.expand();try{tg.setHeaderColor('#0f0f1a');}catch(e){}}
 
-let stars = 0;
-let gameState = 'betting';
-let currentMult = 1.00;
-let myBet = 0;
-let myCashedOut = false;
-let gameInterval = null;
-let crashPoint = 1;
-let autoMult = 2.00;
-let autoEnabled = true;
-let betAmount = 0;
-let topupMethod = 'stars';
-let topupAmount = 200;
-let initData = tg?.initData || '';
-let fakePlayers = [];
-let roundNum = 0;
+let stars=0,gameState='betting',currentMult=1.00;
+let myBet=0,myCashedOut=false,gameInterval=null,crashPoint=1;
+let autoMult=2.00,autoEnabled=true,betAmt=0;
+let topupMethod='stars',topupAmount=200;
+let initData=tg?.initData||'';
+let fakePlayers=[],rocketY=0,rocketDir=1,animFrame=null;
 
-const COLORS = ['#e74c3c','#3b82f6','#00c853','#f59e0b','#8b5cf6','#06b6d4','#ec4899'];
+const NAMES=['Aquver','StarRider','CryptoKing','MoonAce','LuckyBet','RocketMan','NovaStar','CosmicX','OrbitPro','NebulaX'];
+const COLORS=['#e74c3c','#3b82f6','#00c853','#f59e0b','#8b5cf6','#06b6d4','#ec4899','#14b8a6'];
 
-function fmt(n){ return Number(n).toLocaleString(); }
-function rnd(min,max){ return Math.floor(Math.random()*(max-min+1))+min; }
+function fmt(n){return Number(Math.round(n)).toLocaleString();}
+function rnd(a,b){return Math.floor(Math.random()*(b-a+1))+a;}
+function toast(msg){const e=document.getElementById('toast');e.textContent=msg;e.classList.add('show');setTimeout(()=>e.classList.remove('show'),2500);}
+function closeM(id){document.getElementById(id).classList.remove('open');}
+function bgClose(id,e){if(e.target===document.getElementById(id))closeM(id);}
 
-function toast(msg){
-  const el=document.getElementById('toast');
-  el.textContent=msg;
-  el.classList.add('show');
-  setTimeout(()=>el.classList.remove('show'),2500);
-}
+function updateStars(){document.getElementById('stars-display').textContent=fmt(stars);}
 
-function updateStars(){
-  document.getElementById('stars-display').textContent=fmt(stars);
-}
-
-// Generate star background dots
-function initStars(){
-  const bg=document.getElementById('stars-bg');
-  bg.innerHTML='';
-  for(let i=0;i<40;i++){
-    const d=document.createElement('div');
-    d.className='star-dot';
-    d.style.left=Math.random()*100+'%';
-    d.style.top=Math.random()*100+'%';
-    d.style.opacity=(Math.random()*0.5+0.1).toFixed(2);
+function initStarsBg(){
+  const bg=document.getElementById('stars-bg');bg.innerHTML='';
+  for(let i=0;i<50;i++){
+    const d=document.createElement('div');d.className='star-dot';
+    const size=Math.random()<0.3?2:1;
+    d.style.cssText=`left:${Math.random()*100}%;top:${Math.random()*100}%;width:${size}px;height:${size}px;opacity:${(Math.random()*0.5+0.1).toFixed(2)}`;
     bg.appendChild(d);
   }
 }
 
+function animateRocket(){
+  if(gameState!=='running'){cancelAnimationFrame(animFrame);return;}
+  rocketY+=0.3*rocketDir;
+  if(rocketY>8||rocketY<-8)rocketDir*=-1;
+  const r=document.getElementById('rocket');
+  const tilt=gameState==='running'?-30:-0;
+  r.style.transform=`translateY(${rocketY}px) rotate(${tilt}deg)`;
+  animFrame=requestAnimationFrame(animateRocket);
+}
+
 async function loadUser(){
-  try {
-    const controller=new AbortController();
-    const t=setTimeout(()=>controller.abort(),5000);
-    const res=await fetch(SERVER+'/api/user',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({initData}),
-      signal:controller.signal
-    });
+  try{
+    const c=new AbortController();
+    const t=setTimeout(()=>c.abort(),5000);
+    const res=await fetch(SERVER+'/api/user',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({initData}),signal:c.signal});
     clearTimeout(t);
     const data=await res.json();
     stars=data.coins||1000;
-  } catch(e){
-    stars=1000;
-  }
+  }catch(e){stars=1000;}
   updateStars();
-  setGameReady();
+  setReady();
 }
 
-function setGameReady(){
+function setReady(){
   const btn=document.getElementById('main-btn');
-  btn.disabled=false;
-  btn.className='main-btn btn-blue';
-  btn.textContent='Place bet';
+  btn.disabled=false;btn.className='main-btn btn-blue';btn.textContent='Place bet';
   document.getElementById('status').textContent='Waiting for bets...';
+  document.getElementById('mult').className='mult-display wait';
+  document.getElementById('rocket').textContent='🚀';
+  document.getElementById('rocket').style.transform='';
 }
 
 function genFakePlayers(){
-  const names=['Aquver','bes09ik','upnymb73','MoonRider','StarChaser','CryptoKing','LuckyAce','RocketMan'];
-  const count=rnd(2,5);
   fakePlayers=[];
+  const count=rnd(2,5);
   for(let i=0;i<count;i++){
-    const name=names[rnd(0,names.length-1)];
-    const bet=rnd(1,10)*50;
-    const color=COLORS[rnd(0,COLORS.length-1)];
-    fakePlayers.push({name,bet,color,initial:name[0].toUpperCase(),cashedAt:null,lost:false});
+    fakePlayers.push({
+      name:NAMES[rnd(0,NAMES.length-1)],
+      bet:rnd(1,20)*50,
+      color:COLORS[rnd(0,COLORS.length-1)],
+      cashedAt:null,lost:false,
+      autoOut:parseFloat((rnd(110,450)/100).toFixed(2))
+    });
   }
 }
 
 function renderPlayers(){
   const el=document.getElementById('players-list');
-  const allPlayers=[];
+  const all=[];
   if(myBet>0){
-    allPlayers.push({
-      name: tg?.initDataUnsafe?.user?.first_name || 'You',
-      bet: myBet,
-      color: '#3b82f6',
-      initial: '★',
-      cashedAt: myCashedOut?currentMult:null,
-      lost: false,
-      isMe: true
-    });
+    all.push({name:tg?.initDataUnsafe?.user?.first_name||'You',bet:myBet,color:'#3b82f6',cashedAt:myCashedOut?currentMult:null,lost:!myCashedOut&&gameState==='crashed',isMe:true});
   }
-  allPlayers.push(...fakePlayers);
-  if(!allPlayers.length){
-    el.innerHTML='<div style="padding:20px;text-align:center;color:#444;font-size:13px;">Place a bet to join the round</div>';
+  all.push(...fakePlayers);
+  if(!all.length){
+    el.innerHTML='<div style="padding:20px;text-align:center;color:#333;font-size:13px;">Place a bet to join the round</div>';
     return;
   }
-  el.innerHTML=allPlayers.map(p=>{
-    let prizeHTML='';
-    if(gameState==='crashed'){
-      if(p.cashedAt){
-        prizeHTML=`<span class="prize-won">⭐ ${fmt(Math.floor(p.bet*p.cashedAt))}</span>`;
-      } else {
-        prizeHTML=`<span class="prize-lost">✕</span>`;
-      }
-    } else if(p.cashedAt){
-      prizeHTML=`<span class="prize-won">⭐ ${fmt(Math.floor(p.bet*p.cashedAt))}</span>`;
+  el.innerHTML=all.map(p=>{
+    let prize='';
+    if(p.cashedAt){
+      const won=Math.floor(p.bet*p.cashedAt);
+      prize=`<span class="prize-won-amt">⭐${fmt(won)}</span>`;
+    } else if(p.lost||gameState==='crashed'){
+      prize=`<span class="prize-lost-x">✕</span>`;
     } else {
-      prizeHTML=`<span class="prize-pending">⭐</span>`;
+      prize=`<span class="prize-star">⭐</span>`;
     }
+    const multColor=p.cashedAt?'#00e676':p.lost?'#ff4444':'#aaa';
+    const multText=p.cashedAt?`x${p.cashedAt.toFixed(2)}`:gameState==='crashed'?`x${currentMult.toFixed(2)}`:`x${currentMult.toFixed(2)}`;
     return `<div class="player-row">
-      <div class="player-avatar" style="background:${p.color}">${p.initial}</div>
+      <div class="player-avatar" style="background:${p.color}">${p.name[0].toUpperCase()}</div>
       <div style="flex:1">
         <div class="player-name">${p.name}${p.isMe?' (you)':''}</div>
-        <div class="player-bet">⭐ ${fmt(p.bet)} <span class="player-mult">x${currentMult.toFixed(2)}</span></div>
+        <div class="player-bet-info">⭐ ${fmt(p.bet)} <span style="color:${multColor};font-weight:600;margin-left:4px">${multText}</span>${!p.cashedAt&&!p.lost&&gameState==='running'?'<span style="color:#ff4444;margin-left:4px">✕</span>':''}</div>
       </div>
-      <div>${prizeHTML}</div>
+      <div>${prize}</div>
     </div>`;
   }).join('');
 }
 
 function handleMain(){
-  if(gameState==='betting' && myBet===0){
-    openBetModal();
-  } else if(gameState==='running' && myBet>0 && !myCashedOut){
-    cashOut();
-  }
+  if(gameState==='betting'&&myBet===0){openBetModal();}
+  else if(gameState==='running'&&myBet>0&&!myCashedOut){cashOut();}
 }
 
-function openBetModal(){
-  betAmount=0;
-  document.getElementById('bet-display').textContent='0';
-  document.getElementById('bet-modal').classList.add('open');
-}
+function openBetModal(){betAmt=0;document.getElementById('bet-display').textContent='0';document.getElementById('bet-modal').classList.add('open');}
+function openTopup(){document.getElementById('topup-modal').classList.add('open');}
 
-function openTopup(){
-  document.getElementById('topup-modal').classList.add('open');
+function changeBet(delta){
+  betAmt=Math.max(0,Math.min(20000,betAmt+delta));
+  document.getElementById('bet-display').textContent=fmt(betAmt);
 }
-
-function closeModal(id,e){
-  if(e.target===document.getElementById(id)){
-    document.getElementById(id).classList.remove('open');
-  }
-}
-
-function addBet(n){
-  betAmount=Math.min(betAmount+n,20000);
-  document.getElementById('bet-display').textContent=fmt(betAmount);
-}
-
-function changeAutoMult(delta){
-  autoMult=Math.max(1.1,Math.min(100,parseFloat((autoMult+delta).toFixed(2))));
-  document.getElementById('auto-mult-val').textContent='x'+autoMult.toFixed(2);
-}
-
-function toggleAuto(){
-  autoEnabled=!autoEnabled;
-  const el=document.getElementById('auto-toggle');
-  el.classList.toggle('on',autoEnabled);
-}
-
-function setAutoMult(val){
-  autoMult=val;
-  autoEnabled=true;
-  document.getElementById('auto-mult-val').textContent='x'+val.toFixed(2);
-  document.getElementById('auto-toggle').classList.add('on');
-  document.querySelectorAll('.mult-opt').forEach(o=>o.classList.remove('active-opt'));
-  document.querySelectorAll('.mult-opt').forEach(o=>{
-    if(o.textContent==='x'+val.toFixed(2)) o.classList.add('active-opt');
-  });
-}
+function setBet(n){betAmt=n;document.getElementById('bet-display').textContent=fmt(betAmt);}
+function changeAutoMult(d){autoMult=Math.max(1.1,Math.min(100,parseFloat((autoMult+d).toFixed(2))));document.getElementById('auto-mult-val').textContent='x'+autoMult.toFixed(2);}
+function toggleAuto(){autoEnabled=!autoEnabled;document.getElementById('auto-toggle').classList.toggle('on',autoEnabled);}
+function setAutoMult(v){autoMult=v;autoEnabled=true;document.getElementById('auto-mult-val').textContent='x'+v.toFixed(2);document.getElementById('auto-toggle').classList.add('on');document.querySelectorAll('.mult-opt').forEach(o=>{if(o!==document.getElementById('opt-current'))o.classList.toggle('active-sel',o.textContent==='x'+v.toFixed(2));});}
 
 function confirmBet(){
-  if(betAmount<50){ toast('Minimum bet is 50 stars'); return; }
-  if(betAmount>stars){ toast('Not enough stars! Top up first.'); return; }
-  document.getElementById('bet-modal').classList.remove('open');
-  myBet=betAmount;
-  stars-=myBet;
-  updateStars();
-  renderPlayers();
+  if(betAmt<50){toast('Minimum bet is 50 stars');return;}
+  if(betAmt>stars){toast('Not enough stars! Top up first.');return;}
+  closeM('bet-modal');
+  myBet=betAmt;stars-=myBet;updateStars();
   const btn=document.getElementById('main-btn');
   if(gameState==='running'){
     btn.className='main-btn btn-red';
@@ -393,44 +347,37 @@ function confirmBet(){
     btn.disabled=false;
   } else {
     btn.className='main-btn btn-green';
-    btn.textContent='✅ Bet placed — waiting...';
+    btn.textContent='✅ Bet placed — starting soon...';
     btn.disabled=true;
     startCountdown();
   }
+  renderPlayers();
   toast('Bet of ⭐'+fmt(myBet)+' placed!');
 }
 
 function startCountdown(){
-  crashPoint=genCrash();
-  genFakePlayers();
-  gameState='countdown';
-  let c=3;
+  crashPoint=genCrash();genFakePlayers();
+  gameState='countdown';let c=3;
   document.getElementById('status').textContent='Starting in '+c+'...';
-  document.getElementById('mult').className='mult-display wait';
-  const cd=setInterval(()=>{
-    c--;
-    if(c<=0){ clearInterval(cd); startRound(); }
-    else document.getElementById('status').textContent='Starting in '+c+'...';
-  },800);
+  const cd=setInterval(()=>{c--;if(c<=0){clearInterval(cd);startRound();}else document.getElementById('status').textContent='Starting in '+c+'...';},800);
 }
 
 function genCrash(){
   const r=Math.random();
-  if(r<0.35) return parseFloat((1+Math.random()*0.7).toFixed(2));
-  if(r<0.65) return parseFloat((1.7+Math.random()*1.3).toFixed(2));
-  if(r<0.85) return parseFloat((3+Math.random()*4).toFixed(2));
+  if(r<0.35)return parseFloat((1+Math.random()*0.7).toFixed(2));
+  if(r<0.65)return parseFloat((1.7+Math.random()*1.3).toFixed(2));
+  if(r<0.85)return parseFloat((3+Math.random()*4).toFixed(2));
   return parseFloat((7+Math.random()*18).toFixed(2));
 }
 
 function startRound(){
-  gameState='running';
-  roundNum++;
-  currentMult=1.00;
-  myCashedOut=false;
+  gameState='running';currentMult=1.00;myCashedOut=false;
   document.getElementById('mult').className='mult-display run';
   document.getElementById('prog').style.background='#00e676';
-  document.getElementById('result-banner').innerHTML='';
-  document.getElementById('opt-wait').className='mult-opt inactive';
+  document.getElementById('result-banner').classList.remove('show');
+  document.getElementById('opt-current').textContent='x1.00';
+  document.getElementById('opt-current').className='mult-opt current';
+  animateRocket();
   if(myBet>0){
     const btn=document.getElementById('main-btn');
     btn.className='main-btn btn-red';
@@ -441,48 +388,41 @@ function startRound(){
   gameInterval=setInterval(()=>{
     const e=(Date.now()-start)/1000;
     currentMult=parseFloat((Math.pow(1.055,e*10)).toFixed(2));
-    if(currentMult<1) currentMult=1.00;
+    if(currentMult<1)currentMult=1.00;
     document.getElementById('mult').textContent=currentMult.toFixed(2)+'x';
-    document.getElementById('status').textContent='🚀 Flying...';
+    document.getElementById('opt-current').textContent='x'+currentMult.toFixed(2);
     const p=Math.min((currentMult-1)/(crashPoint-1)*100,100);
     document.getElementById('prog').style.width=p+'%';
-    if(myBet>0 && !myCashedOut){
+    if(myBet>0&&!myCashedOut){
       document.getElementById('main-btn').textContent='💸 CASH OUT — x'+currentMult.toFixed(2);
-      if(autoEnabled && currentMult>=autoMult) cashOut();
+      if(autoEnabled&&currentMult>=autoMult)cashOut();
     }
-    fakePlayers.forEach(fp=>{
-      if(!fp.cashedAt && !fp.lost){
-        const autoOut=rnd(150,350)/100;
-        if(currentMult>=autoOut){
-          fp.cashedAt=currentMult;
-          renderPlayers();
-        }
-      }
-    });
+    fakePlayers.forEach(fp=>{if(!fp.cashedAt&&!fp.lost&&currentMult>=fp.autoOut){fp.cashedAt=currentMult;}});
     renderPlayers();
-    if(currentMult>=crashPoint) doCrash();
+    if(currentMult>=crashPoint)doCrash();
   },80);
 }
 
 function cashOut(){
-  if(myCashedOut||gameState!=='running') return;
+  if(myCashedOut||gameState!=='running')return;
   myCashedOut=true;
   const win=Math.floor(myBet*currentMult);
   const profit=win-myBet;
-  stars+=win;
-  updateStars();
+  stars+=win;updateStars();
   const btn=document.getElementById('main-btn');
   btn.className='main-btn btn-green';
   btn.textContent='✅ Cashed out at x'+currentMult.toFixed(2)+'!';
   btn.disabled=true;
-  document.getElementById('result-banner').innerHTML=
-    `<div class="result-banner result-win">🎉 Cashed out at x${currentMult.toFixed(2)} — won ⭐ ${fmt(win)} (+${fmt(profit)})</div>`;
+  const rb=document.getElementById('result-banner');
+  rb.className='result-banner result-win show';
+  rb.textContent='🎉 Cashed out at x'+currentMult.toFixed(2)+' — won ⭐'+fmt(win)+' (+'+fmt(profit)+')';
   saveBet(myBet,currentMult);
   renderPlayers();
+  toast('🎉 Won ⭐'+fmt(win)+'!');
 }
 
 function doCrash(){
-  clearInterval(gameInterval);
+  clearInterval(gameInterval);cancelAnimationFrame(animFrame);
   gameState='crashed';
   const f=crashPoint.toFixed(2);
   document.getElementById('mult').textContent=f+'x';
@@ -490,85 +430,60 @@ function doCrash(){
   document.getElementById('status').textContent='💥 Crashed!';
   document.getElementById('prog').style.width='100%';
   document.getElementById('prog').style.background='#ff4444';
-  document.getElementById('opt-wait').className='mult-opt waiting-opt';
-  fakePlayers.forEach(fp=>{ if(!fp.cashedAt) fp.lost=true; });
+  document.getElementById('rocket').textContent='💥';
+  document.getElementById('opt-current').textContent='x'+f;
+  fakePlayers.forEach(fp=>{if(!fp.cashedAt)fp.lost=true;});
   renderPlayers();
-  if(myBet>0 && !myCashedOut){
-    document.getElementById('result-banner').innerHTML=
-      `<div class="result-banner result-lose">💥 Crashed at x${f} — lost ⭐ ${fmt(myBet)}</div>`;
+  if(myBet>0&&!myCashedOut){
+    const rb=document.getElementById('result-banner');
+    rb.className='result-banner result-lose show';
+    rb.textContent='💥 Crashed at x'+f+' — lost ⭐'+fmt(myBet);
     saveBet(myBet,null);
+    const btn=document.getElementById('main-btn');
+    btn.className='main-btn btn-blue';
+    btn.textContent='Place bet';
+    btn.disabled=false;
   }
-  setTimeout(()=>resetRound(), 3000);
+  setTimeout(resetRound,3000);
 }
 
 function resetRound(){
-  gameState='betting';
-  myBet=0;
-  myCashedOut=false;
-  currentMult=1.00;
-  fakePlayers=[];
+  gameState='betting';myBet=0;myCashedOut=false;currentMult=1.00;fakePlayers=[];
   document.getElementById('mult').textContent='1';
-  document.getElementById('mult').className='mult-display wait';
-  document.getElementById('status').textContent='Waiting for bets...';
   document.getElementById('prog').style.width='0%';
   document.getElementById('prog').style.background='#00e676';
-  document.getElementById('result-banner').innerHTML='';
-  renderPlayers();
-  document.querySelectorAll('.mult-opt').forEach(o=>o.classList.remove('active-opt'));
-  setGameReady();
+  document.getElementById('result-banner').classList.remove('show');
+  document.getElementById('opt-current').textContent='Waiting';
+  document.querySelectorAll('.mult-opt').forEach(o=>o.classList.remove('active-sel'));
+  renderPlayers();setReady();
 }
 
 async function saveBet(bet,cashedOutAt){
-  try {
-    await fetch(SERVER+'/api/bet',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({initData,betAmount:bet,cashedOutAt})
-    });
-  } catch(e){}
+  try{await fetch(SERVER+'/api/bet',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({initData,betAmount:bet,cashedOutAt})});}catch(e){}
 }
 
-function setTopupMethod(method,el){
-  topupMethod=method;
+function setTopupMethod(m,el){
+  topupMethod=m;
   document.querySelectorAll('.ttab').forEach(t=>t.classList.remove('active'));
-  el.classList.add('active');
-  updateTopupDisplay();
+  el.classList.add('active');updateTopupDisplay();
 }
-
-function setTopupAmt(n){
-  topupAmount=n;
-  updateTopupDisplay();
-}
-
+function setTopupAmt(n){topupAmount=n;updateTopupDisplay();}
 function updateTopupDisplay(){
   document.getElementById('topup-amount').textContent=fmt(topupAmount);
-  const usd=(topupAmount*0.013).toFixed(2);
-  document.getElementById('topup-sub').textContent='≈ $'+usd;
-  const bonusEl=document.getElementById('topup-bonus');
-  if(topupMethod==='ton'){
-    bonusEl.style.visibility='visible';
-    bonusEl.textContent='+ Bonus '+Math.floor(topupAmount*0.2)+' stars (TON +20%)';
-  } else if(topupMethod==='crypto'){
-    bonusEl.style.visibility='visible';
-    bonusEl.textContent='+ Bonus '+Math.floor(topupAmount*0.15)+' stars (Crypto +15%)';
-  } else {
-    bonusEl.style.visibility='hidden';
-  }
+  document.getElementById('topup-sub').textContent='≈ $'+(topupAmount*0.013).toFixed(2);
+  const bon=document.getElementById('topup-bonus');
+  if(topupMethod==='ton'){bon.textContent='+ Bonus '+fmt(topupAmount*0.2)+' stars (TON +20%)';}
+  else if(topupMethod==='crypto'){bon.textContent='+ Bonus '+fmt(topupAmount*0.15)+' stars (Crypto +15%)';}
+  else bon.textContent='';
 }
-
 function doTopup(){
-  let bonus=0;
-  if(topupMethod==='ton') bonus=Math.floor(topupAmount*0.2);
-  if(topupMethod==='crypto') bonus=Math.floor(topupAmount*0.15);
-  const total=topupAmount+bonus;
-  stars+=total;
-  updateStars();
-  document.getElementById('topup-modal').classList.remove('open');
-  toast('⭐ +'+fmt(total)+' stars added!');
+  let bonus=topupMethod==='ton'?Math.floor(topupAmount*0.2):topupMethod==='crypto'?Math.floor(topupAmount*0.15):0;
+  stars+=topupAmount+bonus;updateStars();
+  closeM('topup-modal');
+  toast('⭐ +'+fmt(topupAmount+bonus)+' stars added!');
 }
 
-initStars();
-loadUser();
+initStarsBg();loadUser();
 </script>
 </body>
 </html>
