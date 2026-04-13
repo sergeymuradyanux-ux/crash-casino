@@ -10,302 +10,244 @@
 html,body{height:100%;overflow:hidden}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0a1a0a;color:#fff;max-width:480px;margin:0 auto;display:flex;flex-direction:column;height:100vh}
 
-/* HISTORY BAR */
-.history-bar{display:flex;gap:6px;padding:6px 10px;overflow-x:auto;background:rgba(0,0,0,0.5);flex-shrink:0;z-index:10}
+.history-bar{display:flex;gap:6px;padding:6px 10px;overflow-x:auto;background:rgba(0,0,0,0.6);flex-shrink:0;z-index:10;align-items:center}
 .history-bar::-webkit-scrollbar{display:none}
-.hp{padding:4px 10px;border-radius:20px;font-size:12px;font-weight:700;flex-shrink:0}
+.hp{padding:4px 11px;border-radius:20px;font-size:12px;font-weight:700;flex-shrink:0}
 .hp-low{background:#5a1a1a;color:#ff8a8a}
 .hp-mid{background:#4a3a00;color:#ffd700}
 .hp-high{background:#1a4a1a;color:#6dff6d}
 
-/* GAME SCENE */
-.scene{flex:1;position:relative;overflow:hidden;background:linear-gradient(180deg,#0a0a2e 0%,#0d1f0d 40%,#0a1a0a 100%)}
+.scene{position:relative;overflow:hidden;background:linear-gradient(180deg,#050518 0%,#0a1a0a 50%,#0d2a0d 100%);flex-shrink:0}
 
-/* STARS */
 .stars-layer{position:absolute;inset:0;pointer-events:none}
+.moon{position:absolute;top:12px;right:16px;width:40px;height:40px;background:#fffde0;border-radius:50%;opacity:0.9}
+.moon-glow{position:absolute;top:6px;right:10px;width:52px;height:52px;background:rgba(255,253,200,0.15);border-radius:50%}
 
-/* MOON */
-.moon{position:absolute;top:14px;right:20px;width:44px;height:44px;background:#fffde0;border-radius:50%;box-shadow:0 0 20px rgba(255,253,200,0.4)}
+.ground{position:absolute;bottom:0;left:0;right:0;height:60px;background:linear-gradient(180deg,#1a3a10 0%,#0f2808 100%)}
 
-/* TREES */
-.trees{position:absolute;bottom:70px;left:0;right:0;height:130px;pointer-events:none}
-.tree{position:absolute;bottom:0}
-.tree-trunk{width:10px;background:#2a1a08;margin:0 auto}
-.tree-top{width:0;height:0;border-style:solid;margin:0 auto}
+.mult-overlay{position:absolute;top:10px;left:0;right:0;text-align:center;z-index:10;pointer-events:none}
+.mult-num{font-size:68px;font-weight:900;line-height:1;letter-spacing:-3px}
+.mult-num.wait{color:rgba(255,255,255,0.15)}
+.mult-num.countdown{color:#fff;font-size:90px;text-shadow:0 0 30px rgba(255,255,255,0.5)}
+.mult-num.run{color:#00ff88;text-shadow:0 0 30px rgba(0,255,136,0.5)}
+.mult-num.crash{color:#ff4444;text-shadow:0 0 30px rgba(255,68,68,0.5)}
+.mult-label{font-size:12px;color:rgba(255,255,255,0.4);margin-top:2px}
 
-/* GROUND */
-.ground{position:absolute;bottom:0;left:0;right:0;height:70px;background:linear-gradient(180deg,#1a3a10 0%,#0f2808 100%);border-top:2px solid #2a5a18}
-.fence{position:absolute;bottom:60px;left:0;right:0;height:20px;display:flex;gap:0}
-.fence-post{width:8px;height:24px;background:#8B6914;flex-shrink:0}
-.fence-rail{flex:1;height:4px;background:#a07820;align-self:center}
+#cow-canvas{position:absolute;bottom:58px;left:0;right:0;width:100%;pointer-events:none;z-index:5}
+#bg-canvas{position:absolute;bottom:58px;left:0;right:0;width:100%;pointer-events:none}
 
-/* MULTIPLIER OVERLAY */
-.mult-overlay{position:absolute;top:16px;left:0;right:0;text-align:center;z-index:10;pointer-events:none}
-.mult-num{font-size:64px;font-weight:900;letter-spacing:-3px;line-height:1;text-shadow:0 0 30px currentColor}
-.mult-num.wait{color:rgba(255,255,255,0.2)}
-.mult-num.run{color:#00ff88}
-.mult-num.crash{color:#ff4444}
-.mult-num.countdown{color:#fff;font-size:90px}
-.mult-label{font-size:13px;color:rgba(255,255,255,0.5);margin-top:2px}
+.beam{position:absolute;left:50%;width:6px;transform:translateX(-50%);z-index:4;display:none;border-radius:3px;background:linear-gradient(180deg,rgba(0,255,136,0) 0%,rgba(0,255,136,0.5) 100%)}
 
-/* COW CANVAS */
-#cow-canvas{position:absolute;bottom:65px;left:0;right:0;width:100%;pointer-events:none;z-index:5;transition:none}
-
-/* BEAM */
-.beam{position:absolute;top:0;left:50%;width:4px;transform:translateX(-50%);background:linear-gradient(180deg,rgba(0,255,136,0) 0%,rgba(0,255,136,0.6) 100%);display:none;z-index:4}
-
-/* BOTTOM PANEL */
-.bottom-panel{background:#0d1a0d;border-top:1px solid #1a3a1a;flex-shrink:0;z-index:20}
-
-/* BALANCE */
-.balance-row{display:flex;align-items:center;justify-content:space-between;padding:6px 14px;border-bottom:1px solid #1a2a1a}
-.bal-left{display:flex;align-items:center;gap:6px}
-.bal-avatar{width:28px;height:28px;border-radius:50%;background:#3a7a3a;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700}
+.bal-bar{display:flex;align-items:center;justify-content:space-between;padding:7px 14px;background:#0d1f0d;border-top:1px solid #1a3a1a;flex-shrink:0}
+.bal-left{display:flex;align-items:center;gap:8px}
+.bal-av{width:30px;height:30px;border-radius:50%;background:#2a5a2a;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700}
 .bal-name{font-size:13px;font-weight:600;color:#ccc}
-.bal-amount{font-size:15px;font-weight:800;color:#fff}
-.bal-stars{display:flex;align-items:center;gap:5px;background:#1a2a1a;border-radius:16px;padding:5px 10px;cursor:pointer}
-.bal-stars span{font-size:14px;font-weight:700}
-.bal-plus{width:22px;height:22px;background:#3b82f6;border-radius:50%;border:none;color:#fff;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.bal-right{display:flex;align-items:center;gap:6px;background:#162a16;border-radius:20px;padding:6px 10px;cursor:pointer}
+.bal-right span{font-size:15px;font-weight:700}
+.bal-plus{width:24px;height:24px;background:#3b82f6;border-radius:50%;border:none;color:#fff;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 
-/* BET CONTROLS */
-.bet-controls{padding:8px 10px 4px}
-.bet-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:6px}
-.bet-panel{background:#0f2010;border:1px solid #1a3a1a;border-radius:12px;padding:8px 10px}
-.bet-panel-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
-.pm-btn{width:32px;height:32px;border-radius:8px;border:none;font-size:18px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform 0.1s}
-.pm-btn:active{transform:scale(0.9)}
-.pm-minus{background:#2a0808;color:#ff6b6b}
-.pm-plus{background:#082a10;color:#6dff6d}
-.bet-inp{flex:1;background:transparent;border:none;color:#fff;font-size:15px;font-weight:800;text-align:center;outline:none;width:60px}
-.quick-bets{display:flex;gap:4px;margin-bottom:8px}
-.qbet{flex:1;padding:5px 2px;background:#0a1a0a;border:1px solid #1a3a1a;border-radius:8px;color:#aaa;font-size:11px;font-weight:600;cursor:pointer;text-align:center;transition:all 0.15s}
-.qbet:active{background:#1a3a1a;color:#fff}
-.bet-action-btn{width:100%;padding:12px;border-radius:10px;border:none;font-size:15px;font-weight:800;cursor:pointer;transition:transform 0.1s}
-.bet-action-btn:active{transform:scale(0.97)}
-.btn-bet-green{background:#2d7a2d;color:#fff}
-.btn-bet-green:hover{background:#3a9a3a}
-.btn-cashout{background:#8b1a1a;color:#fff;animation:cashpulse 0.7s infinite}
-@keyframes cashpulse{0%,100%{background:#8b1a1a}50%{background:#cc2222}}
-.btn-bet-green.placed{background:#1a3a1a;color:#6dff6d}
-.sub-btns{display:flex;gap:6px;margin-top:5px}
-.sub-btn{flex:1;padding:6px;background:#0a1a0a;border:1px solid #1a3a1a;border-radius:8px;color:#888;font-size:10px;font-weight:600;cursor:pointer;text-align:center}
-.sub-btn.active{border-color:#3b82f6;color:#3b82f6}
-
-/* PLAYERS TAB */
-.players-bar{display:flex;border-bottom:1px solid #1a3a1a;background:#0a1200}
-.ptab{flex:1;padding:7px 4px;text-align:center;font-size:12px;font-weight:600;color:#555;cursor:pointer;border-bottom:2px solid transparent}
+.players-section{flex:1;display:flex;flex-direction:column;overflow:hidden;background:#0a140a}
+.players-tabs{display:flex;border-bottom:1px solid #1a3a1a;flex-shrink:0}
+.ptab{flex:1;padding:8px 4px;text-align:center;font-size:12px;font-weight:600;color:#444;cursor:pointer;border-bottom:2px solid transparent;background:none;border-top:none;border-left:none;border-right:none}
 .ptab.active{color:#6dff6d;border-bottom-color:#6dff6d}
-.players-list{max-height:120px;overflow-y:auto;padding:0 10px}
-.players-list::-webkit-scrollbar{width:3px}
-.players-list::-webkit-scrollbar-thumb{background:#1a3a1a;border-radius:2px}
-.pl-row{display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid #0f1f0f}
+.players-list{flex:1;overflow-y:auto;padding:0 10px}
+.players-list::-webkit-scrollbar{width:2px}
+.players-list::-webkit-scrollbar-thumb{background:#1a3a1a}
+.pl-row{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid #0f1f0f}
 .pl-row:last-child{border-bottom:none}
-.pl-avatar{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0}
-.pl-name{font-size:12px;font-weight:600;flex:1}
-.pl-bet{font-size:11px;color:#888}
-.pl-mult{font-size:11px;font-weight:700;margin-left:4px}
-.pl-prize{font-size:12px;font-weight:700;text-align:right;min-width:36px}
+.pl-av{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
+.pl-name{font-size:13px;font-weight:600;flex:1}
+.pl-info{font-size:11px;color:#666}
+.pl-mult{font-weight:700;margin-left:3px}
+.pl-prize{font-size:13px;font-weight:700;min-width:40px;text-align:right}
 .pr-win{color:#6dff6d}
 .pr-lose{color:#ff6b6b}
-.pr-pend{color:#888}
+.pr-pend{color:#555;font-size:18px}
 
-/* TOAST */
-.toast{position:fixed;top:50px;left:50%;transform:translateX(-50%);background:#1a3a1a;border:1px solid #2a5a2a;border-radius:12px;padding:10px 20px;font-size:14px;color:#fff;z-index:999;opacity:0;transition:opacity 0.3s;pointer-events:none;white-space:nowrap}
-.toast.show{opacity:1}
+.result-banner{padding:8px 14px;text-align:center;font-size:14px;font-weight:700;flex-shrink:0;display:none}
+.result-banner.show{display:block}
+.rb-win{background:#002a14;color:#6dff6d}
+.rb-lose{background:#2a0000;color:#ff6b6b}
 
-/* OVERLAY MODALS */
-.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:500;align-items:flex-end;justify-content:center}
-.overlay.open{display:flex}
-.sheet{background:#0f1f0f;border-radius:20px 20px 0 0;padding:20px 20px 40px;width:100%;max-width:480px;position:relative}
-.sheet-handle{width:36px;height:4px;background:#2a3a2a;border-radius:2px;margin:0 auto 16px}
-.sheet-title{font-size:18px;font-weight:800;text-align:center;margin-bottom:16px;color:#fff}
-.sheet-close{position:absolute;top:16px;right:16px;width:28px;height:28px;background:#1a2a1a;border-radius:50%;border:none;color:#888;font-size:13px;cursor:pointer}
-.topup-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px}
-.tp-card{background:#1a2a1a;border-radius:12px;padding:12px 6px;text-align:center;cursor:pointer;border:2px solid transparent;transition:all 0.15s}
-.tp-card.selected,.tp-card:active{border-color:#3b82f6}
-.tp-amt{font-size:15px;font-weight:800;color:#ffd700}
-.tp-usd{font-size:10px;color:#555;margin-top:2px}
-.topup-btn{width:100%;padding:15px;border-radius:12px;background:#3b82f6;border:none;color:#fff;font-size:16px;font-weight:800;cursor:pointer}
-
-/* DAILY */
-.daily-icon{font-size:60px;text-align:center;display:block;margin:0 0 10px}
-.daily-reward-box{display:flex;align-items:center;justify-content:center;gap:10px;background:#0a1a0a;border-radius:14px;padding:14px;margin-bottom:12px}
-.streak-row{display:flex;gap:5px;justify-content:center;margin-bottom:18px}
-.s-dot{width:32px;height:32px;border-radius:50%;background:#1a2a1a;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#444;border:1px solid #2a3a2a}
-.s-dot.done{background:#fbbf24;color:#000}
-.s-dot.today{background:#3b82f6;color:#fff}
+/* SINGLE BIG BUTTON */
+.action-area{flex-shrink:0;background:#0d1f0d;border-top:1px solid #1a3a1a;padding:10px 14px 14px}
+.placed-info{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;display:none}
+.placed-info.show{display:flex}
+.placed-bet-lbl{font-size:13px;color:#888}
+.placed-bet-val{font-size:14px;font-weight:700;color:#6dff6d}
+.main-btn{width:100%;padding:17px;border-radius:16px;font-size:19px;font-weight:900;cursor:pointer;border:none;color:#fff;letter-spacing:0.3px;transition:transform 0.1s}
+.main-btn:active{transform:scale(0.97)}
+.btn-place{background:#2d7a2d}
+.btn-cashout{background:#8b1a1a;animation:cpulse 0.65s infinite}
+.btn-waiting{background:#1a3a1a;color:#6dff6d;cursor:not-allowed}
+.btn-disabled{background:#141a14;color:#333;cursor:not-allowed}
+@keyframes cpulse{0%,100%{background:#8b1a1a}50%{background:#cc2020}}
 
 /* NAV */
-.nav-bar{display:flex;background:#080e08;border-top:1px solid #1a2a1a;flex-shrink:0}
-.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;padding:8px 4px 10px;cursor:pointer;border:none;background:none;color:#444;font-size:9px;font-weight:600;gap:3px}
+.nav-bar{display:flex;background:#070e07;border-top:1px solid #142014;flex-shrink:0}
+.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;padding:8px 4px 12px;cursor:pointer;border:none;background:none;color:#444;font-size:9px;font-weight:600;gap:3px}
 .nav-btn.active{color:#6dff6d}
-.nav-ico{font-size:20px}
-.nav-badge{position:absolute;top:-2px;right:-2px;background:#ef4444;color:#fff;border-radius:8px;font-size:8px;font-weight:700;padding:1px 4px}
+.nav-ico{font-size:20px;line-height:1}
 .nav-ico-wrap{position:relative}
+.nav-badge{position:absolute;top:-3px;right:-4px;background:#ef4444;color:#fff;border-radius:8px;font-size:8px;padding:1px 4px;font-weight:700}
 
 /* PAGES */
-.page{display:none;flex:1;overflow-y:auto;background:#0a140a;padding-bottom:10px}
+.page{display:none;flex:1;overflow-y:auto;background:#080e08;padding-bottom:20px}
 .page.active{display:block}
-.page-title{font-size:18px;font-weight:800;padding:14px 16px 10px;color:#fff}
-.task-card{margin:0 12px 8px;background:#0f1f0f;border:1px solid #1a3a1a;border-radius:12px;padding:12px 14px;display:flex;align-items:center;gap:10px}
+.pg-title{font-size:18px;font-weight:800;padding:14px 16px 10px}
+.task-card{margin:0 12px 8px;background:#0d1a0d;border:1px solid #1a3a1a;border-radius:12px;padding:12px 14px;display:flex;align-items:center;gap:10px}
 .task-ico{font-size:26px;flex-shrink:0}
-.task-name{font-size:13px;font-weight:700;color:#fff}
-.task-rew{font-size:11px;color:#ffd700;margin-top:2px}
-.task-btn-el{padding:7px 14px;border-radius:16px;border:none;font-size:12px;font-weight:700;cursor:pointer}
+.task-nm{font-size:13px;font-weight:700}
+.task-rw{font-size:11px;color:#ffd700;margin-top:2px}
+.tbtn{padding:7px 14px;border-radius:16px;border:none;font-size:12px;font-weight:700;cursor:pointer}
 .tbdo{background:#3b82f6;color:#fff}
-.tbdone{background:#1a2a1a;color:#555;cursor:not-allowed}
-.lb-row{margin:0 12px 6px;background:#0f1f0f;border:1px solid #1a3a1a;border-radius:12px;padding:10px 14px;display:flex;align-items:center;gap:10px}
-.lb-rank{font-size:16px;font-weight:900;width:24px;text-align:center;flex-shrink:0}
-.lb-av{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0}
+.tbdone{background:#162a16;color:#555;cursor:not-allowed}
+.lb-row{margin:0 12px 7px;background:#0d1a0d;border:1px solid #1a3a1a;border-radius:12px;padding:11px 14px;display:flex;align-items:center;gap:10px}
+.lb-rank{font-size:17px;font-weight:900;width:26px;text-align:center;flex-shrink:0}
+.lb-av{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0}
 .lb-nm{flex:1;font-size:13px;font-weight:600}
 .lb-sc{font-size:13px;font-weight:700;color:#ffd700}
-.prof-head{padding:16px;text-align:center}
-.prof-av{width:64px;height:64px;border-radius:50%;background:#3a7a3a;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:800;margin:0 auto 8px}
+.prof-head{padding:18px 16px 0;text-align:center}
+.prof-av{width:68px;height:68px;border-radius:50%;background:#2a5a2a;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:800;margin:0 auto 10px}
 .prof-nm{font-size:18px;font-weight:800}
-.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 12px 12px}
-.st-card{background:#0f1f0f;border:1px solid #1a3a1a;border-radius:12px;padding:12px;text-align:center}
+.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 12px}
+.st-card{background:#0d1a0d;border:1px solid #1a3a1a;border-radius:12px;padding:12px;text-align:center}
 .st-num{font-size:22px;font-weight:800}
 .st-lbl{font-size:11px;color:#555;margin-top:2px}
-.invite-card{margin:0 12px;background:#0f1f0f;border:1px solid #1a3a1a;border-radius:12px;padding:16px}
+.inv-card{margin:0 12px;background:#0d1a0d;border:1px solid #1a3a1a;border-radius:12px;padding:16px}
 .inv-title{font-size:15px;font-weight:800;margin-bottom:4px}
-.inv-sub{font-size:12px;color:#666;margin-bottom:12px;line-height:1.5}
+.inv-sub{font-size:12px;color:#555;margin-bottom:12px;line-height:1.5}
 .inv-stats{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:12px}
-.inv-st{background:#0a1200;border-radius:10px;padding:10px;text-align:center}
+.inv-st{background:#07100a;border-radius:10px;padding:10px;text-align:center}
 .inv-num{font-size:20px;font-weight:800}
 .inv-lbl{font-size:10px;color:#555;margin-top:1px}
 .inv-btns{display:flex;gap:8px}
 .inv-btn{flex:1;padding:12px;background:#3b82f6;border-radius:12px;border:none;color:#fff;font-size:14px;font-weight:700;cursor:pointer}
-.copy-btn{width:46px;height:46px;background:#1a2a1a;border-radius:12px;border:none;color:#aaa;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.copy-btn{width:46px;height:46px;background:#162a16;border-radius:12px;border:none;color:#888;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+
+/* MODALS */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.88);z-index:500;align-items:flex-end;justify-content:center}
+.overlay.open{display:flex}
+.sheet{background:#0d1a0d;border-radius:22px 22px 0 0;padding:20px 20px 42px;width:100%;max-width:480px;position:relative}
+.sheet-handle{width:36px;height:4px;background:#1a3a1a;border-radius:2px;margin:0 auto 16px}
+.sheet-title{font-size:19px;font-weight:800;text-align:center;margin-bottom:16px}
+.sheet-close{position:absolute;top:16px;right:16px;width:30px;height:30px;background:#162a16;border-radius:50%;border:none;color:#888;font-size:13px;cursor:pointer}
+
+/* BET MODAL - GORILLA STYLE */
+.bet-bal-pill{display:flex;align-items:center;gap:8px;background:#162a16;border-radius:24px;padding:7px 12px;width:fit-content;margin:0 auto 18px}
+.bet-bal-pill span{font-size:15px;font-weight:700}
+.bet-inp-row{display:flex;align-items:baseline;justify-content:center;gap:10px;padding-bottom:16px;border-bottom:1px solid #1a3a1a;margin-bottom:14px}
+.bet-inp{font-size:54px;font-weight:900;letter-spacing:-2px;width:180px;background:transparent;border:none;border-bottom:2px solid #2d7a2d;color:#fff;text-align:right;outline:none;padding:2px 0;-webkit-appearance:none}
+.bet-inp:focus{border-bottom-color:#6dff6d}
+.bet-inp::placeholder{color:#1a3a1a}
+.bet-unit{font-size:22px;color:#333;font-weight:600;padding-bottom:6px}
+.bet-add-row{display:flex;gap:8px;margin-bottom:8px}
+.add-btn{flex:1;padding:13px 6px;background:#162a16;border-radius:14px;border:1px solid #1a3a1a;color:#aaa;font-size:14px;font-weight:700;cursor:pointer;transition:all 0.15s}
+.add-btn:active{background:#1a3a1a;color:#6dff6d}
+.bet-hint{text-align:center;font-size:12px;color:#333;margin-bottom:16px}
+.auto-row{display:flex;align-items:center;gap:10px;padding:12px 14px;background:#07100a;border-radius:12px;margin-bottom:18px}
+.auto-lbl{flex:1;font-size:14px;color:#888}
+.auto-ctrl{display:flex;align-items:center;gap:8px}
+.auto-val{font-size:14px;font-weight:700;min-width:44px;text-align:center}
+.ac-btn{width:28px;height:28px;background:#162a16;border-radius:50%;border:none;color:#aaa;font-size:16px;cursor:pointer}
+.atoggle{width:44px;height:26px;background:#1a2a1a;border-radius:13px;cursor:pointer;position:relative;transition:background 0.2s;flex-shrink:0}
+.atoggle.on{background:#2d7a2d}
+.atoggle::after{content:'';position:absolute;top:3px;left:3px;width:20px;height:20px;background:#fff;border-radius:50%;transition:transform 0.2s}
+.atoggle.on::after{transform:translateX(18px)}
+.place-btn{width:100%;padding:16px;border-radius:14px;background:#2d7a2d;border:none;color:#fff;font-size:17px;font-weight:800;cursor:pointer}
+.place-btn:active{background:#3a9a3a}
+
+/* TOPUP */
+.topup-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:18px}
+.tp-card{background:#162a16;border-radius:12px;padding:12px 6px;text-align:center;cursor:pointer;border:2px solid transparent;transition:all 0.15s}
+.tp-card.sel,.tp-card:active{border-color:#3b82f6}
+.tp-amt{font-size:15px;font-weight:800;color:#ffd700}
+.tp-usd{font-size:10px;color:#444;margin-top:2px}
+.tp-btn{width:100%;padding:15px;border-radius:12px;background:#3b82f6;border:none;color:#fff;font-size:16px;font-weight:800;cursor:pointer}
+
+/* DAILY */
+.daily-ico{font-size:60px;text-align:center;display:block;margin:0 0 10px}
+.daily-rew-box{display:flex;align-items:center;justify-content:center;gap:10px;background:#07100a;border-radius:14px;padding:14px;margin-bottom:12px}
+.streak-row{display:flex;gap:5px;justify-content:center;margin-bottom:18px}
+.s-dot{width:32px;height:32px;border-radius:50%;background:#162a16;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#333;border:1px solid #1a3a1a}
+.s-dot.done{background:#fbbf24;color:#000;border-color:#fbbf24}
+.s-dot.today{background:#3b82f6;color:#fff;border-color:#60a5fa}
+
+.toast{position:fixed;top:60px;left:50%;transform:translateX(-50%);background:#162a16;border:1px solid #2a5a2a;border-radius:12px;padding:10px 20px;font-size:14px;color:#fff;z-index:999;opacity:0;transition:opacity 0.3s;pointer-events:none;white-space:nowrap}
+.toast.show{opacity:1}
 </style>
 </head>
 <body>
 
-<!-- HISTORY BAR -->
+<!-- HISTORY -->
 <div class="history-bar" id="history-bar">
   <span style="color:#333;font-size:12px">No rounds yet</span>
 </div>
 
-<!-- GAME SCENE (only on crash page) -->
-<div id="game-scene-wrap" style="flex:1;display:flex;flex-direction:column;overflow:hidden">
-
-  <!-- SCENE -->
-  <div class="scene" id="scene">
-    <!-- Stars -->
-    <div class="stars-layer" id="stars-layer"></div>
-    <!-- Moon -->
-    <div class="moon"></div>
-    <!-- Beam -->
-    <div class="beam" id="beam"></div>
-    <!-- Trees (drawn via JS) -->
-    <canvas id="bg-canvas" style="position:absolute;bottom:65px;left:0;right:0;width:100%;height:140px"></canvas>
-    <!-- Ground -->
-    <div class="ground">
-      <div style="position:absolute;top:-14px;left:0;right:0;display:flex;align-items:center">
-        <div style="height:4px;flex:1;background:#5a3010"></div>
-      </div>
-      <!-- Fence posts -->
-      <div id="fence" style="position:absolute;top:-20px;left:0;right:0;display:flex;gap:14px;padding:0 8px"></div>
-    </div>
-    <!-- Cow canvas -->
-    <canvas id="cow-canvas" height="120"></canvas>
-    <!-- Multiplier -->
-    <div class="mult-overlay">
-      <div class="mult-num wait" id="mult-num">1</div>
-      <div class="mult-label" id="mult-label">Waiting...</div>
-    </div>
+<!-- GAME SCENE -->
+<div class="scene" id="scene" style="height:42vh">
+  <div class="stars-layer" id="stars-layer"></div>
+  <div class="moon-glow"></div>
+  <div class="moon"></div>
+  <canvas id="bg-canvas" style="position:absolute;bottom:58px;left:0;right:0;width:100%;height:130px"></canvas>
+  <div class="ground">
+    <div id="fence" style="position:absolute;top:-18px;left:0;right:0;display:flex;align-items:center;padding:0 6px;gap:12px"></div>
   </div>
-
-  <!-- BOTTOM PANEL -->
-  <div class="bottom-panel" id="bottom-panel">
-
-    <!-- BALANCE ROW -->
-    <div class="balance-row">
-      <div class="bal-left">
-        <div class="bal-avatar" id="bal-avatar">?</div>
-        <div>
-          <div class="bal-name" id="bal-name">Player</div>
-        </div>
-      </div>
-      <div class="bal-stars" onclick="openSheet('topup-overlay')">
-        <span style="font-size:16px">⭐</span>
-        <span id="stars-display">...</span>
-        <button class="bal-plus" onclick="event.stopPropagation();openSheet('topup-overlay')">+</button>
-      </div>
-    </div>
-
-    <!-- BET CONTROLS -->
-    <div class="bet-controls">
-      <div class="bet-row">
-        <!-- BET PANEL 1 -->
-        <div class="bet-panel" id="panel1">
-          <div class="bet-panel-header">
-            <button class="pm-btn pm-minus" onclick="adjustBet(1,-stepVal(1))">−</button>
-            <input class="bet-inp" type="number" id="bet-inp-1" value="50" min="1" max="20000" inputmode="numeric">
-            <button class="pm-btn pm-plus" onclick="adjustBet(1,stepVal(1))">+</button>
-          </div>
-          <div class="quick-bets">
-            <div class="qbet" onclick="setQuick(1,50)">50</div>
-            <div class="qbet" onclick="setQuick(1,100)">100</div>
-            <div class="qbet" onclick="setQuick(1,500)">500</div>
-            <div class="qbet" onclick="setQuick(1,1000)">1K</div>
-          </div>
-          <button class="bet-action-btn btn-bet-green" id="action-btn-1" onclick="handleBet(1)">
-            Bet<br><span id="bet-lbl-1">50 ⭐</span>
-          </button>
-          <div class="sub-btns">
-            <div class="sub-btn active" id="auto-btn-1" onclick="toggleAuto(1)">AUTO PLAY</div>
-            <div class="sub-btn" id="autoplay-info-1" style="font-size:9px;color:#555">x<span id="auto-val-1">2.00</span></div>
-          </div>
-        </div>
-        <!-- BET PANEL 2 -->
-        <div class="bet-panel" id="panel2">
-          <div class="bet-panel-header">
-            <button class="pm-btn pm-minus" onclick="adjustBet(2,-stepVal(2))">−</button>
-            <input class="bet-inp" type="number" id="bet-inp-2" value="50" min="1" max="20000" inputmode="numeric">
-            <button class="pm-btn pm-plus" onclick="adjustBet(2,stepVal(2))">+</button>
-          </div>
-          <div class="quick-bets">
-            <div class="qbet" onclick="setQuick(2,50)">50</div>
-            <div class="qbet" onclick="setQuick(2,100)">100</div>
-            <div class="qbet" onclick="setQuick(2,500)">500</div>
-            <div class="qbet" onclick="setQuick(2,1000)">1K</div>
-          </div>
-          <button class="bet-action-btn btn-bet-green" id="action-btn-2" onclick="handleBet(2)">
-            Bet<br><span id="bet-lbl-2">50 ⭐</span>
-          </button>
-          <div class="sub-btns">
-            <div class="sub-btn active" id="auto-btn-2" onclick="toggleAuto(2)">AUTO PLAY</div>
-            <div class="sub-btn" id="autoplay-info-2" style="font-size:9px;color:#555">x<span id="auto-val-2">3.00</span></div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- PLAYERS -->
-    <div class="players-bar">
-      <div class="ptab active" id="ptab-all" onclick="switchTab('all')">All Bets</div>
-      <div class="ptab" id="ptab-result" onclick="switchTab('result')">Result</div>
-      <div class="ptab" id="ptab-top" onclick="switchTab('top')">Top</div>
-    </div>
-    <div class="players-list" id="players-list">
-      <div style="padding:14px;text-align:center;color:#333;font-size:12px">Place a bet to join</div>
-    </div>
+  <div class="beam" id="beam"></div>
+  <canvas id="cow-canvas" height="110" style="position:absolute;bottom:56px;left:0;right:0;width:100%;pointer-events:none;z-index:5"></canvas>
+  <div class="mult-overlay">
+    <div class="mult-num wait" id="mult-num">1</div>
+    <div class="mult-label" id="mult-label">Waiting for bets...</div>
   </div>
-
 </div>
 
-<!-- PAGES (tasks, leaderboard, profile) -->
+<!-- BALANCE BAR -->
+<div class="bal-bar">
+  <div class="bal-left">
+    <div class="bal-av" id="bal-av">?</div>
+    <div class="bal-name" id="bal-nm">Player</div>
+  </div>
+  <div class="bal-right" onclick="openSheet('topup-overlay')">
+    <span style="font-size:18px">⭐</span>
+    <span id="stars-disp">...</span>
+    <button class="bal-plus" onclick="event.stopPropagation();openSheet('topup-overlay')">+</button>
+  </div>
+</div>
+
+<!-- PLAYERS -->
+<div class="players-section" id="crash-section">
+  <div class="players-tabs">
+    <button class="ptab active" id="ptab-all" onclick="switchTab('all')">All Bets</button>
+    <button class="ptab" id="ptab-result" onclick="switchTab('result')">Result</button>
+    <button class="ptab" id="ptab-top" onclick="switchTab('top')">Top</button>
+  </div>
+  <div class="result-banner" id="result-banner"></div>
+  <div class="players-list" id="players-list">
+    <div style="padding:16px;text-align:center;color:#333;font-size:13px">Place a bet to join the round</div>
+  </div>
+</div>
+
+<!-- SINGLE ACTION BUTTON -->
+<div class="action-area" id="action-area">
+  <div class="placed-info" id="placed-info">
+    <span class="placed-bet-lbl">Bet placed</span>
+    <span class="placed-bet-val" id="placed-val">⭐ 0</span>
+  </div>
+  <button class="main-btn btn-disabled" id="main-btn" onclick="handleMain()" disabled>Loading...</button>
+</div>
+
+<!-- PAGES -->
 <div id="page-tasks" class="page">
-  <div class="page-title">Tasks</div>
-  <div class="task-card"><div class="task-ico">📅</div><div style="flex:1"><div class="task-name">Daily login</div><div class="task-rew">+1 ⭐ per day</div></div><button class="task-btn-el tbdo" id="task-daily" onclick="claimDailyTask()">Claim</button></div>
-  <div class="task-card"><div class="task-ico">👥</div><div style="flex:1"><div class="task-name">Invite a friend</div><div class="task-rew">+5 ⭐ per friend</div></div><button class="task-btn-el tbdo" onclick="doInvite()">Invite</button></div>
-  <div class="task-card"><div class="task-ico">🎮</div><div style="flex:1"><div class="task-name">Play 5 rounds today</div><div class="task-rew">+3 ⭐ stars</div></div><button class="task-btn-el tbdo" id="task-rounds">0/5</button></div>
-  <div class="task-card"><div class="task-ico">💰</div><div style="flex:1"><div class="task-name">Win with x3.00 or higher</div><div class="task-rew">+5 ⭐ stars</div></div><button class="task-btn-el tbdo" id="task-bigwin" onclick="switchNav('crash')">Go play</button></div>
-  <div class="task-card"><div class="task-ico">🔥</div><div style="flex:1"><div class="task-name">7-day streak</div><div class="task-rew">+10 ⭐ bonus</div></div><button class="task-btn-el tbdo" id="task-streak">Go</button></div>
+  <div class="pg-title">Tasks</div>
+  <div class="task-card"><div class="task-ico">📅</div><div style="flex:1"><div class="task-nm">Daily login</div><div class="task-rw">+1 ⭐ per day</div></div><button class="tbtn tbdo" id="task-daily" onclick="claimDailyTask()">Claim</button></div>
+  <div class="task-card"><div class="task-ico">👥</div><div style="flex:1"><div class="task-nm">Invite a friend</div><div class="task-rw">+5 ⭐ per friend</div></div><button class="tbtn tbdo" onclick="doInvite()">Invite</button></div>
+  <div class="task-card"><div class="task-ico">🎮</div><div style="flex:1"><div class="task-nm">Play 5 rounds today</div><div class="task-rw">+3 ⭐ stars</div></div><button class="tbtn tbdo" id="task-rounds">0/5</button></div>
+  <div class="task-card"><div class="task-ico">💰</div><div style="flex:1"><div class="task-nm">Win with x3.00+</div><div class="task-rw">+5 ⭐ stars</div></div><button class="tbtn tbdo" id="task-bigwin" onclick="switchNav('crash')">Go play</button></div>
+  <div class="task-card"><div class="task-ico">🔥</div><div style="flex:1"><div class="task-nm">7-day streak</div><div class="task-rw">+10 ⭐ bonus</div></div><button class="tbtn tbdo" id="task-streak">Go</button></div>
 </div>
 
 <div id="page-leaderboard" class="page">
-  <div class="page-title">Leaderboard</div>
+  <div class="pg-title">Leaderboard</div>
   <div id="lb-list"></div>
 </div>
 
@@ -320,9 +262,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
     <div class="st-card"><div class="st-num" id="st-won">0</div><div class="st-lbl">Stars won</div></div>
     <div class="st-card"><div class="st-num" id="st-streak">0</div><div class="st-lbl">Day streak</div></div>
   </div>
-  <div class="invite-card">
+  <div class="inv-card">
     <div class="inv-title">Invite friends — earn 10%!</div>
-    <div class="inv-sub">Earn 10% from every deposit. Get ⭐5 per friend invited, up to 30/day.</div>
+    <div class="inv-sub">Earn 10% from every deposit. Get ⭐5 per friend, up to 30/day.</div>
     <div class="inv-stats">
       <div class="inv-st"><div class="inv-num" id="inv-cnt">0</div><div class="inv-lbl">Invited</div></div>
       <div class="inv-st"><div class="inv-num" id="inv-ern">0</div><div class="inv-lbl">Earned ⭐</div></div>
@@ -334,7 +276,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
   </div>
 </div>
 
-<!-- NAV BAR -->
+<!-- NAV -->
 <div class="nav-bar">
   <button class="nav-btn active" id="nav-crash" onclick="switchNav('crash')">
     <div class="nav-ico-wrap"><span class="nav-ico">🐄</span></div>
@@ -354,22 +296,56 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
   </button>
 </div>
 
+<!-- BET MODAL -->
+<div class="overlay" id="bet-overlay" onclick="bgClose('bet-overlay',event)">
+  <div class="sheet">
+    <button class="sheet-close" onclick="closeSheet('bet-overlay')">✕</button>
+    <div class="sheet-handle"></div>
+    <div class="sheet-title">New bet</div>
+    <div class="bet-bal-pill">
+      <span style="font-size:18px">⭐</span>
+      <span id="modal-bal">0</span>
+      <button class="bal-plus" onclick="closeSheet('bet-overlay');openSheet('topup-overlay')">+</button>
+    </div>
+    <div class="bet-inp-row">
+      <input class="bet-inp" type="number" id="bet-inp" placeholder="0" min="0" max="20000" inputmode="numeric" oninput="clampBet()">
+      <span class="bet-unit">stars</span>
+    </div>
+    <div class="bet-add-row">
+      <button class="add-btn" onclick="addToBet(100)">+ 100</button>
+      <button class="add-btn" onclick="addToBet(500)">+ 500</button>
+      <button class="add-btn" onclick="addToBet(2500)">+ 2,500</button>
+    </div>
+    <div class="bet-hint">From 50 to 20,000 stars</div>
+    <div class="auto-row">
+      <span class="auto-lbl">Auto cash-out</span>
+      <div class="auto-ctrl">
+        <button class="ac-btn" onclick="chAuto(-0.5)">−</button>
+        <span class="auto-val" id="auto-val">x2.00</span>
+        <button class="ac-btn" onclick="chAuto(0.5)">+</button>
+      </div>
+      <div class="atoggle on" id="atoggle" onclick="toggleAuto()"></div>
+    </div>
+    <button class="place-btn" onclick="confirmBet()">Place bet</button>
+  </div>
+</div>
+
 <!-- TOPUP MODAL -->
 <div class="overlay" id="topup-overlay" onclick="bgClose('topup-overlay',event)">
   <div class="sheet">
     <button class="sheet-close" onclick="closeSheet('topup-overlay')">✕</button>
     <div class="sheet-handle"></div>
     <div class="sheet-title">Top up with Stars</div>
-    <div style="text-align:center;font-size:12px;color:#555;margin-bottom:14px">Telegram Stars · Instant</div>
+    <div style="text-align:center;font-size:12px;color:#444;margin-bottom:14px">Telegram Stars · Instant</div>
     <div class="topup-grid">
-      <div class="tp-card selected" onclick="selTop(100,this)"><div class="tp-amt">⭐ 100</div><div class="tp-usd">≈$1.30</div></div>
+      <div class="tp-card sel" onclick="selTop(100,this)"><div class="tp-amt">⭐ 100</div><div class="tp-usd">≈$1.30</div></div>
       <div class="tp-card" onclick="selTop(200,this)"><div class="tp-amt">⭐ 200</div><div class="tp-usd">≈$2.60</div></div>
       <div class="tp-card" onclick="selTop(500,this)"><div class="tp-amt">⭐ 500</div><div class="tp-usd">≈$6.50</div></div>
       <div class="tp-card" onclick="selTop(1000,this)"><div class="tp-amt">⭐ 1,000</div><div class="tp-usd">≈$13</div></div>
       <div class="tp-card" onclick="selTop(2000,this)"><div class="tp-amt">⭐ 2,000</div><div class="tp-usd">≈$26</div></div>
       <div class="tp-card" onclick="selTop(5000,this)"><div class="tp-amt">⭐ 5,000</div><div class="tp-usd">≈$65</div></div>
     </div>
-    <button class="topup-btn" onclick="doTopup()">Top up ⭐ <span id="topup-btn-lbl">100</span> stars</button>
+    <button class="tp-btn" onclick="doTopup()">Top up ⭐ <span id="tp-lbl">100</span> stars</button>
   </div>
 </div>
 
@@ -377,16 +353,16 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 <div class="overlay" id="daily-overlay">
   <div class="sheet">
     <div class="sheet-handle"></div>
-    <span class="daily-icon">🎁</span>
+    <span class="daily-ico">🎁</span>
     <div style="font-size:20px;font-weight:800;text-align:center;margin-bottom:4px">Daily bonus!</div>
-    <div style="font-size:13px;color:#666;text-align:center;margin-bottom:16px">Come back every day for free stars</div>
-    <div class="daily-reward-box">
+    <div style="font-size:13px;color:#555;text-align:center;margin-bottom:16px">Come back every day for free stars</div>
+    <div class="daily-rew-box">
       <span style="font-size:28px">⭐</span>
-      <span style="font-size:32px;font-weight:900;color:#ffd700" id="daily-num">+1</span>
+      <span style="font-size:34px;font-weight:900;color:#ffd700" id="daily-num">+1</span>
       <div><div style="font-size:13px;font-weight:700">free star</div><div style="font-size:11px;color:#555">Day <span id="daily-day">1</span></div></div>
     </div>
     <div class="streak-row" id="streak-row"></div>
-    <button class="topup-btn" onclick="claimDaily()">Claim free star</button>
+    <button class="tp-btn" onclick="claimDaily()">Claim free star</button>
   </div>
 </div>
 
@@ -395,60 +371,48 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 <script>
 const SERVER='https://crash-casino-production.up.railway.app';
 const tg=window.Telegram?.WebApp;
-if(tg){tg.ready();tg.expand();try{tg.setHeaderColor('#0a140a');}catch(e){}}
+if(tg){tg.ready();tg.expand();try{tg.setHeaderColor('#080e08');}catch(e){}}
 
-let stars=0,gameState='idle';
-let currentMult=1,gameInterval=null,crashPoint=1;
+let stars=0,gameState='idle',currentMult=1;
+let myBet=0,myCashedOut=false,gameInterval=null,crashPoint=1;
 let startTime=0,crashHistory=[],fakePlayers=[];
 let gamesPlayed=0,bestMult=0,starsWon=0,roundsToday=0;
-let topupSel=100,curTab='all',curNav='crash';
+let autoMult=2,autoOn=true,topupSel=100;
 let initData=tg?.initData||'';
+let cowBaseY=0,cowFloatY=0,cowFloatDir=1,cowFlyPct=0;
 
-/* TWO BET PANELS */
-let bets=[
-  {placed:false,cashedOut:false,autoOn:true,autoMult:2.00,active:false},
-  {placed:false,cashedOut:false,autoOn:false,autoMult:3.00,active:false}
-];
-
-/* CANVAS */
 const cowCanvas=document.getElementById('cow-canvas');
 const cowCtx=cowCanvas.getContext('2d');
 const bgCanvas=document.getElementById('bg-canvas');
 const bgCtx=bgCanvas.getContext('2d');
-let cowY=0,cowBaseY=0,cowFloatY=0,cowFloatDir=1,cowFlyProgress=0;
 
-function resizeAll(){
+function resize(){
   const scene=document.getElementById('scene');
   cowCanvas.width=scene.clientWidth;
-  cowCanvas.height=120;
+  cowCanvas.height=110;
   bgCanvas.width=scene.clientWidth;
-  bgCanvas.height=140;
+  bgCanvas.height=130;
   drawBg();buildFence();buildStars();
 }
 
 function drawBg(){
   const W=bgCanvas.width,H=bgCanvas.height;
   bgCtx.clearRect(0,0,W,H);
-  /* Trees */
-  const treeData=[
-    {x:0.05,h:110,w:50},{x:0.12,h:90,w:42},{x:0.22,h:120,w:55},
-    {x:0.35,h:80,w:38},{x:0.45,h:130,w:58},{x:0.55,h:95,w:44},
-    {x:0.65,h:110,w:50},{x:0.75,h:85,w:40},{x:0.85,h:125,w:56},
-    {x:0.92,h:100,w:46}
+  const trees=[
+    {x:.04,h:108,w:48},{x:.13,h:88,w:40},{x:.22,h:118,w:52},
+    {x:.33,h:78,w:36},{x:.44,h:128,w:56},{x:.54,h:94,w:43},
+    {x:.63,h:108,w:48},{x:.74,h:84,w:38},{x:.83,h:122,w:54},
+    {x:.93,h:98,w:44}
   ];
-  treeData.forEach(t=>{
+  trees.forEach(t=>{
     const x=t.x*W,h=t.h,w=t.w;
-    /* Trunk */
-    bgCtx.fillStyle='#2a1a08';
-    bgCtx.fillRect(x-5,H-20,10,20);
-    /* Layers */
-    const layers=3;
-    for(let i=0;i<layers;i++){
-      const ly=H-20-(i*(h/layers*0.7));
-      const lw=w*(1-(i*0.25));
-      const lh=h/layers*0.8;
-      const shade=i===0?'#0d2a0d':i===1?'#0f3a0f':'#124a12';
-      bgCtx.fillStyle=shade;
+    bgCtx.fillStyle='#241208';
+    bgCtx.fillRect(x-4,H-18,9,18);
+    for(let i=0;i<3;i++){
+      const ly=H-18-(i*(h/3*.65));
+      const lw=w*(1-i*.22);
+      const lh=h/3*.75;
+      bgCtx.fillStyle=i===0?'#0c260c':i===1?'#0f3010':'#123812';
       bgCtx.beginPath();
       bgCtx.moveTo(x,ly-lh);
       bgCtx.lineTo(x-lw/2,ly);
@@ -462,157 +426,153 @@ function drawBg(){
 function buildFence(){
   const fence=document.getElementById('fence');
   fence.innerHTML='';
-  const W=cowCanvas.width||300;
-  const count=Math.floor(W/20);
+  const W=cowCanvas.width||320;
+  const count=Math.floor(W/18);
   for(let i=0;i<count;i++){
-    const post=document.createElement('div');
-    post.style.cssText='width:6px;height:20px;background:#5a3a10;flex-shrink:0;border-radius:1px';
-    fence.appendChild(post);
+    const p=document.createElement('div');
+    p.style.cssText='width:5px;height:18px;background:#4a2e0a;flex-shrink:0;border-radius:1px';
+    fence.appendChild(p);
     if(i<count-1){
-      const rail=document.createElement('div');
-      rail.style.cssText='flex:1;height:3px;background:#7a5218;align-self:center';
-      fence.appendChild(rail);
+      const r=document.createElement('div');
+      r.style.cssText='flex:1;height:3px;background:#6a4218;align-self:center';
+      fence.appendChild(r);
     }
   }
 }
 
 function buildStars(){
-  const layer=document.getElementById('stars-layer');
-  layer.innerHTML='';
-  for(let i=0;i<60;i++){
+  const l=document.getElementById('stars-layer');l.innerHTML='';
+  for(let i=0;i<70;i++){
     const s=document.createElement('div');
-    const sz=Math.random()<0.3?2.5:1.5;
-    s.style.cssText=`position:absolute;width:${sz}px;height:${sz}px;background:#fff;border-radius:50%;left:${Math.random()*100}%;top:${Math.random()*60}%;opacity:${(Math.random()*0.7+0.1).toFixed(2)}`;
-    layer.appendChild(s);
+    const sz=Math.random()<0.25?2.5:1.5;
+    s.style.cssText=`position:absolute;width:${sz}px;height:${sz}px;background:#fff;border-radius:50%;left:${Math.random()*100}%;top:${Math.random()*55}%;opacity:${(Math.random()*.7+.1).toFixed(2)}`;
+    l.appendChild(s);
   }
 }
 
-/* DRAW COW */
-function drawCow(x,y,crashed,flyPct){
+/* COW DRAWING */
+function drawCow(x,y,crashed,fly){
   const c=cowCtx;
   const W=cowCanvas.width;
   c.clearRect(0,0,W,cowCanvas.height);
-  if(crashed){
-    c.font='48px serif';c.textAlign='center';
-    c.fillText('💥',x,y+40);
-    return;
-  }
-  c.save();
-  c.translate(x,y);
-  if(flyPct>0){
-    c.rotate(-flyPct*0.3);
-    /* Rocket under cow */
-    c.fillStyle='#3b82f6';
-    c.beginPath();c.ellipse(0,30,12,28,0,0,Math.PI*2);c.fill();
-    c.fillStyle='#ef4444';
-    c.beginPath();c.moveTo(0,-2);c.lineTo(-12,16);c.lineTo(12,16);c.closePath();c.fill();
+  if(crashed){c.font='44px serif';c.textAlign='center';c.fillText('💥',x,y+30);return;}
+  c.save();c.translate(x,y);
+  if(fly>0){
+    c.rotate(-fly*.28);
+    /* Rocket */
+    c.fillStyle='#2563eb';
+    c.beginPath();c.ellipse(0,26,11,26,0,0,Math.PI*2);c.fill();
+    c.fillStyle='#dc2626';
+    c.beginPath();c.moveTo(0,0);c.lineTo(-11,14);c.lineTo(11,14);c.closePath();c.fill();
     /* Flame */
-    c.fillStyle='#ff8800';
-    c.beginPath();c.ellipse(0,54,8,18,0,0,Math.PI*2);c.fill();
-    c.fillStyle='#ffdd00';
-    c.beginPath();c.ellipse(0,50,5,12,0,0,Math.PI*2);c.fill();
+    c.fillStyle='#f97316';
+    c.beginPath();c.ellipse(0,48,7,16,0,0,Math.PI*2);c.fill();
+    c.fillStyle='#fbbf24';
+    c.beginPath();c.ellipse(0,44,4,10,0,0,Math.PI*2);c.fill();
     /* Wings */
     c.fillStyle='#60a5fa';
-    c.beginPath();c.moveTo(-12,22);c.lineTo(-22,32);c.lineTo(-12,36);c.closePath();c.fill();
-    c.beginPath();c.moveTo(12,22);c.lineTo(22,32);c.lineTo(12,36);c.closePath();c.fill();
+    c.beginPath();c.moveTo(-11,18);c.lineTo(-20,28);c.lineTo(-11,32);c.closePath();c.fill();
+    c.beginPath();c.moveTo(11,18);c.lineTo(20,28);c.lineTo(11,32);c.closePath();c.fill();
   }
-  /* COW BODY */
-  c.fillStyle='#f0f0f0';
-  c.beginPath();c.ellipse(0,0,30,20,0,0,Math.PI*2);c.fill();
+  /* Body */
+  c.fillStyle='#f5f5f5';
+  c.beginPath();c.ellipse(0,0,28,18,0,0,Math.PI*2);c.fill();
   /* Spots */
-  c.fillStyle='#333';
-  c.beginPath();c.ellipse(-8,-5,8,6,0.3,0,Math.PI*2);c.fill();
-  c.beginPath();c.ellipse(12,3,6,5,-0.2,0,Math.PI*2);c.fill();
+  c.fillStyle='#2a2a2a';
+  c.beginPath();c.ellipse(-7,-4,7,5,.3,0,Math.PI*2);c.fill();
+  c.beginPath();c.ellipse(11,3,5,4,-.2,0,Math.PI*2);c.fill();
   /* Head */
-  c.fillStyle='#f0f0f0';
-  c.beginPath();c.ellipse(28,-4,16,14,0,0,Math.PI*2);c.fill();
+  c.fillStyle='#f5f5f5';
+  c.beginPath();c.ellipse(26,-4,14,12,0,0,Math.PI*2);c.fill();
   /* Snout */
-  c.fillStyle='#ffcccc';
-  c.beginPath();c.ellipse(38,-2,8,6,0,0,Math.PI*2);c.fill();
-  c.fillStyle='#cc6677';
-  c.beginPath();c.arc(35,-2,2,0,Math.PI*2);c.fill();
-  c.beginPath();c.arc(41,-2,2,0,Math.PI*2);c.fill();
+  c.fillStyle='#fca5a5';
+  c.beginPath();c.ellipse(35,-2,7,5,0,0,Math.PI*2);c.fill();
+  c.fillStyle='#be123c';
+  c.beginPath();c.arc(32,-2,1.8,0,Math.PI*2);c.fill();
+  c.beginPath();c.arc(38,-2,1.8,0,Math.PI*2);c.fill();
   /* Eye */
-  c.fillStyle='#222';
-  c.beginPath();c.arc(26,-8,3,0,Math.PI*2);c.fill();
+  c.fillStyle='#111';
+  c.beginPath();c.arc(24,-7,2.5,0,Math.PI*2);c.fill();
   c.fillStyle='#fff';
-  c.beginPath();c.arc(27,-9,1,0,Math.PI*2);c.fill();
+  c.beginPath();c.arc(25,-8,.9,0,Math.PI*2);c.fill();
   /* Ear */
-  c.fillStyle='#f0f0f0';
-  c.beginPath();c.ellipse(22,-16,5,8,-0.4,0,Math.PI*2);c.fill();
-  c.fillStyle='#ffaaaa';
-  c.beginPath();c.ellipse(22,-16,3,5,-0.4,0,Math.PI*2);c.fill();
+  c.fillStyle='#f5f5f5';
+  c.beginPath();c.ellipse(20,-14,4,7,-.4,0,Math.PI*2);c.fill();
+  c.fillStyle='#fca5a5';
+  c.beginPath();c.ellipse(20,-14,2.5,4.5,-.4,0,Math.PI*2);c.fill();
   /* Horns */
-  c.fillStyle='#dda010';
-  c.beginPath();c.moveTo(18,-18);c.lineTo(14,-28);c.lineTo(22,-20);c.closePath();c.fill();
+  c.fillStyle='#ca8a04';
+  c.beginPath();c.moveTo(16,-16);c.lineTo(13,-25);c.lineTo(21,-18);c.closePath();c.fill();
   /* Udder */
-  c.fillStyle='#ffaaaa';
-  c.beginPath();c.ellipse(-4,18,12,7,0,0,Math.PI*2);c.fill();
-  /* Legs */
-  if(flyPct===0){
-    c.fillStyle='#e0e0e0';
-    [[-18,18],[-8,18],[8,18],[18,18]].forEach(([lx,ly])=>{
-      c.fillRect(lx-4,ly,8,14);
-    });
-    /* Hooves */
-    c.fillStyle='#222';
-    [[-18,32],[-8,32],[8,32],[18,32]].forEach(([lx,ly])=>{
-      c.beginPath();c.ellipse(lx,ly,5,3,0,0,Math.PI*2);c.fill();
-    });
+  c.fillStyle='#fca5a5';
+  c.beginPath();c.ellipse(-4,16,10,6,0,0,Math.PI*2);c.fill();
+  /* Legs (only when not flying) */
+  if(fly===0){
+    c.fillStyle='#e5e5e5';
+    [[-16,16],[-7,16],[7,16],[16,16]].forEach(([lx,ly])=>{c.fillRect(lx-3,ly,7,13);});
+    c.fillStyle='#111';
+    [[-16,29],[-7,29],[7,29],[16,29]].forEach(([lx,ly])=>{c.beginPath();c.ellipse(lx,ly,4,2.5,0,0,Math.PI*2);c.fill();});
   }
   /* Tail */
-  c.strokeStyle='#ddd';c.lineWidth=3;c.lineCap='round';
-  c.beginPath();c.moveTo(-28,0);c.quadraticCurveTo(-40,-10,-36,-20);c.stroke();
-  c.fillStyle='#ccc';
-  c.beginPath();c.ellipse(-36,-20,5,8,0.4,0,Math.PI*2);c.fill();
+  c.strokeStyle='#ddd';c.lineWidth=2.5;c.lineCap='round';
+  c.beginPath();c.moveTo(-26,0);c.quadraticCurveTo(-36,-8,-33,-18);c.stroke();
+  c.fillStyle='#bbb';
+  c.beginPath();c.ellipse(-33,-18,4,7,.4,0,Math.PI*2);c.fill();
   c.restore();
 }
 
-function animCow(){
-  const W=cowCanvas.width;
+function animLoop(){
+  const W=cowCanvas.width,H=cowCanvas.height;
   const cx=W/2;
-  if(gameState==='running'||gameState==='countdown'){
-    cowFloatY+=0.15*cowFloatDir;
-    if(cowFloatY>5||cowFloatY<-5)cowFloatDir*=-1;
-  }
-  let finalY=cowBaseY+cowFloatY;
   if(gameState==='running'){
+    cowFloatY+=.18*cowFloatDir;
+    if(cowFloatY>6||cowFloatY<-6)cowFloatDir*=-1;
     const e=(Date.now()-startTime)/1000;
-    cowFlyProgress=Math.min(e/3,1);
-    finalY=cowBaseY-(cowFlyProgress*180);
-    const beam=document.getElementById('beam');
-    if(cowFlyProgress>0.1){
-      beam.style.display='block';
-      beam.style.height=(cowFlyProgress*200)+'px';
-      beam.style.bottom=(65+20)+'px';
-    }
+    cowFlyPct=Math.min(e/2.5,1);
+  } else if(gameState==='countdown'){
+    cowFloatY+=.1*cowFloatDir;
+    if(cowFloatY>4||cowFloatY<-4)cowFloatDir*=-1;
+    cowFlyPct=0;
   } else {
-    cowFlyProgress=0;
-    document.getElementById('beam').style.display='none';
+    cowFlyPct=0;
   }
-  drawCow(cx,finalY,gameState==='crashed',cowFlyProgress);
-  requestAnimationFrame(animCow);
+  const maxRise=H+40;
+  const cy=cowBaseY+cowFloatY-(cowFlyPct*maxRise);
+  const beam=document.getElementById('beam');
+  if(gameState==='running'&&cowFlyPct>.1){
+    beam.style.display='block';
+    const bh=cowFlyPct*180;
+    beam.style.height=bh+'px';
+    beam.style.bottom='75px';
+  } else {
+    beam.style.display='none';
+  }
+  drawCow(cx,cy,gameState==='crashed',cowFlyPct);
+  requestAnimationFrame(animLoop);
 }
 
 /* UTILS */
 function fmt(n){return Number(Math.round(n)).toLocaleString();}
 function rnd(a,b){return Math.floor(Math.random()*(b-a+1))+a;}
-function updateStars(){document.getElementById('stars-display').textContent=fmt(stars);}
-function toast(msg,d=2500){
-  const e=document.getElementById('toast');e.textContent=msg;e.classList.add('show');
-  setTimeout(()=>e.classList.remove('show'),d);
+function updateStars(){
+  document.getElementById('stars-disp').textContent=fmt(stars);
+  document.getElementById('modal-bal').textContent=fmt(stars);
 }
+function toast(msg,d=2500){const e=document.getElementById('toast');e.textContent=msg;e.classList.add('show');setTimeout(()=>e.classList.remove('show'),d);}
 function openSheet(id){document.getElementById(id).classList.add('open');}
 function closeSheet(id){document.getElementById(id).classList.remove('open');}
 function bgClose(id,e){if(e.target===document.getElementById(id))closeSheet(id);}
 
 /* NAV */
 function switchNav(name){
-  curNav=name;
   document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
   document.getElementById('nav-'+name).classList.add('active');
-  const isGame=name==='crash';
-  document.getElementById('game-scene-wrap').style.display=isGame?'flex':'none';
+  const isCrash=name==='crash';
+  document.getElementById('scene').style.display=isCrash?'block':'none';
+  document.getElementById('bal-bar').style.display=isCrash?'flex':'none';
+  document.getElementById('crash-section').style.display=isCrash?'flex':'none';
+  document.getElementById('action-area').style.display=isCrash?'block':'none';
+  document.getElementById('history-bar').style.display=isCrash?'flex':'none';
   ['tasks','leaderboard','profile'].forEach(p=>{
     const el=document.getElementById('page-'+p);
     if(el)el.classList.toggle('active',p===name);
@@ -621,98 +581,98 @@ function switchNav(name){
   if(name==='profile')renderProfile();
 }
 
-/* PLAYER TABS */
 function switchTab(t){
-  curTab=t;
   document.querySelectorAll('.ptab').forEach(p=>p.classList.remove('active'));
   document.getElementById('ptab-'+t).classList.add('active');
   renderPlayers();
 }
 
-/* BET PANEL */
-function getBetAmt(n){
-  const v=parseFloat(document.getElementById('bet-inp-'+n).value)||0;
-  return Math.max(0,Math.min(20000,v));
+/* MAIN BUTTON LOGIC */
+function setBtn(state,text){
+  const btn=document.getElementById('main-btn');
+  btn.className='main-btn '+state;
+  btn.textContent=text;
+  btn.disabled=(state==='btn-disabled'||state==='btn-waiting');
 }
-function stepVal(n){
-  const v=getBetAmt(n);
-  return v>=1000?100:v>=100?50:10;
-}
-function adjustBet(n,d){
-  const inp=document.getElementById('bet-inp-'+n);
-  const cur=parseFloat(inp.value)||0;
-  inp.value=Math.max(1,Math.min(20000,cur+d));
-  updateBetLabel(n);
-}
-function setQuick(n,v){
-  document.getElementById('bet-inp-'+n).value=v;
-  updateBetLabel(n);
-}
-function updateBetLabel(n){
-  const v=getBetAmt(n);
-  document.getElementById('bet-lbl-'+n).textContent=fmt(v)+' ⭐';
-}
-function toggleAuto(n){
-  bets[n-1].autoOn=!bets[n-1].autoOn;
-  document.getElementById('auto-btn-'+n).classList.toggle('active',bets[n-1].autoOn);
-}
-['1','2'].forEach(n=>{
-  document.getElementById('bet-inp-'+n).addEventListener('input',()=>updateBetLabel(n));
-});
 
-function handleBet(n){
-  const idx=n-1;
-  const b=bets[idx];
-  if(gameState==='running'&&b.placed&&!b.cashedOut){
-    doCashOut(n);return;
+function handleMain(){
+  if(gameState==='idle'&&myBet===0){
+    document.getElementById('bet-inp').value='';
+    openSheet('bet-overlay');
+    setTimeout(()=>document.getElementById('bet-inp').focus(),400);
+  } else if(gameState==='running'&&myBet>0&&!myCashedOut){
+    cashOut();
   }
-  if(b.placed)return;
-  const amt=getBetAmt(n);
-  if(amt<1){toast('Enter a bet amount');return;}
+}
+
+/* BET MODAL */
+function clampBet(){
+  const inp=document.getElementById('bet-inp');
+  let v=parseInt(inp.value)||0;
+  if(v>20000)inp.value=20000;
+  if(v<0)inp.value=0;
+}
+function addToBet(n){
+  const inp=document.getElementById('bet-inp');
+  inp.value=Math.min(20000,(parseInt(inp.value)||0)+n);
+}
+function chAuto(d){
+  autoMult=Math.max(1.1,Math.min(100,parseFloat((autoMult+d).toFixed(2))));
+  document.getElementById('auto-val').textContent='x'+autoMult.toFixed(2);
+}
+function toggleAuto(){
+  autoOn=!autoOn;
+  document.getElementById('atoggle').classList.toggle('on',autoOn);
+}
+
+function confirmBet(){
+  const amt=Math.min(20000,Math.max(0,parseInt(document.getElementById('bet-inp').value)||0));
+  if(amt<50){toast('Minimum bet is 50 stars');return;}
   if(amt>stars){toast('Not enough stars!');return;}
-  b.placed=true;b.cashedOut=false;b.amount=amt;
-  stars-=amt;updateStars();
-  const btn=document.getElementById('action-btn-'+n);
+  closeSheet('bet-overlay');
+  myBet=amt;stars-=myBet;updateStars();
+  document.getElementById('placed-info').classList.add('show');
+  document.getElementById('placed-val').textContent='⭐ '+fmt(myBet);
   if(gameState==='running'){
-    btn.className='bet-action-btn btn-cashout';
-    btn.innerHTML='CASHOUT<br><span>x'+currentMult.toFixed(2)+'</span>';
+    setBtn('btn-cashout','CASH OUT  x'+currentMult.toFixed(2));
   } else {
-    btn.className='bet-action-btn btn-bet-green placed';
-    btn.innerHTML='Placed<br><span id="bet-lbl-'+n+'">'+fmt(amt)+' ⭐</span>';
+    setBtn('btn-waiting','Bet placed — starting...');
     if(!gameInterval)startCountdown();
   }
   renderPlayers();
-  toast('Bet ⭐'+fmt(amt)+' placed!');
+  toast('Bet ⭐'+fmt(myBet)+' placed!');
 }
 
-function doCashOut(n){
-  const idx=n-1;
-  const b=bets[idx];
-  if(!b.placed||b.cashedOut||gameState!=='running')return;
-  b.cashedOut=true;
-  const win=Math.floor(b.amount*currentMult);
-  const profit=win-b.amount;
+function cashOut(){
+  if(myCashedOut||gameState!=='running')return;
+  myCashedOut=true;
+  const win=Math.floor(myBet*currentMult);
+  const profit=win-myBet;
   stars+=win;updateStars();
   starsWon+=Math.max(0,profit);
   if(currentMult>bestMult)bestMult=currentMult;
   if(currentMult>=3){
-    const tb=document.getElementById('task-bigwin');
-    if(tb&&tb.textContent!=='Done'){tb.className='task-btn-el tbdone';tb.textContent='Done';stars+=5;updateStars();toast('+5 ⭐ big win task!');}
+    const b=document.getElementById('task-bigwin');
+    if(b&&b.textContent!=='Done'){b.className='tbtn tbdone';b.textContent='Done';stars+=5;updateStars();toast('+5 ⭐ big win task!');}
   }
-  const btn=document.getElementById('action-btn-'+n);
-  btn.className='bet-action-btn btn-bet-green';
-  btn.innerHTML='Won!<br><span>+'+fmt(profit)+' ⭐</span>';
+  setBtn('btn-place','Place bet');
+  document.getElementById('placed-info').classList.remove('show');
+  const rb=document.getElementById('result-banner');
+  rb.className='result-banner rb-win show';
+  rb.textContent='Cashed out x'+currentMult.toFixed(2)+' — won ⭐'+fmt(win)+' (+'+fmt(profit)+')';
+  saveBet(myBet,currentMult);
   renderPlayers();
   toast('Won ⭐'+fmt(win)+'!');
 }
 
-/* COUNTDOWN */
+/* GAME */
 function startCountdown(){
   crashPoint=genCrash();genFakePlayers();
-  gameState='countdown';
-  cowBaseY=50;
+  gameState='countdown';cowBaseY=40;
+  document.getElementById('result-banner').classList.remove('show');
   const mn=document.getElementById('mult-num');
   mn.className='mult-num countdown';
+  document.getElementById('mult-label').textContent='';
   const seq=['5','4','3','2','1','GO!!'];
   let i=0;
   const cd=setInterval(()=>{
@@ -723,30 +683,22 @@ function startCountdown(){
 
 function genCrash(){
   const r=Math.random();
-  if(r<0.35)return parseFloat((1+Math.random()*0.6).toFixed(2));
-  if(r<0.65)return parseFloat((1.6+Math.random()*1.4).toFixed(2));
-  if(r<0.85)return parseFloat((3+Math.random()*5).toFixed(2));
+  if(r<.35)return parseFloat((1+Math.random()*.6).toFixed(2));
+  if(r<.65)return parseFloat((1.6+Math.random()*1.4).toFixed(2));
+  if(r<.85)return parseFloat((3+Math.random()*5).toFixed(2));
   return parseFloat((8+Math.random()*22).toFixed(2));
 }
 
 function startRound(){
-  gameState='running';currentMult=1;startTime=Date.now();
+  gameState='running';currentMult=1;myCashedOut=false;startTime=Date.now();
   gamesPlayed++;roundsToday++;
   const tr=document.getElementById('task-rounds');
   if(tr&&roundsToday<=5)tr.textContent=Math.min(roundsToday,5)+'/5';
-  if(roundsToday>=5&&tr&&tr.textContent!=='Done'){tr.className='task-btn-el tbdone';tr.textContent='Done';stars+=3;updateStars();}
+  if(roundsToday>=5&&tr&&tr.textContent!=='Done'){tr.className='tbtn tbdone';tr.textContent='Done';stars+=3;updateStars();}
   const mn=document.getElementById('mult-num');
-  mn.className='mult-num run';
-  mn.textContent='1.00x';
+  mn.className='mult-num run';mn.textContent='1.00x';
   document.getElementById('mult-label').textContent='Flying up!';
-  bets.forEach((b,i)=>{
-    if(b.placed&&!b.cashedOut){
-      const btn=document.getElementById('action-btn-'+(i+1));
-      btn.className='bet-action-btn btn-cashout';
-      btn.innerHTML='CASHOUT<br><span id="co-lbl-'+(i+1)+'">x1.00</span>';
-      btn.disabled=false;
-    }
-  });
+  if(myBet>0&&!myCashedOut){setBtn('btn-cashout','CASH OUT  x1.00');}
   gameInterval=setInterval(tick,50);
 }
 
@@ -755,16 +707,11 @@ function tick(){
   currentMult=parseFloat((Math.pow(1.06,e*10)).toFixed(2));
   if(currentMult<1)currentMult=1;
   document.getElementById('mult-num').textContent=currentMult.toFixed(2)+'x';
-  bets.forEach((b,i)=>{
-    if(b.placed&&!b.cashedOut){
-      const lbl=document.getElementById('co-lbl-'+(i+1));
-      if(lbl)lbl.textContent='x'+currentMult.toFixed(2);
-      if(b.autoOn&&currentMult>=b.autoMult)doCashOut(i+1);
-    }
-  });
-  fakePlayers.forEach(fp=>{
-    if(!fp.cashedAt&&!fp.lost&&currentMult>=fp.autoOut)fp.cashedAt=currentMult;
-  });
+  if(myBet>0&&!myCashedOut){
+    setBtn('btn-cashout','CASH OUT  x'+currentMult.toFixed(2));
+    if(autoOn&&currentMult>=autoMult)cashOut();
+  }
+  fakePlayers.forEach(fp=>{if(!fp.cashedAt&&!fp.lost&&currentMult>=fp.autoOut)fp.cashedAt=currentMult;});
   renderPlayers();
   if(currentMult>=crashPoint)doCrash();
 }
@@ -775,38 +722,36 @@ function doCrash(){
   const f=parseFloat(crashPoint.toFixed(2));
   crashHistory.unshift(f);if(crashHistory.length>15)crashHistory.pop();
   renderHistory();
-  const mn=document.getElementById('mult-num');
-  mn.textContent=f+'x';mn.className='mult-num crash';
+  document.getElementById('mult-num').textContent=f+'x';
+  document.getElementById('mult-num').className='mult-num crash';
   document.getElementById('mult-label').textContent='Crashed!';
-  bets.forEach((b,i)=>{
-    if(b.placed&&!b.cashedOut){
-      const btn=document.getElementById('action-btn-'+(i+1));
-      btn.className='bet-action-btn btn-bet-green';
-      btn.innerHTML='Bet<br><span id="bet-lbl-'+(i+1)+'">'+fmt(getBetAmt(i+1))+' ⭐</span>';
-    }
-    b.placed=false;b.cashedOut=false;
-  });
   fakePlayers.forEach(fp=>{if(!fp.cashedAt)fp.lost=true;});
+  if(myBet>0&&!myCashedOut){
+    const rb=document.getElementById('result-banner');
+    rb.className='result-banner rb-lose show';
+    rb.textContent='Crashed at x'+f+' — lost ⭐'+fmt(myBet);
+    saveBet(myBet,null);
+  }
+  document.getElementById('placed-info').classList.remove('show');
+  setBtn('btn-place','Place bet');
   renderPlayers();
-  setTimeout(resetRound,3000);
+  setTimeout(()=>{myBet=0;myCashedOut=false;fakePlayers=[];renderPlayers();resetRound();},3200);
 }
 
 function resetRound(){
-  gameState='idle';currentMult=1;cowBaseY=50;cowFlyProgress=0;
-  fakePlayers=[];
+  gameState='idle';currentMult=1;cowBaseY=40;cowFlyPct=0;
   document.getElementById('mult-num').textContent='1';
   document.getElementById('mult-num').className='mult-num wait';
-  document.getElementById('mult-label').textContent='Waiting...';
-  renderPlayers();
+  document.getElementById('mult-label').textContent='Waiting for bets...';
+  document.getElementById('result-banner').classList.remove('show');
 }
 
-/* FAKE PLAYERS */
-const PNAMES=['Aquver','StarRider','CryptoX','MoonAce','LuckyBet','NovaStar','CosmicPro','NebulaX','OrbitAce','PulsarBet','CowKing','RanchPro'];
+const PNAMES=['Aquver','CowKing','MoonAce','StarRider','CryptoX','LuckyBet','NovaStar','RanchPro','NebulaX','OrbitAce','PulsarBet','GalaxyCow'];
 const PCOLORS=['#e74c3c','#3b82f6','#10b981','#f59e0b','#8b5cf6','#06b6d4','#ec4899','#14b8a6','#f97316','#84cc16'];
 
 function genFakePlayers(){
   fakePlayers=[];
-  for(let i=0;i<rnd(4,8);i++){
+  for(let i=0;i<rnd(4,9);i++){
     fakePlayers.push({name:PNAMES[rnd(0,PNAMES.length-1)],bet:rnd(1,40)*50,color:PCOLORS[rnd(0,PCOLORS.length-1)],cashedAt:null,lost:false,autoOut:parseFloat((rnd(110,600)/100).toFixed(2))});
   }
 }
@@ -814,24 +759,18 @@ function genFakePlayers(){
 function renderPlayers(){
   const el=document.getElementById('players-list');
   const all=[];
-  bets.forEach((b,i)=>{
-    if(b.placed||b.cashedOut)all.push({name:tg?.initDataUnsafe?.user?.first_name||'You',bet:b.amount||0,color:'#3b82f6',cashedAt:b.cashedOut?currentMult:null,lost:!b.cashedOut&&gameState==='crashed',isMe:true});
-  });
+  if(myBet>0)all.push({name:tg?.initDataUnsafe?.user?.first_name||'You',bet:myBet,color:'#2d7a2d',cashedAt:myCashedOut?currentMult:null,lost:!myCashedOut&&gameState==='crashed',isMe:true});
   all.push(...fakePlayers);
-  if(!all.length){el.innerHTML='<div style="padding:14px;text-align:center;color:#333;font-size:12px">Place a bet to join</div>';return;}
+  if(!all.length){el.innerHTML='<div style="padding:16px;text-align:center;color:#333;font-size:13px">Place a bet to join</div>';return;}
   el.innerHTML=all.map(p=>{
     let prize,mc='#555';
-    if(p.cashedAt){
-      prize=`<span class="pl-prize pr-win">+${fmt(Math.floor(p.bet*(p.cashedAt-1)))}</span>`;mc='#6dff6d';
-    } else if(p.lost||gameState==='crashed'){
-      prize=`<span class="pl-prize pr-lose">−${fmt(p.bet)}</span>`;mc='#ff6b6b';
-    } else {
-      prize=`<span class="pl-prize pr-pend">⭐</span>`;mc='#888';
-    }
+    if(p.cashedAt){prize=`<span class="pl-prize pr-win">+${fmt(Math.floor(p.bet*(p.cashedAt-1)))}</span>`;mc='#6dff6d';}
+    else if(p.lost||gameState==='crashed'){prize=`<span class="pl-prize pr-lose">−${fmt(p.bet)}</span>`;mc='#ff6b6b';}
+    else prize=`<span class="pl-prize pr-pend">⭐</span>`;
     return `<div class="pl-row">
-      <div class="pl-avatar" style="background:${p.color}">${p.name[0]}</div>
+      <div class="pl-av" style="background:${p.color}">${p.name[0]}</div>
       <div class="pl-name">${p.name}${p.isMe?' (you)':''}</div>
-      <div class="pl-bet">⭐${fmt(p.bet)}<span class="pl-mult" style="color:${mc}">×${(p.cashedAt||currentMult).toFixed(2)}</span></div>
+      <div class="pl-info">⭐${fmt(p.bet)}<span class="pl-mult" style="color:${mc}">×${(p.cashedAt||currentMult).toFixed(2)}</span></div>
       ${prize}
     </div>`;
   }).join('');
@@ -846,12 +785,10 @@ function renderHistory(){
   }).join('');
 }
 
-/* LEADERBOARD */
 function renderLB(){
   const names=['CowKing','MoonAce','StarRider','CryptoX','NovaStar','RanchPro','GalaxyBet','NebulaX','PulsarAce','CosmicPro'];
-  const colors=PCOLORS;
   const myName=tg?.initDataUnsafe?.user?.first_name||'You';
-  const rows=[{name:myName,score:starsWon,color:'#3b82f6',me:true},...names.map((n,i)=>({name:n,score:rnd(200,9999),color:colors[i%colors.length]}))];
+  const rows=[{name:myName,score:starsWon,color:'#2d7a2d',me:true},...names.map((n,i)=>({name:n,score:rnd(200,9999),color:PCOLORS[i%PCOLORS.length]}))];
   rows.sort((a,b)=>b.score-a.score);
   document.getElementById('lb-list').innerHTML=rows.slice(0,10).map((r,i)=>`
     <div class="lb-row">
@@ -862,14 +799,13 @@ function renderLB(){
     </div>`).join('');
 }
 
-/* PROFILE */
 function renderProfile(){
   const user=tg?.initDataUnsafe?.user;
   const name=user?.first_name||'Player';
   document.getElementById('prof-nm').textContent=name;
   document.getElementById('prof-av').textContent=name[0]?.toUpperCase()||'?';
-  document.getElementById('bal-name').textContent=name;
-  document.getElementById('bal-avatar').textContent=name[0]?.toUpperCase()||'?';
+  document.getElementById('bal-nm').textContent=name;
+  document.getElementById('bal-av').textContent=name[0]?.toUpperCase()||'?';
   document.getElementById('st-games').textContent=gamesPlayed;
   document.getElementById('st-best').textContent=bestMult>0?bestMult.toFixed(2)+'x':'—';
   document.getElementById('st-won').textContent=fmt(starsWon);
@@ -877,77 +813,68 @@ function renderProfile(){
   document.getElementById('st-streak').textContent=parseInt(localStorage.getItem('orb_streak_'+uid)||'0');
 }
 
-/* INVITE */
 function doInvite(){
   const uid=tg?.initDataUnsafe?.user?.id||'0';
   const link=`https://t.me/OrbitCrashBot?start=ref_${uid}`;
   try{tg.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(link)}&text=${encodeURIComponent('Play Cow Crash — win Stars! '+link)}`);}
   catch(e){copyToClipboard(link);toast('Link copied!');}
 }
-function copyLink(){
-  const uid=tg?.initDataUnsafe?.user?.id||'0';
-  copyToClipboard(`https://t.me/OrbitCrashBot?start=ref_${uid}`);toast('Link copied!');
-}
-function copyToClipboard(t){
-  try{navigator.clipboard.writeText(t);}catch(e){const el=document.createElement('textarea');el.value=t;document.body.appendChild(el);el.select();document.execCommand('copy');document.body.removeChild(el);}
-}
+function copyLink(){copyToClipboard(`https://t.me/OrbitCrashBot?start=ref_${tg?.initDataUnsafe?.user?.id||'0'}`);toast('Link copied!');}
+function copyToClipboard(t){try{navigator.clipboard.writeText(t);}catch(e){const el=document.createElement('textarea');el.value=t;document.body.appendChild(el);el.select();document.execCommand('copy');document.body.removeChild(el);}}
 
-/* DAILY */
 function checkDaily(){
   const uid=tg?.initDataUnsafe?.user?.id||'guest';
-  const dk='orb_daily_'+uid,sk='orb_streak_'+uid;
+  const dk='cow_daily_'+uid,sk='cow_streak_'+uid;
   const last=localStorage.getItem(dk),today=new Date().toDateString();
-  if(last===today){document.getElementById('task-daily').className='task-btn-el tbdone';document.getElementById('task-daily').textContent='Done';return;}
+  if(last===today){document.getElementById('task-daily').className='tbtn tbdone';document.getElementById('task-daily').textContent='Done';return;}
   const prev=new Date(Date.now()-86400000).toDateString();
   let streak=parseInt(localStorage.getItem(sk)||'0');
   if(last!==prev)streak=0;
   const day=streak+1,reward=day>=7?3:day>=4?2:1;
   document.getElementById('daily-num').textContent='+'+reward;
   document.getElementById('daily-day').textContent=day;
-  renderStreak(day);
-  openSheet('daily-overlay');
-}
-function renderStreak(day){
   const el=document.getElementById('streak-row');el.innerHTML='';
   for(let i=1;i<=7;i++){
     const d=document.createElement('div');
     d.className='s-dot'+(i<day?' done':i===day?' today':'');
     d.textContent=i;el.appendChild(d);
   }
+  openSheet('daily-overlay');
 }
 function claimDaily(){
   const uid=tg?.initDataUnsafe?.user?.id||'guest';
-  let streak=parseInt(localStorage.getItem('orb_streak_'+uid)||'0');
+  let streak=parseInt(localStorage.getItem('cow_streak_'+uid)||'0');
   const day=streak+1,reward=day>=7?3:day>=4?2:1;
   streak++;
-  localStorage.setItem('orb_daily_'+uid,new Date().toDateString());
-  localStorage.setItem('orb_streak_'+uid,streak);
+  localStorage.setItem('cow_daily_'+uid,new Date().toDateString());
+  localStorage.setItem('cow_streak_'+uid,streak);
   stars+=reward;updateStars();
   closeSheet('daily-overlay');
-  document.getElementById('task-daily').className='task-btn-el tbdone';
+  document.getElementById('task-daily').className='tbtn tbdone';
   document.getElementById('task-daily').textContent='Done';
   setTimeout(()=>toast('Daily bonus +'+reward+' ⭐ (Day '+streak+')'),300);
 }
 function claimDailyTask(){
-  const uid=tg?.initDataUnsafe?.user?.id||'guest';
-  if(localStorage.getItem('orb_daily_'+uid)===new Date().toDateString()){toast('Already claimed!');return;}
+  if(localStorage.getItem('cow_daily_'+(tg?.initDataUnsafe?.user?.id||'guest'))===new Date().toDateString()){toast('Already claimed!');return;}
   checkDaily();
 }
 
-/* TOPUP */
 function selTop(n,el){
   topupSel=n;
-  document.querySelectorAll('.tp-card').forEach(c=>c.classList.remove('selected'));
-  el.classList.add('selected');
-  document.getElementById('topup-btn-lbl').textContent=fmt(n);
+  document.querySelectorAll('.tp-card').forEach(c=>c.classList.remove('sel'));
+  el.classList.add('sel');
+  document.getElementById('tp-lbl').textContent=fmt(n);
 }
 function doTopup(){
   stars+=topupSel;updateStars();
   closeSheet('topup-overlay');
-  toast('+'+fmt(topupSel)+' ⭐ added!');
+  toast('+'+fmt(topupSel)+' ⭐ stars!');
 }
 
-/* LOAD */
+async function saveBet(bet,co){
+  try{await fetch(SERVER+'/api/bet',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({initData,betAmount:bet,cashedOutAt:co})});}catch(e){}
+}
+
 async function loadUser(){
   try{
     const c=new AbortController();
@@ -957,24 +884,23 @@ async function loadUser(){
     stars=d.coins||1000;
   }catch(e){stars=1000;}
   updateStars();
+  setBtn('btn-place','Place bet');
   const user=tg?.initDataUnsafe?.user;
   if(user){
     const n=user.first_name||'Player';
-    document.getElementById('bal-name').textContent=n;
-    document.getElementById('bal-avatar').textContent=n[0]?.toUpperCase()||'?';
+    document.getElementById('bal-nm').textContent=n;
+    document.getElementById('bal-av').textContent=n[0]?.toUpperCase()||'?';
   }
-  updateBetLabel('1');updateBetLabel('2');
   setTimeout(checkDaily,1000);
 }
 
-/* INIT */
 window.addEventListener('load',()=>{
-  resizeAll();
-  cowBaseY=50;
-  animCow();
+  resize();
+  cowBaseY=40;
+  animLoop();
   loadUser();
 });
-window.addEventListener('resize',resizeAll);
+window.addEventListener('resize',resize);
 </script>
 </body>
 </html>
