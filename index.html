@@ -2,247 +2,906 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 <title>Orbit Crash</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
 :root{
   --bg:#0b0e17;--bg2:#111520;--bg3:#171c2d;--card:#141824;--card2:#1a2030;
   --border:#1e2535;--border2:#252d40;
-  --blue:#4f6ef7;--blue-dk:#3454d1;
-  --green:#22c55e;--red:#ef4444;--gold:#f4b942;
+  --blue:#4f6ef7;--blue-dk:#3454d1;--blue-sh:#1a2a6e;
+  --green:#22c55e;--green-dk:#15803d;
+  --red:#ef4444;--red-dk:#991b1b;
+  --gold:#f4b942;--gold-dk:#b8861f;
+  --purple:#7c3aed;
   --text:#e8eaf2;--text2:#8892a4;--text3:#4a5568;
-  --r-lg:14px;--r-md:10px;
+  --r-sm:6px;--r-md:10px;--r-lg:14px;--r-xl:20px;
 }
-
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-
-html,body{
-    height: 100%;
-    overflow: hidden;
-    background: var(--bg);
-}
-
+html,body{height:100%;overflow:hidden}
 body{
-  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
-  color:var(--text);
-  max-width:480px;
-  margin:0 auto;
-  display:flex;
-  flex-direction:column;
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Inter',sans-serif;
+  background:var(--bg);color:var(--text);
+  max-width:480px;margin:0 auto;
+  display:flex;flex-direction:column;height:100vh;
 }
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  border:none;cursor:pointer;border-radius:var(--r-lg);
+  font-weight:700;font-family:inherit;
+  transition:all 0.12s;
+  min-height:48px;padding:0 20px;font-size:15px;
+  -webkit-user-select:none;user-select:none;letter-spacing:0.2px;
+}
+.btn:active{transform:scale(0.97);opacity:0.9}
+.btn:disabled{opacity:0.4;cursor:not-allowed;transform:none}
+.btn-primary{background:var(--blue);color:#fff;box-shadow:0 2px 12px rgba(79,110,247,0.3)}
+.btn-primary:active{background:var(--blue-dk)}
+.btn-success{background:var(--green);color:#fff;box-shadow:0 2px 12px rgba(34,197,94,0.25)}
+.btn-success:active{background:var(--green-dk)}
+.btn-danger{
+  background:var(--red);color:#fff;
+  box-shadow:0 2px 16px rgba(239,68,68,0.4);
+  animation:cashglow 1.2s infinite;
+  position:relative;z-index:10;
+  pointer-events:all!important;
+  -webkit-transform:translateZ(0);transform:translateZ(0);
+}
+@keyframes cashglow{
+  0%,100%{box-shadow:0 2px 16px rgba(239,68,68,0.4)}
+  50%{box-shadow:0 2px 28px rgba(239,68,68,0.7),0 0 0 3px rgba(239,68,68,0.15)}
+}
+.btn-danger:active{animation:none;transform:scale(0.97) translateZ(0);box-shadow:0 1px 6px rgba(239,68,68,0.3)}
+.btn-gold{background:var(--gold);color:#1a1000;font-weight:800;box-shadow:0 2px 12px rgba(244,185,66,0.25)}
+.btn-gold:active{background:var(--gold-dk);color:#fff}
+.btn-ghost{background:transparent;color:var(--text2);border:1px solid var(--border2);font-size:13px;min-height:38px}
+.btn-ghost:active{background:var(--card2)}
+.btn-off{background:var(--card);color:var(--text3);cursor:not-allowed;border:1px solid var(--border)}
+.chip{
+  padding:6px 12px;border-radius:var(--r-sm);
+  background:var(--card2);border:1px solid var(--border2);
+  color:var(--text2);font-size:13px;font-weight:700;
+  cursor:pointer;transition:all 0.12s;
+}
+.chip:active{background:var(--blue);color:#fff;border-color:var(--blue)}
+.card{background:var(--card);border-radius:var(--r-lg);border:1px solid var(--border)}
+.avatar{border-radius:50%;border:2px solid var(--border2);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;background:var(--card2);flex-shrink:0;overflow:hidden;color:var(--text)}
+.pill{display:inline-flex;align-items:center;gap:3px;border-radius:20px;padding:3px 10px;font-size:12px;font-weight:700;border:1px solid transparent}
+.pill-green{background:rgba(34,197,94,0.12);color:#86efac;border-color:rgba(34,197,94,0.25)}
+.pill-red{background:rgba(239,68,68,0.12);color:#fca5a5;border-color:rgba(239,68,68,0.25)}
+.pill-gold{background:rgba(244,185,66,0.12);color:#fcd34d;border-color:rgba(244,185,66,0.25)}
+.pill-blue{background:rgba(79,110,247,0.12);color:#a5b4fc;border-color:rgba(79,110,247,0.25)}
+.label{font-size:11px;font-weight:700;color:var(--text3);letter-spacing:0.6px;text-transform:uppercase}
+.page{display:none;flex:1;overflow-y:auto;padding-bottom:16px;background:var(--bg)}
+.page.active{display:block}
 
 /* TOP HUD */
 .top-hud{
   display:flex;align-items:center;justify-content:space-between;
-  padding:10px 14px;
-  background:var(--bg2);
-  border-bottom:1px solid var(--border);
-  height: 55px;
-  flex-shrink: 0;
+  padding:10px 14px;flex-shrink:0;
+  background:var(--bg2);border-bottom:1px solid var(--border);
 }
-.hud-logo{font-size:17px;font-weight:800;display:flex;align-items:center;gap:8px}
+.hud-logo{font-size:17px;font-weight:800;color:var(--text);display:flex;align-items:center;gap:8px;letter-spacing:-0.3px}
 .hud-logo span{color:var(--blue)}
 .hud-bal{
   display:flex;align-items:center;gap:8px;
   background:var(--card);border:1px solid var(--border2);
-  border-radius:var(--r-lg);padding:6px 12px;
+  border-radius:var(--r-lg);padding:6px 8px 6px 12px;cursor:pointer;
+  transition:border-color 0.15s;
 }
+.hud-bal:hover{border-color:var(--blue)}
 .hud-bal-num{font-size:15px;font-weight:800;color:var(--gold)}
-
-/* MAIN CONTENT AREA */
-.main-container {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden; /* Contains the scrollable pages */
-    position: relative;
+.hud-plus{
+  width:26px;height:26px;border-radius:var(--r-sm);
+  background:var(--blue);border:none;color:#fff;font-size:16px;font-weight:800;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;
+  box-shadow:0 2px 8px rgba(79,110,247,0.4);
 }
 
-.page {
-    display: none;
-    flex-direction: column;
-    height: 100%;
-    width: 100%;
-}
-
-.page.active {
-    display: flex;
-}
-
-/* CRASH PAGE SPECIFIC LAYOUT */
-.game-section {
-    flex: 1; /* This makes the rocket grid shrink/grow */
-    display: flex;
-    flex-direction: column;
-    padding: 10px 12px;
-    min-height: 0; 
-}
-
+/* GAME — 70% screen height */
 .game-wrap{
-  flex: 1;
-  border-radius:var(--r-lg);
+  margin:10px 12px 0;border-radius:var(--r-lg);
   overflow:hidden;position:relative;
   border:1px solid var(--border);
-  background:#080b14;
-  min-height: 180px; /* Minimum height for the rocket grid */
+  background:#080b14;flex-shrink:0;
+  height:70vh;max-height:70vh;min-height:200px;
 }
-
 canvas#gc{position:absolute;inset:0;width:100%;height:100%}
-
-.mult-overlay{
-    position:absolute;
-    top: 50%; left: 50%;
-    transform: translate(-50%, -50%);
-    text-align:center;
-    pointer-events:none;
-}
-.mn{font-size:56px;font-weight:900;line-height:1;}
+.mult-overlay{position:absolute;top:12px;left:0;right:0;text-align:center;pointer-events:none;z-index:5}
+.mn{font-size:64px;font-weight:900;line-height:1;letter-spacing:-2px}
 .mn.wait{color:rgba(255,255,255,0.1)}
+.mn.cd{color:var(--text);font-size:80px}
+.mn.run{color:var(--green);text-shadow:0 0 28px rgba(34,197,94,0.5)}
+.mn.crash{color:var(--red);text-shadow:0 0 28px rgba(239,68,68,0.5)}
+.ms{font-size:11px;color:var(--text3);margin-top:3px;font-weight:700;letter-spacing:0.8px}
 
-/* LISTS & TABS */
-.pl-wrap{
-  height: 140px; /* Fixed height to protect button space */
-  margin: 10px 12px;
-  display:flex;flex-direction:column;
-  flex-shrink: 0;
-}
-.pl-list{
-    flex:1; overflow-y:auto; background:var(--card); 
-    border-radius:var(--r-md); border:1px solid var(--border);
-    font-size: 13px; padding: 10px;
-}
+/* HISTORY */
+.hist-bar{display:flex;gap:5px;padding:6px 12px;overflow-x:auto;flex-shrink:0;align-items:center}
+.hist-bar::-webkit-scrollbar{display:none}
 
-/* ACTION BUTTON AREA */
+/* RESULT */
+.rb{margin:6px 12px;padding:10px 14px;border-radius:var(--r-md);text-align:center;font-size:14px;font-weight:700;display:none}
+.rb.show{display:block}
+.rb-w{background:rgba(34,197,94,0.1);color:#86efac;border:1px solid rgba(34,197,94,0.2)}
+.rb-l{background:rgba(239,68,68,0.1);color:#fca5a5;border:1px solid rgba(239,68,68,0.2)}
+
+/* PLAYERS */
+.pl-wrap{flex:1;display:flex;flex-direction:column;overflow:hidden;min-height:0;margin:0 12px}
+.pl-tabs{
+  display:flex;gap:2px;padding:4px;flex-shrink:0;
+  background:var(--card);border-radius:var(--r-md);border:1px solid var(--border);margin-top:8px;
+}
+.ptab{
+  flex:1;padding:7px 4px;text-align:center;font-size:12px;font-weight:700;
+  color:var(--text3);cursor:pointer;border:none;border-radius:var(--r-sm);
+  background:transparent;transition:all 0.15s;min-height:34px;letter-spacing:0.3px;
+}
+.ptab.active{background:var(--bg2);color:var(--text);border:1px solid var(--border2)}
+.pl-list{flex:1;overflow-y:auto;padding:0 2px;margin-top:6px}
+.pl-list::-webkit-scrollbar{width:2px}
+.pl-list::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+.pr{
+  display:flex;align-items:center;gap:8px;padding:8px 10px;margin-bottom:3px;
+  border-radius:var(--r-md);background:var(--card);border:1px solid var(--border);min-height:44px;
+}
+.pnm{font-size:13px;font-weight:700;flex:1;color:var(--text)}
+.pbt{font-size:11px;color:var(--text3);margin-top:2px}
+.pmlt{font-weight:800;margin-left:3px}
+.ppz{font-size:13px;font-weight:800;min-width:44px;text-align:right}
+.pw{color:var(--green)}.plz{color:var(--red)}.pp{color:var(--text3);font-size:16px}
+
+/* ACTION */
 .act-area{
-  padding: 10px 14px 14px;
-  background:var(--bg2);
-  border-top:1px solid var(--border);
-  flex-shrink: 0;
+  flex-shrink:0;padding:8px 12px 12px;
+  background:var(--bg2);border-top:1px solid var(--border);
 }
+.placed-row{display:none;justify-content:space-between;align-items:center;margin-bottom:6px}
+.placed-row.show{display:flex}
+.placed-lbl{font-size:12px;color:var(--text3);font-weight:600}
+.placed-val{font-size:13px;font-weight:800;color:var(--gold)}
+#mbtn{width:100%;font-size:17px;min-height:52px;font-weight:800;letter-spacing:0.2px}
 
-.btn{
-  width: 100%;
-  display:flex;align-items:center;justify-content:center;
-  border:none;border-radius:var(--r-lg);
-  font-weight:800; font-size: 17px;
-  min-height:54px; transition:0.1s;
-}
-.btn-primary{background:var(--blue);color:#fff;}
-.btn-primary:active{transform:scale(0.98);}
-
-/* BOTTOM NAV */
+/* NAV */
 .nav{
-  display:flex;
-  background:var(--bg2);
-  border-top:1px solid var(--border);
+  display:flex;flex-shrink:0;
+  background:var(--bg2);border-top:1px solid var(--border);
   padding-bottom:env(safe-area-inset-bottom);
-  height: 65px;
-  flex-shrink: 0;
 }
 .nb{
-  flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
-  cursor:pointer;border:none;background:none;
-  color:var(--text3);font-size:10px;font-weight:700;
+  flex:1;display:flex;flex-direction:column;align-items:center;
+  padding:9px 4px 11px;cursor:pointer;border:none;background:none;
+  color:var(--text3);font-size:9px;font-weight:700;gap:4px;
+  min-height:56px;transition:color 0.15s;
+  letter-spacing:0.5px;text-transform:uppercase;
 }
 .nb.active{color:var(--blue)}
+.ni-svg{width:26px;height:26px;flex-shrink:0;opacity:0.5;transition:all 0.15s}
+.nb.active .ni-svg{opacity:1;filter:brightness(0) saturate(100%) invert(40%) sepia(80%) saturate(500%) hue-rotate(210deg) brightness(110%)}
+.niw{position:relative;display:flex}
+.nbdg{position:absolute;top:-4px;right:-6px;background:var(--red);color:#fff;border-radius:10px;font-size:9px;padding:1px 5px;font-weight:800;border:2px solid var(--bg2)}
+
+/* MODALS */
+.ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:500;align-items:flex-end;justify-content:center;backdrop-filter:blur(4px)}
+.ov.open{display:flex}
+.sh{background:var(--bg2);border-radius:20px 20px 0 0;padding:16px 16px 40px;width:100%;max-width:480px;position:relative;border-top:1px solid var(--border2)}
+.sh-hnd{width:36px;height:4px;border-radius:2px;background:var(--border2);margin:0 auto 14px}
+.sh-ttl{font-size:17px;font-weight:800;margin-bottom:14px;color:var(--text);display:flex;align-items:center;gap:8px}
+.sh-cls{position:absolute;top:14px;right:14px;width:30px;height:30px;border-radius:var(--r-sm);background:var(--card);border:1px solid var(--border2);color:var(--text3);font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+
+/* BET MODAL */
+.seg-tabs{display:flex;background:var(--card);border-radius:var(--r-md);border:1px solid var(--border);overflow:hidden;margin-bottom:16px}
+.seg-tab{flex:1;padding:10px;text-align:center;font-size:14px;font-weight:700;cursor:pointer;color:var(--text3);border:none;background:transparent;transition:all 0.15s}
+.seg-tab.active{background:var(--bg2);color:var(--text);border-bottom:2px solid var(--blue)}
+.bet-section-label{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.bet-bal-show{font-size:13px;color:var(--text3);font-weight:700}
+.bet-bal-show span{color:var(--gold);font-weight:800}
+.bet-inp-wrap{display:flex;align-items:center;background:var(--card);border:1px solid var(--border2);border-radius:var(--r-md);padding:0 12px;margin-bottom:10px;transition:border-color 0.15s}
+.bet-inp-wrap:focus-within{border-color:var(--blue)}
+.bet-ico{width:26px;height:26px;border-radius:50%;background:var(--blue);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-right:10px}
+.bet-inp{
+  flex:1;background:transparent;border:none;color:var(--text);
+  font-size:22px;font-weight:800;outline:none;padding:14px 0;
+  -webkit-appearance:none;-moz-appearance:textfield;
+}
+.bet-inp::-webkit-outer-spin-button,.bet-inp::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.bet-inp::placeholder{color:var(--text3)}
+.bet-quick{display:flex;gap:6px;margin-bottom:14px}
+.auto-section{background:var(--card);border:1px solid var(--border);border-radius:var(--r-md);padding:12px 14px;margin-bottom:16px}
+.auto-row{display:flex;align-items:center;gap:10px}
+.auto-lbl{flex:1;font-size:14px;font-weight:700;color:var(--text2)}
+.auto-ctrl{display:flex;align-items:center;gap:8px}
+.auto-val{font-size:16px;font-weight:800;min-width:52px;text-align:center;color:var(--text)}
+.acb{width:30px;height:30px;border-radius:var(--r-sm);background:var(--bg);border:1px solid var(--border2);color:var(--text);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background 0.12s}
+.acb:active{background:var(--card2)}
+.tog{width:44px;height:26px;border-radius:13px;background:var(--border2);cursor:pointer;position:relative;transition:all 0.2s;flex-shrink:0}
+.tog.on{background:var(--blue)}
+.tog::after{content:'';position:absolute;top:3px;left:3px;width:20px;height:20px;background:#fff;border-radius:50%;transition:transform 0.2s;box-shadow:0 1px 3px rgba(0,0,0,0.3)}
+.tog.on::after{transform:translateX(18px)}
+
+/* TOPUP */
+.tp-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px}
+.tpc{background:var(--card);border:1px solid var(--border);border-radius:var(--r-md);padding:14px 6px;text-align:center;cursor:pointer;transition:all 0.15s;min-height:64px;display:flex;flex-direction:column;justify-content:center}
+.tpc.sel,.tpc:active{border-color:var(--blue);background:rgba(79,110,247,0.08)}
+.tpa{font-size:14px;font-weight:800;color:var(--gold)}
+.tpu{font-size:10px;color:var(--text3);margin-top:3px;font-weight:600}
+
+/* DAILY */
+.drbox{display:flex;align-items:center;justify-content:center;gap:12px;background:var(--card);border:1px solid var(--border2);border-radius:var(--r-lg);padding:16px;margin-bottom:14px}
+.strow{display:flex;gap:6px;justify-content:center;margin-bottom:18px}
+.sdot{width:34px;height:34px;border-radius:50%;background:var(--card);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:var(--text3)}
+.sdot.done{background:var(--gold);color:#1a1000;border-color:var(--gold-dk)}
+.sdot.today{background:var(--blue);color:#fff;border-color:var(--blue-dk)}
+
+/* PAGES */
+.pg-ttl{font-size:18px;font-weight:800;padding:14px 14px 10px;color:var(--text);display:flex;align-items:center;gap:10px;letter-spacing:-0.3px}
+.tc{margin:0 12px 8px;padding:12px 14px;display:flex;align-items:center;gap:12px;min-height:60px}
+.task-ico-wrap{width:44px;height:44px;border-radius:var(--r-md);flex-shrink:0;background:var(--card2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center}
+.tnm{font-size:14px;font-weight:700;color:var(--text)}
+.trw{font-size:12px;color:var(--gold);font-weight:600;margin-top:2px}
+.lbr{margin:0 12px 4px;padding:9px 14px;display:flex;align-items:center;gap:10px;min-height:48px}
+.ph{padding:16px 14px 0;text-align:center}
+.pav-wrap{width:72px;height:72px;border-radius:50%;background:var(--card2);border:2px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:800;margin:0 auto 10px;color:var(--text)}
+.pnm{font-size:18px;font-weight:800;color:var(--text);letter-spacing:-0.3px}
+.sgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 12px}
+.scard{padding:14px;text-align:center;min-height:60px}
+.snum{font-size:22px;font-weight:800;color:var(--text)}
+.slbl{font-size:11px;color:var(--text3);font-weight:700;margin-top:3px;letter-spacing:0.4px;text-transform:uppercase}
+.icard{margin:0 12px;padding:16px}
+.ittl{font-size:15px;font-weight:800;color:var(--text);margin-bottom:4px}
+.isub{font-size:12px;color:var(--text3);margin-bottom:12px;line-height:1.6;font-weight:600}
+.istats{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:12px}
+.ist{background:var(--bg);border-radius:var(--r-md);padding:12px;text-align:center;border:1px solid var(--border)}
+.isnum{font-size:20px;font-weight:800;color:var(--text)}
+.islbl{font-size:10px;color:var(--text3);margin-top:2px;font-weight:700;text-transform:uppercase;letter-spacing:0.4px}
+.ibtns{display:flex;gap:8px}
+.ibtn{flex:1;min-height:46px;font-size:15px}
+.cpbtn{width:46px;height:46px;border-radius:var(--r-md);background:var(--card);border:1px solid var(--border2);color:var(--text2);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background 0.12s}
+.cpbtn:active{background:var(--card2)}
+.toast{position:fixed;top:70px;left:50%;transform:translateX(-50%);background:var(--card2);border:1px solid var(--border2);border-radius:var(--r-lg);padding:11px 20px;font-size:14px;font-weight:700;color:var(--text);z-index:999;opacity:0;transition:opacity 0.3s;pointer-events:none;white-space:nowrap;box-shadow:0 8px 24px rgba(0,0,0,0.4)}
+.toast.show{opacity:1}
+::-webkit-scrollbar{width:3px;height:3px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
 </style>
 </head>
 <body>
 
+<svg style="display:none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <symbol id="ico-rocket" viewBox="0 0 28 28">
+      <path d="M14 2c0 0-2 3-3 7l3 3 3-3C16 5 14 2 14 2z" fill="#a5b4fc"/>
+      <path d="M11 9c0 5 3 9 3 9s3-4 3-9" fill="#818cf8"/>
+      <circle cx="14" cy="10" r="2.5" fill="#60a5fa"/>
+      <circle cx="14" cy="10" r="1" fill="#e0f2fe"/>
+      <path d="M11 9l-4 4 2 2z" fill="#6366f1"/>
+      <path d="M17 9l4 4-2 2z" fill="#6366f1"/>
+      <path d="M12 18c0 2.5 2 4 2 4s2-1.5 2-4l-2-1z" fill="#f97316"/>
+      <path d="M13 19c0 1.5 1 2.5 1 2.5s1-1 1-2.5l-1-.5z" fill="#fed7aa"/>
+    </symbol>
+    <symbol id="ico-swords" viewBox="0 0 28 28">
+      <line x1="4" y1="24" x2="22" y2="6" stroke="#94a3b8" stroke-width="2.5" stroke-linecap="round"/>
+      <path d="M20 4l4 4-1.5 1.5L22 8l-4-4z" fill="#cbd5e1"/>
+      <rect x="3" y="21.5" width="5" height="2" rx="1" transform="rotate(-45 5.5 22.5)" fill="#f4b942"/>
+      <line x1="24" y1="24" x2="6" y2="6" stroke="#94a3b8" stroke-width="2.5" stroke-linecap="round"/>
+      <path d="M8 4L4 8l1.5 1.5L6 8l4-4z" fill="#cbd5e1"/>
+      <rect x="20" y="21.5" width="5" height="2" rx="1" transform="rotate(45 22.5 22.5)" fill="#f4b942"/>
+    </symbol>
+    <symbol id="ico-trophy" viewBox="0 0 28 28">
+      <path d="M8 3h12v9c0 4-2.7 7-6 7s-6-3-6-7V3z" fill="#f4b942" stroke="#b8861f" stroke-width="1"/>
+      <path d="M9 3.5h10v7c0 3-2.2 5.5-5 5.5s-5-2.5-5-5.5z" fill="#fcd34d"/>
+      <path d="M8 5H4c0 0 0 5 4 5z" fill="#f4b942"/>
+      <path d="M20 5h4c0 0 0 5-4 5z" fill="#f4b942"/>
+      <rect x="12" y="19" width="4" height="3" fill="#b8861f"/>
+      <rect x="9" y="22" width="10" height="3" rx="1.5" fill="#b8861f"/>
+      <rect x="10" y="22.5" width="8" height="2" rx="1" fill="#f4b942"/>
+    </symbol>
+    <symbol id="ico-person" viewBox="0 0 28 28">
+      <circle cx="14" cy="9" r="5" fill="#6366f1"/>
+      <circle cx="14" cy="9" r="3.5" fill="#818cf8"/>
+      <path d="M5 26c0-5 4-8 9-8s9 3 9 8" fill="#6366f1"/>
+      <path d="M7 26c0-3.5 3.1-6 7-6s7 2.5 7 6" fill="#818cf8"/>
+    </symbol>
+    <symbol id="ico-calendar" viewBox="0 0 28 28">
+      <rect x="3" y="5" width="22" height="20" rx="3" fill="#1e2535" stroke="#4f6ef7" stroke-width="1.5"/>
+      <rect x="3" y="5" width="22" height="7" rx="3" fill="#4f6ef7"/>
+      <rect x="3" y="9" width="22" height="3" fill="#4f6ef7"/>
+      <circle cx="9" cy="4" r="2" fill="#818cf8" stroke="#4f6ef7" stroke-width="1"/>
+      <circle cx="19" cy="4" r="2" fill="#818cf8" stroke="#4f6ef7" stroke-width="1"/>
+      <rect x="7" y="14" width="4" height="3" rx="1" fill="#f4b942"/>
+      <rect x="12" y="14" width="4" height="3" rx="1" fill="#60a5fa"/>
+      <rect x="17" y="14" width="4" height="3" rx="1" fill="#60a5fa"/>
+      <rect x="7" y="19" width="4" height="3" rx="1" fill="#60a5fa"/>
+      <rect x="12" y="19" width="4" height="3" rx="1" fill="#60a5fa"/>
+    </symbol>
+    <symbol id="ico-friends" viewBox="0 0 28 28">
+      <circle cx="10" cy="9" r="4" fill="#6366f1"/>
+      <circle cx="10" cy="9" r="2.8" fill="#818cf8"/>
+      <path d="M2 24c0-4.4 3.6-7 8-7s8 2.6 8 7" fill="#6366f1"/>
+      <path d="M4 24c0-2.8 2.7-5 6-5s6 2.2 6 5" fill="#818cf8"/>
+      <circle cx="20" cy="8" r="3.5" fill="#f4b942"/>
+      <circle cx="20" cy="8" r="2.3" fill="#fcd34d"/>
+      <path d="M14.5 23c0-3.5 2.5-6 5.5-6s5.5 2.5 5.5 6" fill="#f4b942"/>
+      <path d="M16 23c0-2 1.8-4 4-4s4 2 4 4" fill="#fcd34d"/>
+    </symbol>
+    <symbol id="ico-gamepad" viewBox="0 0 28 28">
+      <rect x="3" y="9" width="22" height="13" rx="6" fill="#1e2535" stroke="#4f6ef7" stroke-width="1.5"/>
+      <rect x="9" y="14" width="6" height="2" rx="1" fill="#818cf8"/>
+      <rect x="11" y="12" width="2" height="6" rx="1" fill="#818cf8"/>
+      <circle cx="19" cy="13.5" r="1.3" fill="#22c55e"/>
+      <circle cx="21.5" cy="15.5" r="1.3" fill="#ef4444"/>
+      <circle cx="19" cy="17.5" r="1.3" fill="#f4b942"/>
+      <circle cx="16.5" cy="15.5" r="1.3" fill="#60a5fa"/>
+      <ellipse cx="7" cy="15.5" rx="2" ry="1" fill="#6366f1"/>
+    </symbol>
+    <symbol id="ico-coinbag" viewBox="0 0 28 28">
+      <path d="M14 5c-2 0-5 2-5 2l1 3h8l1-3c0 0-3-2-5-2z" fill="#f4b942" stroke="#b8861f" stroke-width="1"/>
+      <ellipse cx="14" cy="17" rx="8" ry="9" fill="#f4b942" stroke="#b8861f" stroke-width="1.5"/>
+      <ellipse cx="14" cy="16" rx="6.5" ry="7.5" fill="#fcd34d"/>
+      <text x="14" y="20" text-anchor="middle" font-size="11" fill="#b8861f" font-weight="bold" font-family="sans-serif">$</text>
+    </symbol>
+    <symbol id="ico-flame" viewBox="0 0 28 28">
+      <path d="M14 2c0 0-1 5-4 8 0 0 0-3-2-4 0 0-2 4-1 8 1 5 5 9 7 9s6-4 7-9c1-4-1-8-1-8-2 1-2 4-2 4-3-3-4-8-4-8z" fill="#f97316"/>
+      <path d="M14 6c0 0-.5 4-3 6.5 0 0 0-2-1.5-3 0 0-1.5 3-.5 6 .7 2.5 3 5.5 5 5.5s4.3-3 5-5.5c1-3-.5-6-.5-6-1.5 1-1.5 3-1.5 3-2.5-2.5-3-6.5-3-6.5z" fill="#ef4444"/>
+      <path d="M14 10c0 0 0 3-2 5 0 0 0-1.5-1-2 0 0-1 2 0 4.5.5 1.5 2 3 3 3s2.5-1.5 3-3c1-2.5 0-4.5 0-4.5-1 .5-1 2-1 2-2-2-2-5-2-5z" fill="#fcd34d"/>
+    </symbol>
+    <symbol id="ico-star" viewBox="0 0 24 24">
+      <path d="M12 2l2.7 5.5 6 .9-4.4 4.2 1.1 6-5.4-2.8-5.4 2.8 1.1-6L3.3 8.4l6-.9z" fill="#f4b942" stroke="#b8861f" stroke-width="0.8"/>
+    </symbol>
+  </defs>
+</svg>
+
+<!-- TOP HUD -->
 <div class="top-hud">
-  <div class="hud-logo">🚀 Orbit<span>Crash</span></div>
-  <div class="hud-bal">
-    <span class="hud-bal-num" id="stars-disp">1,000</span>
-    <div style="background:var(--blue); padding: 2px 6px; border-radius:4px; font-weight:bold">+</div>
+  <div class="hud-logo">
+    <svg width="20" height="20"><use href="#ico-rocket"/></svg>
+    Orbit<span>Crash</span>
+  </div>
+  <div class="hud-bal" onclick="openSh('topup-ov')">
+    <svg width="16" height="16"><use href="#ico-star"/></svg>
+    <span class="hud-bal-num" id="stars-disp">...</span>
+    <button class="hud-plus" onclick="event.stopPropagation();openSh('topup-ov')">+</button>
   </div>
 </div>
 
-<div class="main-container">
-  <div id="page-crash" class="page active">
-    <div class="game-section">
-      <div class="game-wrap">
-        <canvas id="gc"></canvas>
-        <div class="mult-overlay">
-          <div class="mn wait" id="mn">1.00x</div>
-          <div style="font-size:11px; color:var(--text3); font-weight:700; margin-top:5px">WAITING FOR BETS</div>
-        </div>
-      </div>
-    </div>
+<!-- CRASH PAGE -->
+<div id="crash-page" style="display:flex;flex-direction:column;flex:1;overflow:hidden;min-height:0">
 
-    <div class="pl-wrap">
-        <div style="font-size:11px; color:var(--text3); margin-bottom:5px; font-weight:bold">ALL BETS</div>
-        <div class="pl-list" id="pl-list">
-          <div style="color:var(--text3); text-align:center; padding-top:20px">No bets in this round</div>
-        </div>
-    </div>
-
-    <div class="act-area">
-      <button class="btn btn-primary" id="mbtn">PLACE BET</button>
+  <!-- GAME — 70% screen height -->
+  <div class="game-wrap">
+    <canvas id="gc"></canvas>
+    <div class="mult-overlay">
+      <div class="mn wait" id="mn">1</div>
+      <div class="ms" id="ms">WAITING FOR BETS</div>
     </div>
   </div>
 
-  <div id="page-tasks" class="page">
-      <div style="padding: 20px; text-align:center">Tasks Coming Soon</div>
+  <div class="hist-bar" id="hist-bar">
+    <span style="color:var(--text3);font-size:12px;font-weight:700">No rounds yet</span>
+  </div>
+
+  <div class="rb" id="rb"></div>
+
+  <div class="pl-wrap">
+    <div class="pl-tabs">
+      <button class="ptab active" id="ptab-all" onclick="swTab('all')">All Bets</button>
+      <button class="ptab" id="ptab-result" onclick="swTab('result')">Result</button>
+      <button class="ptab" id="ptab-top" onclick="swTab('top')">Top</button>
+    </div>
+    <div class="pl-list" id="pl-list">
+      <div style="padding:18px;text-align:center;color:var(--text3);font-size:13px;font-weight:600">Place a bet to join the round</div>
+    </div>
+  </div>
+
+  <div class="act-area">
+    <div class="placed-row" id="placed-row">
+      <span class="placed-lbl">Bet placed</span>
+      <span class="placed-val" id="placed-val">⭐ 0</span>
+    </div>
+    <button class="btn btn-off" id="mbtn" onclick="handleMain()">Loading…</button>
   </div>
 </div>
 
+<!-- TASKS PAGE -->
+<div id="page-tasks" class="page">
+  <div class="pg-ttl"><svg width="22" height="22"><use href="#ico-swords"/></svg>Tasks</div>
+  <div class="tc card"><div class="task-ico-wrap"><svg width="28" height="28"><use href="#ico-calendar"/></svg></div><div style="flex:1"><div class="tnm">Daily login</div><div class="trw">+1 ⭐ per day</div></div><button class="btn btn-primary" id="tdaily" onclick="claimDailyTask()" style="min-height:38px;padding:0 16px;font-size:13px">Claim</button></div>
+  <div class="tc card"><div class="task-ico-wrap"><svg width="28" height="28"><use href="#ico-friends"/></svg></div><div style="flex:1"><div class="tnm">Invite a friend</div><div class="trw">+5 ⭐ per friend</div></div><button class="btn btn-primary" onclick="doInvite()" style="min-height:38px;padding:0 16px;font-size:13px">Invite</button></div>
+  <div class="tc card"><div class="task-ico-wrap"><svg width="28" height="28"><use href="#ico-gamepad"/></svg></div><div style="flex:1"><div class="tnm">Play 5 rounds today</div><div class="trw">+3 ⭐ stars</div></div><button class="btn btn-ghost" id="trounds" style="min-height:38px;padding:0 14px;font-size:13px">0/5</button></div>
+  <div class="tc card"><div class="task-ico-wrap"><svg width="28" height="28"><use href="#ico-coinbag"/></svg></div><div style="flex:1"><div class="tnm">Win with ×3.00+</div><div class="trw">+5 ⭐ stars</div></div><button class="btn btn-gold" id="tbigwin" onclick="switchNav('crash')" style="min-height:38px;padding:0 16px;font-size:13px">Play</button></div>
+  <div class="tc card"><div class="task-ico-wrap"><svg width="28" height="28"><use href="#ico-flame"/></svg></div><div style="flex:1"><div class="tnm">7-day streak</div><div class="trw">+10 ⭐ bonus</div></div><button class="btn btn-ghost" id="tstreak" style="min-height:38px;padding:0 14px;font-size:13px">Go</button></div>
+</div>
+
+<!-- LEADERBOARD PAGE -->
+<div id="page-leaderboard" class="page">
+  <div class="pg-ttl"><svg width="22" height="22"><use href="#ico-trophy"/></svg>Leaderboard</div>
+  <div style="display:grid;grid-template-columns:28px 36px 1fr 80px;gap:8px;padding:6px 14px;border-bottom:1px solid var(--border);margin:0 12px">
+    <span class="label">#</span><span></span>
+    <span class="label">Player</span>
+    <span class="label" style="text-align:right">Stars</span>
+  </div>
+  <div id="lb-list"></div>
+</div>
+
+<!-- PROFILE PAGE -->
+<div id="page-profile" class="page">
+  <div class="ph">
+    <div class="pav-wrap" id="pav">?</div>
+    <div class="pnm" id="pnm">Player</div>
+  </div>
+  <div class="sgrid">
+    <div class="scard card"><div class="snum" id="sg">0</div><div class="slbl">Games</div></div>
+    <div class="scard card"><div class="snum" id="sb">—</div><div class="slbl">Best Mult</div></div>
+    <div class="scard card"><div class="snum" id="sw">0</div><div class="slbl">Stars Won</div></div>
+    <div class="scard card"><div class="snum" id="ss">0</div><div class="slbl">Streak</div></div>
+  </div>
+  <div class="icard card">
+    <div class="ittl">Invite friends — earn 10%</div>
+    <div class="isub">Earn 10% from every deposit your friends make. Get ⭐5 per friend, up to 30/day.</div>
+    <div class="istats">
+      <div class="ist"><div class="isnum" id="icnt">0</div><div class="islbl">Invited</div></div>
+      <div class="ist"><div class="isnum" id="iern">0</div><div class="islbl">Earned ⭐</div></div>
+    </div>
+    <div class="ibtns">
+      <button class="btn btn-primary ibtn" onclick="doInvite()">Invite Friend</button>
+      <button class="cpbtn" onclick="copyLink()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+          <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- BOTTOM NAV -->
 <nav class="nav">
-  <button class="nb active" onclick="showPage('crash')"><span>🚀</span><br>CRASH</button>
-  <button class="nb" onclick="showPage('tasks')"><span>⚒️</span><br>TASKS</button>
-  <button class="nb"><span>🏆</span><br>TOP</button>
-  <button class="nb"><span>👤</span><br>PROFILE</button>
+  <button class="nb active" id="nav-crash" onclick="switchNav('crash')">
+    <div class="niw">
+      <svg class="ni-svg" viewBox="0 0 28 28">
+        <path d="M14 2c0 0-2 3-3 7l3 3 3-3C16 5 14 2 14 2z" fill="#94a3b8"/>
+        <path d="M11 9c0 5 3 9 3 9s3-4 3-9" fill="#64748b"/>
+        <circle cx="14" cy="10" r="2.5" fill="#7dd3fc"/>
+        <path d="M11 9l-4 4 2 2z" fill="#818cf8"/>
+        <path d="M17 9l4 4-2 2z" fill="#818cf8"/>
+        <path d="M12 18c0 2.5 2 4 2 4s2-1.5 2-4l-2-1z" fill="#f97316"/>
+      </svg>
+    </div>
+    <span>CRASH</span>
+  </button>
+  <button class="nb" id="nav-tasks" onclick="switchNav('tasks')">
+    <div class="niw">
+      <svg class="ni-svg" viewBox="0 0 28 28">
+        <line x1="4" y1="24" x2="22" y2="6" stroke="#64748b" stroke-width="2.5" stroke-linecap="round"/>
+        <path d="M20 4l4 4-1.5 1.5L22 8l-4-4z" fill="#94a3b8"/>
+        <rect x="2.5" y="21" width="5" height="2.5" rx="1.2" transform="rotate(-45 5 22.2)" fill="#f4b942"/>
+        <line x1="24" y1="24" x2="6" y2="6" stroke="#64748b" stroke-width="2.5" stroke-linecap="round"/>
+        <path d="M8 4L4 8l1.5 1.5L6 8l4-4z" fill="#94a3b8"/>
+        <rect x="20.5" y="21" width="5" height="2.5" rx="1.2" transform="rotate(45 23 22.2)" fill="#f4b942"/>
+      </svg>
+      <span class="nbdg">3</span>
+    </div>
+    <span>TASKS</span>
+  </button>
+  <button class="nb" id="nav-leaderboard" onclick="switchNav('leaderboard')">
+    <div class="niw">
+      <svg class="ni-svg" viewBox="0 0 28 28">
+        <path d="M8 4h12v8c0 3.5-2.7 6.5-6 6.5S8 15.5 8 12V4z" fill="#f4b942" stroke="#b8861f" stroke-width="1"/>
+        <path d="M9 4.5h10v6.5c0 2.8-2.2 5-5 5s-5-2.2-5-5z" fill="#fcd34d"/>
+        <path d="M8 6H4.5c0 0 .2 4.5 3.5 4.5z" fill="#f4b942"/>
+        <path d="M20 6h3.5c0 0-.2 4.5-3.5 4.5z" fill="#f4b942"/>
+        <rect x="12.5" y="18.5" width="3" height="2.5" fill="#b8861f"/>
+        <rect x="9.5" y="21" width="9" height="3" rx="1.5" fill="#b8861f"/>
+      </svg>
+    </div>
+    <span>TOP</span>
+  </button>
+  <button class="nb" id="nav-profile" onclick="switchNav('profile')">
+    <div class="niw">
+      <svg class="ni-svg" viewBox="0 0 28 28">
+        <circle cx="14" cy="9" r="5" fill="#64748b"/>
+        <circle cx="14" cy="9" r="3.5" fill="#94a3b8"/>
+        <path d="M5 26c0-5 4-8 9-8s9 3 9 8" fill="#64748b"/>
+        <path d="M7 26c0-3.5 3.1-6 7-6s7 2.5 7 6" fill="#94a3b8"/>
+      </svg>
+    </div>
+    <span>PROFILE</span>
+  </button>
 </nav>
 
+<!-- BET MODAL -->
+<div class="ov" id="bet-ov" onclick="bgCl('bet-ov',event)">
+  <div class="sh">
+    <button class="sh-cls" onclick="closeSh('bet-ov')">✕</button>
+    <div class="sh-hnd"></div>
+    <div class="seg-tabs">
+      <button class="seg-tab active" id="seg-manual" onclick="setSeg('manual')">Manual</button>
+      <button class="seg-tab" id="seg-auto" onclick="setSeg('auto')">Auto</button>
+    </div>
+    <div class="bet-section-label">
+      <span class="label">Bet Amount</span>
+      <span class="bet-bal-show">Balance: <span id="mbal">0</span> ⭐</span>
+    </div>
+    <div class="bet-inp-wrap">
+      <div class="bet-ico"><svg width="14" height="14"><use href="#ico-star"/></svg></div>
+      <input class="bet-inp" type="number" id="binp" placeholder="50" value="50" min="0" max="20000" inputmode="numeric" oninput="clampB()">
+    </div>
+    <div class="bet-quick">
+      <button class="chip" onclick="halfBet()">½</button>
+      <button class="chip" onclick="doubleBet()">2×</button>
+      <button class="chip" onclick="addB(100)">+100</button>
+      <button class="chip" onclick="addB(500)">+500</button>
+      <button class="chip" onclick="maxBet()">MAX</button>
+    </div>
+    <div class="auto-section" id="auto-section">
+      <div class="auto-row">
+        <span class="auto-lbl">Auto cash-out</span>
+        <div class="auto-ctrl">
+          <button class="acb" onclick="chAuto(-0.5)">−</button>
+          <span class="auto-val" id="aval">×2.00</span>
+          <button class="acb" onclick="chAuto(0.5)">+</button>
+        </div>
+        <div class="tog on" id="atog" onclick="togAuto()"></div>
+      </div>
+    </div>
+    <button class="btn btn-primary" onclick="confirmBet()" style="width:100%;font-size:17px;min-height:52px;font-weight:800">
+      Start Game
+    </button>
+  </div>
+</div>
+
+<!-- TOPUP MODAL -->
+<div class="ov" id="topup-ov" onclick="bgCl('topup-ov',event)">
+  <div class="sh">
+    <button class="sh-cls" onclick="closeSh('topup-ov')">✕</button>
+    <div class="sh-hnd"></div>
+    <div class="sh-ttl"><svg width="18" height="18"><use href="#ico-star"/></svg>Top Up Stars</div>
+    <div style="font-size:12px;color:var(--text3);font-weight:600;margin-bottom:14px">Telegram Stars · Instant</div>
+    <div class="tp-grid">
+      <div class="tpc sel" onclick="selTP(100,this)"><div class="tpa">⭐ 100</div><div class="tpu">≈$1.30</div></div>
+      <div class="tpc" onclick="selTP(200,this)"><div class="tpa">⭐ 200</div><div class="tpu">≈$2.60</div></div>
+      <div class="tpc" onclick="selTP(500,this)"><div class="tpa">⭐ 500</div><div class="tpu">≈$6.50</div></div>
+      <div class="tpc" onclick="selTP(1000,this)"><div class="tpa">⭐ 1,000</div><div class="tpu">≈$13</div></div>
+      <div class="tpc" onclick="selTP(2000,this)"><div class="tpa">⭐ 2,000</div><div class="tpu">≈$26</div></div>
+      <div class="tpc" onclick="selTP(5000,this)"><div class="tpa">⭐ 5,000</div><div class="tpu">≈$65</div></div>
+    </div>
+    <button class="btn btn-gold" onclick="doTopup()" style="width:100%;font-size:16px;min-height:50px;font-weight:800">
+      Top Up ⭐ <span id="tplbl">100</span> Stars
+    </button>
+  </div>
+</div>
+
+<!-- DAILY MODAL -->
+<div class="ov" id="daily-ov">
+  <div class="sh">
+    <div class="sh-hnd"></div>
+    <div style="font-size:52px;text-align:center;margin-bottom:10px">🎁</div>
+    <div style="font-size:20px;font-weight:800;text-align:center;margin-bottom:4px;color:var(--text)">Daily Bonus</div>
+    <div style="font-size:13px;color:var(--text3);font-weight:600;text-align:center;margin-bottom:16px">Come back every day for free stars</div>
+    <div class="drbox">
+      <svg width="28" height="28"><use href="#ico-star"/></svg>
+      <span style="font-size:34px;font-weight:900;color:var(--gold)" id="dnum">+1</span>
+      <div>
+        <div style="font-size:14px;font-weight:800;color:var(--text)">free star</div>
+        <div style="font-size:12px;color:var(--text3);font-weight:600">Day <span id="dday">1</span></div>
+      </div>
+    </div>
+    <div class="strow" id="strow"></div>
+    <button class="btn btn-gold" onclick="claimDaily()" style="width:100%;font-size:16px;min-height:50px;font-weight:800">
+      🎁 Claim Free Star
+    </button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
 <script>
-const tg = window.Telegram.WebApp;
-tg.ready();
-tg.expand();
+const SERVER='https://crash-casino-production.up.railway.app';
+const tg=window.Telegram?.WebApp;
+if(tg){tg.ready();tg.expand();try{tg.setHeaderColor('#0b0e17');}catch(e){}}
 
-// Page Switcher
-function showPage(pageId) {
-    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    document.getElementById('page-' + pageId).classList.add('active');
-    
-    document.querySelectorAll('.nb').forEach(n => n.classList.remove('active'));
-    event.currentTarget.classList.add('active');
+let stars=0,gameState='idle',currentMult=1;
+let myBet=0,myCashedOut=false,gameInterval=null,crashPoint=1;
+let startTime=0,autoMult=2,autoOn=true,topupSel=100;
+let initData=tg?.initData||'';
+let fakePlayers=[],crashHistory=[],points=[];
+let gamesPlayed=0,bestMult=0,starsWon=0,roundsToday=0;
+
+const gc=document.getElementById('gc');
+const ctx=gc.getContext('2d');
+
+function resizeGC(){
+  const w=document.querySelector('.game-wrap');
+  if(!w)return;
+  gc.width=w.clientWidth;
+  gc.height=w.clientHeight;
 }
 
-// Canvas Setup
-const canvas = document.getElementById('gc');
-const ctx = canvas.getContext('2d');
-
-function resize() {
-    canvas.width = canvas.clientWidth;
-    canvas.height = canvas.clientHeight;
-    drawGrid();
+function drawCanvas(){
+  ctx.clearRect(0,0,gc.width,gc.height);
+  const W=gc.width,H=gc.height;
+  const pad={l:40,b:24,r:16,t:14};
+  const gW=W-pad.l-pad.r,gH=H-pad.t-pad.b;
+  /* grid */
+  ctx.strokeStyle='rgba(30,37,53,0.9)';ctx.lineWidth=1;
+  for(let i=0;i<=5;i++){
+    const y=pad.t+gH*(i/5);
+    ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(W-pad.r,y);ctx.stroke();
+  }
+  for(let i=0;i<=5;i++){
+    const x=pad.l+gW*(i/5);
+    ctx.beginPath();ctx.moveTo(x,pad.t);ctx.lineTo(x,H-pad.b);ctx.stroke();
+  }
+  if(gameState==='idle'||gameState==='countdown'){
+    ctx.font='36px serif';ctx.textAlign='center';
+    ctx.fillText('🚀',W/2,H/2+10);
+    return;
+  }
+  if(points.length<2)return;
+  const maxM=Math.max(currentMult,1.5);
+  const scX=gW/Math.max(points.length-1,1);
+  const scY=gH/(maxM-1||1);
+  const px=i=>pad.l+i*scX;
+  const py=m=>pad.t+gH-(m-1)*scY;
+  const crashed=gameState==='crashed';
+  const lc=crashed?'#ef4444':'#22c55e';
+  ctx.beginPath();ctx.moveTo(px(0),py(1));
+  points.forEach((m,i)=>ctx.lineTo(px(i),py(m)));
+  ctx.lineTo(px(points.length-1),H-pad.b);ctx.lineTo(px(0),H-pad.b);ctx.closePath();
+  const g=ctx.createLinearGradient(0,pad.t,0,H);
+  g.addColorStop(0,crashed?'rgba(239,68,68,0.2)':'rgba(34,197,94,0.16)');
+  g.addColorStop(1,'rgba(0,0,0,0)');
+  ctx.fillStyle=g;ctx.fill();
+  ctx.beginPath();ctx.moveTo(px(0),py(1));
+  points.forEach((m,i)=>ctx.lineTo(px(i),py(m)));
+  ctx.strokeStyle=lc;ctx.lineWidth=2.5;ctx.lineJoin='round';
+  ctx.shadowColor=lc;ctx.shadowBlur=8;ctx.stroke();ctx.shadowBlur=0;
+  ctx.fillStyle='rgba(148,163,184,0.4)';ctx.font='600 11px sans-serif';ctx.textAlign='right';
+  for(let i=0;i<=4;i++){
+    const m=1+(maxM-1)*(i/4);
+    ctx.fillText(m.toFixed(1)+'×',pad.l-5,py(m)+4);
+  }
+  const tx=px(points.length-1),ty=py(points[points.length-1]);
+  ctx.font='22px serif';ctx.textAlign='center';
+  ctx.fillText(crashed?'💥':'🚀',tx,ty-(crashed?0:13));
 }
 
-function drawGrid() {
-    ctx.clearRect(0,0,canvas.width, canvas.height);
-    ctx.strokeStyle = '#1e2535';
-    ctx.lineWidth = 1;
-    let step = canvas.width / 6;
-    for(let i=0; i<=canvas.width; i+=step) {
-        ctx.beginPath(); ctx.moveTo(i,0); ctx.lineTo(i,canvas.height); ctx.stroke();
-    }
-    for(let i=0; i<=canvas.height; i+=step) {
-        ctx.beginPath(); ctx.moveTo(0,i); ctx.lineTo(canvas.width,i); ctx.stroke();
-    }
+function fmt(n){return Number(Math.round(n)).toLocaleString();}
+function rnd(a,b){return Math.floor(Math.random()*(b-a+1))+a;}
+function updateStars(){
+  document.getElementById('stars-disp').textContent=fmt(stars);
+  document.getElementById('mbal').textContent=fmt(stars);
+}
+function toast(msg,d=2500){const e=document.getElementById('toast');e.textContent=msg;e.classList.add('show');setTimeout(()=>e.classList.remove('show'),d);}
+function openSh(id){document.getElementById(id).classList.add('open');}
+function closeSh(id){document.getElementById(id).classList.remove('open');}
+function bgCl(id,e){if(e.target===document.getElementById(id))closeSh(id);}
+
+function setBtn(type,text){
+  const btn=document.getElementById('mbtn');
+  const map={place:'btn btn-primary',wait:'btn btn-ghost',cash:'btn btn-danger',won:'btn btn-success',off:'btn btn-off'};
+  btn.className=map[type]||map.off;
+  btn.style.cssText='width:100%;font-size:17px;min-height:52px;font-weight:800;letter-spacing:0.2px';
+  btn.disabled=(type==='off'||type==='wait');
+  btn.style.pointerEvents=(type==='off'||type==='wait')?'none':'all';
+  btn.textContent=text;
 }
 
-window.addEventListener('resize', resize);
-setTimeout(resize, 150);
+function switchNav(name){
+  document.querySelectorAll('.nb').forEach(b=>b.classList.remove('active'));
+  document.getElementById('nav-'+name).classList.add('active');
+  document.getElementById('crash-page').style.display=name==='crash'?'flex':'none';
+  ['tasks','leaderboard','profile'].forEach(p=>{
+    const el=document.getElementById('page-'+p);
+    if(el)el.classList.toggle('active',p===name);
+  });
+  if(name==='leaderboard')renderLB();
+  if(name==='profile')renderProfile();
+}
 
-// Basic Interaction
-const mbtn = document.getElementById('mbtn');
-mbtn.onclick = () => {
-    tg.HapticFeedback.impactOccurred('heavy');
-    mbtn.innerText = "BET PLACED";
-    mbtn.style.opacity = "0.5";
-    mbtn.disabled = true;
-};
+function swTab(t){
+  document.querySelectorAll('.ptab').forEach(p=>p.classList.remove('active'));
+  document.getElementById('ptab-'+t).classList.add('active');
+  renderPlayers();
+}
+
+function setSeg(mode){
+  document.getElementById('seg-manual').classList.toggle('active',mode==='manual');
+  document.getElementById('seg-auto').classList.toggle('active',mode==='auto');
+  document.getElementById('auto-section').style.display=mode==='auto'?'none':'block';
+}
+
+function handleMain(){
+  if(gameState==='running'&&myBet>0&&!myCashedOut){cashOut();return;}
+  if((gameState==='idle'||gameState==='countdown')&&myBet===0){
+    document.getElementById('binp').value='50';
+    openSh('bet-ov');
+    setTimeout(()=>document.getElementById('binp').focus(),350);
+  }
+}
+
+function clampB(){const i=document.getElementById('binp');let v=parseInt(i.value)||0;if(v>20000)i.value=20000;if(v<0)i.value=0;}
+function addB(n){const i=document.getElementById('binp');i.value=Math.min(20000,(parseInt(i.value)||0)+n);}
+function halfBet(){const i=document.getElementById('binp');i.value=Math.max(50,Math.floor((parseInt(i.value)||100)/2));}
+function doubleBet(){const i=document.getElementById('binp');i.value=Math.min(20000,(parseInt(i.value)||50)*2);}
+function maxBet(){document.getElementById('binp').value=Math.min(20000,stars);}
+function chAuto(d){autoMult=Math.max(1.1,Math.min(100,parseFloat((autoMult+d).toFixed(2))));document.getElementById('aval').textContent='×'+autoMult.toFixed(2);}
+function togAuto(){autoOn=!autoOn;document.getElementById('atog').classList.toggle('on',autoOn);}
+
+function confirmBet(){
+  const amt=Math.min(20000,Math.max(0,parseInt(document.getElementById('binp').value)||0));
+  if(amt<50){toast('Minimum bet is 50 stars');return;}
+  if(amt>stars){toast('Not enough stars!');return;}
+  closeSh('bet-ov');
+  myBet=amt;stars-=myBet;updateStars();
+  document.getElementById('placed-row').classList.add('show');
+  document.getElementById('placed-val').textContent='⭐ '+fmt(myBet);
+  document.getElementById('rb').classList.remove('show');
+  if(gameState==='running'){setBtn('cash','CASH OUT  ×'+currentMult.toFixed(2));}
+  else{setBtn('wait','Bet placed — starting…');if(!gameInterval&&gameState==='idle')startCountdown();}
+  renderPlayers();toast('Bet ⭐'+fmt(myBet)+' placed!');
+}
+
+function cashOut(){
+  if(myCashedOut||gameState!=='running')return;
+  myCashedOut=true;
+  const win=Math.floor(myBet*currentMult);const profit=win-myBet;
+  stars+=win;updateStars();starsWon+=Math.max(0,profit);
+  if(currentMult>bestMult)bestMult=currentMult;
+  if(currentMult>=3){const b=document.getElementById('tbigwin');if(b&&b.textContent!=='Done'){b.className='btn btn-ghost';b.textContent='Done';stars+=5;updateStars();toast('+5 ⭐ Big win task!');}}
+  setBtn('won','✅ Won ×'+currentMult.toFixed(2)+'!');
+  document.getElementById('placed-row').classList.remove('show');
+  const rb=document.getElementById('rb');rb.className='rb rb-w show';
+  rb.textContent='Won ×'+currentMult.toFixed(2)+' — ⭐'+fmt(win)+' (+'+fmt(profit)+')';
+  saveBet(myBet,currentMult);renderPlayers();toast('Won ⭐'+fmt(win)+'!');
+}
+
+function startCountdown(){
+  crashPoint=genCrash();genFakePlayers();gameState='countdown';points=[];
+  document.getElementById('rb').classList.remove('show');
+  const mn=document.getElementById('mn');mn.className='mn cd';document.getElementById('ms').textContent='';drawCanvas();
+  const seq=['5','4','3','2','1','GO!!'];let i=0;
+  const cd=setInterval(()=>{if(i<seq.length){mn.textContent=seq[i];i++;drawCanvas();}else{clearInterval(cd);startRound();}},550);
+}
+
+function genCrash(){const r=Math.random();if(r<.35)return parseFloat((1+Math.random()*.6).toFixed(2));if(r<.65)return parseFloat((1.6+Math.random()*1.4).toFixed(2));if(r<.85)return parseFloat((3+Math.random()*5).toFixed(2));return parseFloat((8+Math.random()*22).toFixed(2));}
+
+function startRound(){
+  gameState='running';currentMult=1;myCashedOut=false;points=[1];startTime=Date.now();
+  gamesPlayed++;roundsToday++;
+  const tr=document.getElementById('trounds');
+  if(tr&&roundsToday<=5)tr.textContent=Math.min(roundsToday,5)+'/5';
+  if(roundsToday>=5&&tr&&tr.textContent!=='Done'){tr.className='btn btn-ghost';tr.textContent='Done';stars+=3;updateStars();}
+  document.getElementById('mn').className='mn run';document.getElementById('mn').textContent='1.00×';document.getElementById('ms').textContent='FLYING';
+  if(myBet>0&&!myCashedOut)setBtn('cash','CASH OUT  ×1.00');
+  gameInterval=setInterval(tick,50);
+}
+
+function tick(){
+  const e=(Date.now()-startTime)/1000;currentMult=parseFloat((Math.pow(1.06,e*10)).toFixed(2));if(currentMult<1)currentMult=1;
+  points.push(currentMult);if(points.length>120)points=points.slice(-120);
+  document.getElementById('mn').textContent=currentMult.toFixed(2)+'×';
+  if(myBet>0&&!myCashedOut){
+    document.getElementById('mbtn').textContent='CASH OUT  ×'+currentMult.toFixed(2);
+    if(autoOn&&currentMult>=autoMult)cashOut();
+  }
+  fakePlayers.forEach(fp=>{if(!fp.cashedAt&&!fp.lost&&currentMult>=fp.autoOut)fp.cashedAt=currentMult;});
+  renderPlayers();drawCanvas();if(currentMult>=crashPoint)doCrash();
+}
+
+function doCrash(){
+  clearInterval(gameInterval);gameInterval=null;gameState='crashed';
+  const f=parseFloat(crashPoint.toFixed(2));crashHistory.unshift(f);if(crashHistory.length>15)crashHistory.pop();renderHistory();
+  document.getElementById('mn').textContent=f+'×';document.getElementById('mn').className='mn crash';document.getElementById('ms').textContent='CRASHED';
+  fakePlayers.forEach(fp=>{if(!fp.cashedAt)fp.lost=true;});
+  if(myBet>0&&!myCashedOut){const rb=document.getElementById('rb');rb.className='rb rb-l show';rb.textContent='Crashed at ×'+f+' — lost ⭐'+fmt(myBet);saveBet(myBet,null);}
+  setBtn('place','Place Bet');document.getElementById('placed-row').classList.remove('show');
+  renderPlayers();drawCanvas();
+  setTimeout(()=>{myBet=0;myCashedOut=false;fakePlayers=[];renderPlayers();resetGame();},3200);
+}
+
+function resetGame(){
+  gameState='idle';currentMult=1;points=[];
+  document.getElementById('mn').textContent='1';document.getElementById('mn').className='mn wait';
+  document.getElementById('ms').textContent='WAITING FOR BETS';document.getElementById('rb').classList.remove('show');drawCanvas();
+}
+
+const PNAMES=['Aquver','StarRider','CryptoX','MoonAce','LuckyBet','NovaStar','CosmicPro','NebulaX','OrbitAce','PulsarBet','GalaxyX','RocketKing'];
+const PCOLORS=['#e74c3c','#3b82f6','#10b981','#f59e0b','#8b5cf6','#06b6d4','#ec4899','#14b8a6','#f97316','#84cc16'];
+
+function genFakePlayers(){
+  fakePlayers=[];
+  for(let i=0;i<rnd(4,9);i++)fakePlayers.push({name:PNAMES[rnd(0,PNAMES.length-1)],bet:rnd(1,40)*50,color:PCOLORS[rnd(0,PCOLORS.length-1)],cashedAt:null,lost:false,autoOut:parseFloat((rnd(110,600)/100).toFixed(2))});
+}
+
+function renderPlayers(){
+  const el=document.getElementById('pl-list');
+  const all=[];
+  if(myBet>0)all.push({name:tg?.initDataUnsafe?.user?.first_name||'You',bet:myBet,color:'#4f6ef7',cashedAt:myCashedOut?currentMult:null,lost:!myCashedOut&&gameState==='crashed',isMe:true});
+  all.push(...fakePlayers);
+  if(!all.length){el.innerHTML='<div style="padding:18px;text-align:center;color:var(--text3);font-size:13px;font-weight:600">Place a bet to join</div>';return;}
+  el.innerHTML=all.map(p=>{
+    let prize,mc='var(--text3)';
+    if(p.cashedAt){prize=`<span class="ppz pw">+${fmt(Math.floor(p.bet*(p.cashedAt-1)))}</span>`;mc='var(--green)';}
+    else if(p.lost||gameState==='crashed'){prize=`<span class="ppz plz">−${fmt(p.bet)}</span>`;mc='var(--red)';}
+    else prize=`<span class="ppz pp">⭐</span>`;
+    return `<div class="pr">
+      <div class="avatar" style="width:28px;height:28px;font-size:11px;background:${p.color}">${p.name[0]}</div>
+      <div style="flex:1;min-width:0">
+        <div class="pnm">${p.name}${p.isMe?` <span style="color:var(--blue);font-size:10px;font-weight:800">(YOU)</span>`:''}</div>
+        <div class="pbt">⭐${fmt(p.bet)} <span class="pmlt" style="color:${mc}">×${(p.cashedAt||currentMult).toFixed(2)}</span></div>
+      </div>${prize}</div>`;
+  }).join('');
+}
+
+function renderHistory(){
+  const el=document.getElementById('hist-bar');
+  if(!crashHistory.length){el.innerHTML='<span style="color:var(--text3);font-size:12px;font-weight:700">No rounds yet</span>';return;}
+  el.innerHTML=crashHistory.map(m=>{const c=m<1.5?'pill-red':m<3?'pill-gold':'pill-green';return `<span class="pill ${c}">×${m.toFixed(2)}</span>`;}).join('');
+}
+
+function renderLB(){
+  const names=['RocketKing','MoonAce','StarRider','CryptoX','NovaStar','OrbitPro','GalaxyBet','NebulaX','PulsarAce','CosmicPro'];
+  const myName=tg?.initDataUnsafe?.user?.first_name||'You';
+  const rows=[{name:myName,score:starsWon,color:'#4f6ef7',me:true},...names.map((n,i)=>({name:n,score:rnd(200,9999),color:PCOLORS[i%PCOLORS.length]}))];
+  rows.sort((a,b)=>b.score-a.score);
+  document.getElementById('lb-list').innerHTML=rows.slice(0,10).map((r,i)=>`
+    <div style="display:grid;grid-template-columns:28px 36px 1fr 80px;gap:8px;padding:9px 14px;border-bottom:1px solid var(--border);align-items:center;min-height:44px;margin:0 12px">
+      <span style="font-size:14px;font-weight:800;color:var(--text3)">${i===0?'🥇':i===1?'🥈':i===2?'🥉':i+1}</span>
+      <div class="avatar" style="width:32px;height:32px;font-size:12px;background:${r.color}">${r.name[0]}</div>
+      <span style="font-size:13px;font-weight:700;color:var(--text)">${r.name}${r.me?` <span style="font-size:10px;color:var(--blue)">(YOU)</span>`:''}</span>
+      <span style="font-size:13px;font-weight:800;color:var(--gold);text-align:right">⭐ ${fmt(r.score)}</span>
+    </div>`).join('');
+}
+
+function renderProfile(){
+  const user=tg?.initDataUnsafe?.user;const name=user?.first_name||'Player';
+  document.getElementById('pnm').textContent=name;document.getElementById('pav').textContent=name[0]?.toUpperCase()||'?';
+  document.getElementById('sg').textContent=gamesPlayed;document.getElementById('sb').textContent=bestMult>0?bestMult.toFixed(2)+'×':'—';
+  document.getElementById('sw').textContent=fmt(starsWon);
+  document.getElementById('ss').textContent=parseInt(localStorage.getItem('orb_st_'+(user?.id||'guest'))||'0');
+}
+
+function doInvite(){const uid=tg?.initDataUnsafe?.user?.id||'0';const link=`https://t.me/OrbitCrashBot?start=ref_${uid}`;try{tg.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(link)}&text=${encodeURIComponent('Play Orbit Crash — win Stars! '+link)}`);}catch(e){copyToClipboard(link);toast('Link copied!');}}
+function copyLink(){copyToClipboard(`https://t.me/OrbitCrashBot?start=ref_${tg?.initDataUnsafe?.user?.id||'0'}`);toast('Link copied!');}
+function copyToClipboard(t){try{navigator.clipboard.writeText(t);}catch(e){const el=document.createElement('textarea');el.value=t;document.body.appendChild(el);el.select();document.execCommand('copy');document.body.removeChild(el);}}
+
+function checkDaily(){
+  const uid=tg?.initDataUnsafe?.user?.id||'guest';const dk='orb_dl_'+uid,sk='orb_st_'+uid;
+  const last=localStorage.getItem(dk),today=new Date().toDateString();
+  if(last===today){const b=document.getElementById('tdaily');if(b){b.className='btn btn-ghost';b.textContent='Done';b.disabled=true;}return;}
+  const prev=new Date(Date.now()-86400000).toDateString();
+  let streak=parseInt(localStorage.getItem(sk)||'0');if(last!==prev)streak=0;
+  const day=streak+1,reward=day>=7?3:day>=4?2:1;
+  document.getElementById('dnum').textContent='+'+reward;document.getElementById('dday').textContent=day;
+  const sr=document.getElementById('strow');sr.innerHTML='';
+  for(let i=1;i<=7;i++){const d=document.createElement('div');d.className='sdot'+(i<day?' done':i===day?' today':'');d.textContent=i;sr.appendChild(d);}
+  openSh('daily-ov');
+}
+function claimDaily(){
+  const uid=tg?.initDataUnsafe?.user?.id||'guest';
+  let streak=parseInt(localStorage.getItem('orb_st_'+uid)||'0');const day=streak+1,reward=day>=7?3:day>=4?2:1;streak++;
+  localStorage.setItem('orb_dl_'+uid,new Date().toDateString());localStorage.setItem('orb_st_'+uid,streak);
+  stars+=reward;updateStars();closeSh('daily-ov');
+  const b=document.getElementById('tdaily');if(b){b.className='btn btn-ghost';b.textContent='Done';b.disabled=true;}
+  setTimeout(()=>toast('Daily bonus +'+reward+' ⭐ (Day '+streak+')'),300);
+}
+function claimDailyTask(){if(localStorage.getItem('orb_dl_'+(tg?.initDataUnsafe?.user?.id||'guest'))===new Date().toDateString()){toast('Already claimed today!');return;}checkDaily();}
+
+function selTP(n,el){topupSel=n;document.querySelectorAll('.tpc').forEach(c=>c.classList.remove('sel'));el.classList.add('sel');document.getElementById('tplbl').textContent=fmt(n);}
+function doTopup(){stars+=topupSel;updateStars();closeSh('topup-ov');toast('+'+fmt(topupSel)+' ⭐ stars added!');}
+
+async function saveBet(bet,co){try{await fetch(SERVER+'/api/bet',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({initData,betAmount:bet,cashedOutAt:co})});}catch(e){}}
+
+async function loadUser(){
+  try{const c=new AbortController();setTimeout(()=>c.abort(),5000);const r=await fetch(SERVER+'/api/user',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({initData}),signal:c.signal});const d=await r.json();stars=d.coins||1000;}catch(e){stars=1000;}
+  updateStars();setBtn('place','Place Bet');
+  const user=tg?.initDataUnsafe?.user;
+  if(user){document.getElementById('pav').textContent=user.first_name[0]?.toUpperCase()||'?';document.getElementById('pnm').textContent=user.first_name;}
+  setTimeout(checkDaily,900);
+}
+
+window.addEventListener('load',()=>{resizeGC();drawCanvas();loadUser();});
+window.addEventListener('resize',()=>{resizeGC();drawCanvas();});
 </script>
-
 </body>
 </html>
