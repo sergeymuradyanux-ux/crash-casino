@@ -7,7 +7,7 @@
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{background:#0a0a0f;color:#fff;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;max-width:480px;margin:0 auto}
+body{background:#0a0a0f;color:#fff;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;max-width:480px;margin:0 auto;padding-bottom:90px}
 .header{background:#12122a;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #1e1e3a}
 .logo{font-size:16px;font-weight:700;color:#fff}
 .coins{background:#2a1f00;border:1px solid #5c3d00;border-radius:20px;padding:5px 12px;color:#f5a623;font-size:13px;font-weight:600}
@@ -17,7 +17,7 @@ body{background:#0a0a0f;color:#fff;font-family:-apple-system,BlinkMacSystemFont,
 .screen{display:none;padding:12px}
 .screen.active{display:block}
 .crash-box{background:#0d0d1f;border:1px solid #1e1e3a;border-radius:14px;padding:20px;text-align:center;margin-bottom:12px}
-.mult{font-size:52px;font-weight:800;line-height:1;letter-spacing:-2px}
+.mult{font-size:64px;font-weight:800;line-height:1;letter-spacing:-2px}
 .mult.wait{color:#555}
 .mult.run{color:#00e676}
 .mult.crash{color:#ff1744}
@@ -34,10 +34,13 @@ body{background:#0a0a0f;color:#fff;font-family:-apple-system,BlinkMacSystemFont,
 .qrow{display:flex;gap:5px;margin-bottom:10px}
 .qb{flex:1;background:#1a1a2e;border:1px solid #2a2a4a;border-radius:6px;padding:6px 2px;text-align:center;color:#888;font-size:11px;cursor:pointer}
 .qb:hover{background:#2a2a4e}
-.btn{width:100%;padding:13px;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;border:none;color:#fff}
+.action-wrap{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;padding:12px 16px;background:#0a0a0f;border-top:1px solid #1e1e3a;z-index:100}
+.btn{width:100%;padding:16px;border-radius:14px;font-size:17px;font-weight:800;cursor:pointer;border:none;color:#fff;letter-spacing:0.3px}
 .btn-green{background:#00c853}
+.btn-green:active{background:#00a843;transform:scale(0.98)}
 .btn-green:disabled{background:#1a1a2e;color:#444;cursor:not-allowed}
-.btn-red{background:#c62828}
+.btn-red{background:#e53935}
+.btn-red:active{background:#c62828;transform:scale(0.98)}
 .pills{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:10px}
 .pill{padding:3px 9px;border-radius:10px;font-size:10px;font-weight:600}
 .pill-g{background:#003300;color:#00e676}
@@ -46,6 +49,7 @@ body{background:#0a0a0f;color:#fff;font-family:-apple-system,BlinkMacSystemFont,
 .pack-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px}
 .pack{background:#1a1a2e;border:1px solid #2a2a4a;border-radius:12px;padding:12px;text-align:center;cursor:pointer}
 .pack:hover{border-color:#5b9cf6}
+.pack:active{transform:scale(0.97)}
 .pack.hot{border-color:#f5a623}
 .pack-coins{color:#f5a623;font-size:14px;font-weight:700}
 .pack-price{color:#888;font-size:11px;margin-top:2px}
@@ -69,7 +73,7 @@ body{background:#0a0a0f;color:#fff;font-family:-apple-system,BlinkMacSystemFont,
 .tx-neg{color:#ff5252;font-size:13px;font-weight:600}
 .hist-item{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #1a1a2e}
 .loading{text-align:center;padding:40px 0;color:#555;font-size:14px}
-.withdraw-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:100;align-items:flex-end;justify-content:center}
+.withdraw-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:200;align-items:flex-end;justify-content:center}
 .withdraw-modal.open{display:flex}
 .modal-box{background:#12122a;border-radius:20px 20px 0 0;padding:24px 20px 32px;width:100%;max-width:480px}
 .modal-title{font-size:16px;font-weight:700;margin-bottom:4px}
@@ -77,8 +81,12 @@ body{background:#0a0a0f;color:#fff;font-family:-apple-system,BlinkMacSystemFont,
 .modal-label{font-size:12px;color:#888;margin-bottom:6px}
 .modal-inp{width:100%;background:#1a1a2e;border:1px solid #2a2a4a;border-radius:8px;padding:10px 12px;color:#fff;font-size:13px;outline:none;margin-bottom:12px}
 .btn-cancel{width:100%;padding:11px;border-radius:10px;font-size:13px;cursor:pointer;border:1px solid #2a2a4a;background:transparent;color:#888;margin-top:8px}
-.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#1a1a2e;border:1px solid #2a2a4a;border-radius:10px;padding:10px 20px;font-size:13px;color:#fff;z-index:200;opacity:0;transition:opacity 0.3s}
+.toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:#1a1a2e;border:1px solid #2a2a4a;border-radius:10px;padding:10px 20px;font-size:13px;color:#fff;z-index:300;opacity:0;transition:opacity 0.3s;white-space:nowrap}
 .toast.show{opacity:1}
+.win-flash{animation:winpulse 0.5s ease-out}
+.lose-flash{animation:losepulse 0.5s ease-out}
+@keyframes winpulse{0%{background:#003300}100%{background:#0d0d1f}}
+@keyframes losepulse{0%{background:#330000}100%{background:#0d0d1f}}
 </style>
 </head>
 <body>
@@ -96,7 +104,7 @@ body{background:#0a0a0f;color:#fff;font-family:-apple-system,BlinkMacSystemFont,
 
 <!-- GAME -->
 <div id="screen-game" class="screen active">
-  <div class="crash-box">
+  <div class="crash-box" id="crash-box">
     <div class="mult wait" id="mult">1.00x</div>
     <div class="status" id="status">Loading...</div>
     <div class="prog-wrap"><div class="prog-fill" id="prog"></div></div>
@@ -119,17 +127,32 @@ body{background:#0a0a0f;color:#fff;font-family:-apple-system,BlinkMacSystemFont,
     <div class="qb" onclick="document.getElementById('bet').value=500">500</div>
     <div class="qb" onclick="document.getElementById('bet').value=1000">1K</div>
   </div>
-  <button class="btn btn-green" id="action-btn" onclick="handleAction()" disabled>Loading...</button>
 </div>
 
 <!-- SHOP -->
 <div id="screen-shop" class="screen">
   <div class="sec-title">Coin packs</div>
   <div class="pack-grid">
-    <div class="pack" onclick="buyPack(500,1)"><div class="pack-coins">🪙 500</div><div class="pack-price">$1.00</div></div>
-    <div class="pack hot" onclick="buyPack(1200,2)"><div class="hot-badge">🔥 Popular</div><div class="pack-coins">🪙 1,200</div><div class="pack-price">$2.00</div><div class="pack-bonus">+20% bonus</div></div>
-    <div class="pack" onclick="buyPack(3500,5)"><div class="pack-coins">🪙 3,500</div><div class="pack-price">$5.00</div><div class="pack-bonus">+40% bonus</div></div>
-    <div class="pack" onclick="buyPack(8000,10)"><div class="pack-coins">🪙 8,000</div><div class="pack-price">$10.00</div><div class="pack-bonus">+60% bonus</div></div>
+    <div class="pack" onclick="buyPack(500,1)">
+      <div class="pack-coins">🪙 500</div>
+      <div class="pack-price">$1.00</div>
+    </div>
+    <div class="pack hot" onclick="buyPack(1200,2)">
+      <div class="hot-badge">🔥 Popular</div>
+      <div class="pack-coins">🪙 1,200</div>
+      <div class="pack-price">$2.00</div>
+      <div class="pack-bonus">+20% bonus</div>
+    </div>
+    <div class="pack" onclick="buyPack(3500,5)">
+      <div class="pack-coins">🪙 3,500</div>
+      <div class="pack-price">$5.00</div>
+      <div class="pack-bonus">+40% bonus</div>
+    </div>
+    <div class="pack" onclick="buyPack(8000,10)">
+      <div class="pack-coins">🪙 8,000</div>
+      <div class="pack-price">$10.00</div>
+      <div class="pack-bonus">+60% bonus</div>
+    </div>
   </div>
   <div class="sec-title">Pay with crypto</div>
   <div class="crypto-row">
@@ -154,14 +177,19 @@ body{background:#0a0a0f;color:#fff;font-family:-apple-system,BlinkMacSystemFont,
     <div class="wal-btn" onclick="showScreen('shop')">🛒 Buy coins</div>
   </div>
   <div class="sec-title">Transactions</div>
-  <div id="tx-list"><div class="loading">Loading...</div></div>
+  <div id="tx-list"><div class="loading">No transactions yet</div></div>
 </div>
 
 <!-- HISTORY -->
 <div id="screen-history" class="screen">
   <div class="sec-title">Recent crashes</div>
   <div class="pills" id="pill-row"></div>
-  <div id="hist-list"><div class="loading">No games yet</div></div>
+  <div id="hist-list"><div class="loading">No games yet — play first!</div></div>
+</div>
+
+<!-- FIXED BOTTOM BUTTON -->
+<div class="action-wrap">
+  <button class="btn btn-green" id="action-btn" onclick="handleAction()" disabled>Loading...</button>
 </div>
 
 <!-- WITHDRAW MODAL -->
@@ -222,27 +250,24 @@ function updateCoins(){
 async function loadUser(){
   try {
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 5000);
-    const res = await fetch(SERVER+'/api/user', {
+    const timeout = setTimeout(()=>controller.abort(), 5000);
+    const res = await fetch(SERVER+'/api/user',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({initData}),
-      signal: controller.signal
+      body:JSON.stringify({initData}),
+      signal:controller.signal
     });
     clearTimeout(timeout);
     const data = await res.json();
-    if(data.coins !== undefined){
-      coins = data.coins;
-    } else {
-      coins = 1000;
-    }
+    coins = data.coins !== undefined ? data.coins : 1000;
   } catch(e){
     coins = 1000;
   }
   updateCoins();
   document.getElementById('status').textContent = 'Ready to play!';
-  document.getElementById('action-btn').disabled = false;
-  document.getElementById('action-btn').textContent = 'Place Bet';
+  const btn = document.getElementById('action-btn');
+  btn.disabled = false;
+  btn.textContent = 'Place Bet';
 }
 
 function showScreen(name){
@@ -251,6 +276,12 @@ function showScreen(name){
   document.getElementById('screen-'+name).classList.add('active');
   const idx = ['game','shop','wallet','history'].indexOf(name);
   document.querySelectorAll('.nav-btn')[idx].classList.add('active');
+  const btn = document.getElementById('action-btn');
+  if(name==='game'){
+    btn.style.display='block';
+  } else {
+    btn.style.display='none';
+  }
   if(name==='wallet') renderTx();
   if(name==='history') renderHistory();
 }
@@ -276,8 +307,10 @@ function startBet(){
   updateCoins();
   crashPoint=genCrash();
   gameState='countdown';
-  document.getElementById('action-btn').disabled=true;
-  document.getElementById('action-btn').textContent='Starting...';
+  const btn = document.getElementById('action-btn');
+  btn.disabled=true;
+  btn.textContent='Starting...';
+  btn.className='btn btn-green';
   document.getElementById('result-area').innerHTML='';
   document.getElementById('mult').className='mult wait';
   document.getElementById('prog').style.width='0%';
@@ -294,9 +327,10 @@ function startBet(){
 function runGame(){
   gameState='running'; currentMult=1.00;
   document.getElementById('mult').className='mult run';
-  document.getElementById('action-btn').disabled=false;
-  document.getElementById('action-btn').className='btn btn-red';
-  document.getElementById('action-btn').textContent='💸 Cash Out';
+  const btn = document.getElementById('action-btn');
+  btn.disabled=false;
+  btn.className='btn btn-red';
+  btn.textContent='💸 CASH OUT';
   const start=Date.now();
   gameInterval=setInterval(()=>{
     const e=(Date.now()-start)/1000;
@@ -319,8 +353,10 @@ function cashOut(){
   const profit=win-currentBet;
   coins+=win; updateCoins();
   localTx.unshift({label:'Win ×'+currentMult.toFixed(2),time:'Just now',delta:'+'+fmt(profit)+' 🪙',pos:true});
-  document.getElementById('action-btn').disabled=true;
-  document.getElementById('action-btn').textContent='Cashed out!';
+  const btn = document.getElementById('action-btn');
+  btn.disabled=true;
+  btn.className='btn btn-green';
+  btn.textContent='✅ Cashed out at '+currentMult.toFixed(2)+'x!';
   document.getElementById('status').textContent='Cashed out at '+currentMult.toFixed(2)+'x';
   showResult('🎉 Won '+fmt(win)+' 🪙  (profit +'+fmt(profit)+')',true);
   saveBet(currentBet, currentMult);
@@ -337,9 +373,10 @@ function doCrash(){
   document.getElementById('status').textContent='💥 Crashed at '+f+'x';
   document.getElementById('prog').style.width='100%';
   document.getElementById('prog').style.background='#ff1744';
-  document.getElementById('action-btn').className='btn btn-green';
-  document.getElementById('action-btn').textContent='Place Bet';
-  document.getElementById('action-btn').disabled=false;
+  const btn = document.getElementById('action-btn');
+  btn.className='btn btn-green';
+  btn.textContent='Place Bet';
+  btn.disabled=false;
   if(!cashedOut && currentBet>0){
     localTx.unshift({label:'Loss · crashed ×'+f,time:'Just now',delta:'-'+fmt(currentBet)+' 🪙',pos:false});
     showResult('💥 Crashed at '+f+'x — lost '+fmt(currentBet)+' 🪙',false);
@@ -349,12 +386,12 @@ function doCrash(){
 
 async function saveBet(bet, cashedOutAt){
   try {
-    await fetch(SERVER+'/api/bet', {
+    await fetch(SERVER+'/api/bet',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({initData, betAmount:bet, cashedOutAt})
+      body:JSON.stringify({initData, betAmount:bet, cashedOutAt})
     });
-  } catch(e){ console.log('Could not save bet'); }
+  } catch(e){}
 }
 
 function showResult(msg,win){
@@ -365,15 +402,12 @@ function showResult(msg,win){
 function buyPack(c,price){
   coins+=c; updateCoins();
   localTx.unshift({label:'Bought '+fmt(c)+' coins',time:'Just now',delta:'+'+fmt(c)+' 🪙',pos:true});
-  toast('+'+fmt(c)+' coins added! Demo mode — payment coming soon.');
+  toast('+'+fmt(c)+' coins added! Demo — payment coming soon.');
 }
 
 function renderTx(){
   const el=document.getElementById('tx-list');
-  if(!localTx.length){
-    el.innerHTML='<div class="loading">No transactions yet</div>';
-    return;
-  }
+  if(!localTx.length){ el.innerHTML='<div class="loading">No transactions yet</div>'; return; }
   el.innerHTML=localTx.map(t=>`
     <div class="tx-item">
       <div><div class="tx-name">${t.label}</div><div class="tx-time">${t.time}</div></div>
