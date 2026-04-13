@@ -221,26 +221,28 @@ function updateCoins(){
 
 async function loadUser(){
   try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 5000);
     const res = await fetch(SERVER+'/api/user', {
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({initData})
+      body: JSON.stringify({initData}),
+      signal: controller.signal
     });
+    clearTimeout(timeout);
     const data = await res.json();
     if(data.coins !== undefined){
       coins = data.coins;
-      updateCoins();
-      document.getElementById('status').textContent = 'Ready to play!';
-      document.getElementById('action-btn').disabled = false;
-      document.getElementById('action-btn').textContent = 'Place Bet';
+    } else {
+      coins = 1000;
     }
   } catch(e){
     coins = 1000;
-    updateCoins();
-    document.getElementById('status').textContent = 'Ready (offline mode)';
-    document.getElementById('action-btn').disabled = false;
-    document.getElementById('action-btn').textContent = 'Place Bet';
   }
+  updateCoins();
+  document.getElementById('status').textContent = 'Ready to play!';
+  document.getElementById('action-btn').disabled = false;
+  document.getElementById('action-btn').textContent = 'Place Bet';
 }
 
 function showScreen(name){
