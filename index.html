@@ -25,7 +25,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Inter',sans-serif;
 .btn:disabled{opacity:0.4;cursor:not-allowed;transform:none}
 .btn-primary{background:var(--blue);color:#fff;box-shadow:0 2px 12px rgba(79,110,247,0.3)}
 .btn-primary:active{background:var(--blue-dk)}
-.btn-success{background:var(--green);color:#fff;box-shadow:0 2px 12px rgba(34,197,94,0.25)}
+.btn-success{background:var(--green);color:#fff;font-size:18px;font-weight:800}
 .btn-success:active{background:var(--green-dk)}
 .btn-danger{
   background:var(--red);color:#fff;
@@ -45,7 +45,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Inter',sans-serif;
 .btn-ghost{background:transparent;color:var(--text2);border:1px solid var(--border2);font-size:13px;min-height:38px}
 .btn-ghost:active{background:var(--card2)}
 .btn-off{background:var(--card);color:var(--text3);cursor:not-allowed;border:1px solid var(--border)}
-.chip{padding:6px 12px;border-radius:var(--r-sm);background:var(--card2);border:1px solid var(--border2);color:var(--text2);font-size:13px;font-weight:700;cursor:pointer;transition:all 0.12s;min-height:40px;display:flex;align-items:center;justify-content:center}
+.btn-wait{background:var(--card2);color:var(--text3);cursor:not-allowed;border:1px solid var(--border2);font-size:15px}
+.chip{padding:0 12px;border-radius:var(--r-sm);background:var(--card2);border:1px solid var(--border2);color:var(--text2);font-size:13px;font-weight:700;cursor:pointer;transition:all 0.12s;height:40px;display:flex;align-items:center;justify-content:center;flex:1}
 .chip:active{background:var(--blue);color:#fff;border-color:var(--blue)}
 .card{background:var(--card);border-radius:var(--r-lg);border:1px solid var(--border)}
 .avatar{border-radius:50%;border:2px solid var(--border2);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;background:var(--card2);flex-shrink:0;color:var(--text)}
@@ -69,37 +70,61 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Inter',sans-serif;
 .game-wrap{margin:10px 12px 0;border-radius:var(--r-lg);overflow:hidden;position:relative;border:1px solid var(--border);background:#060910;flex-shrink:0;height:50vh;max-height:50vh;min-height:160px}
 canvas#gc{position:absolute;inset:0;width:100%;height:100%}
 .mult-overlay{position:absolute;top:12px;left:0;right:0;text-align:center;pointer-events:none;z-index:5}
-.mn{font-size:64px;font-weight:900;line-height:1;letter-spacing:-2px}
-.mn.wait{color:rgba(255,255,255,0.08)}
+.mn{font-size:64px;font-weight:900;line-height:1;letter-spacing:-2px;display:none}
+.mn.visible{display:block}
 .mn.cd{color:var(--text);font-size:80px;text-shadow:0 0 40px rgba(255,255,255,0.3)}
 .mn.run{color:var(--green);text-shadow:0 0 32px rgba(34,197,94,0.6),0 0 64px rgba(34,197,94,0.2)}
 .mn.crash{color:var(--red);text-shadow:0 0 32px rgba(239,68,68,0.6)}
-.ms{font-size:11px;color:var(--text3);margin-top:3px;font-weight:700;letter-spacing:1px}
+.ms{font-size:11px;color:var(--text3);margin-top:3px;font-weight:700;letter-spacing:1px;display:none}
+.ms.visible{display:block}
 
 /* HISTORY */
-.hist-bar{display:flex;gap:5px;padding:6px 12px;overflow-x:auto;flex-shrink:0;align-items:center}
+.hist-bar{display:flex;gap:5px;padding:6px 12px;overflow-x:auto;flex-shrink:0;align-items:center;min-height:36px}
 .hist-bar::-webkit-scrollbar{display:none}
 
 /* RESULT */
-.rb{margin:6px 12px;padding:10px 14px;border-radius:var(--r-md);text-align:center;font-size:14px;font-weight:700;display:none}
+.rb{margin:4px 12px;padding:10px 14px;border-radius:var(--r-md);text-align:center;font-size:14px;font-weight:700;display:none}
 .rb.show{display:block}
 .rb-w{background:rgba(34,197,94,0.1);color:#86efac;border:1px solid rgba(34,197,94,0.2)}
 .rb-l{background:rgba(239,68,68,0.1);color:#fca5a5;border:1px solid rgba(239,68,68,0.2)}
 
-/* PLAYERS */
+/* PLAYERS — now a proper table */
 .pl-wrap{flex:1;display:flex;flex-direction:column;overflow:hidden;min-height:0;margin:0 12px}
-.pl-tabs{display:flex;gap:2px;padding:4px;flex-shrink:0;background:var(--card);border-radius:var(--r-md);border:1px solid var(--border);margin-top:8px}
+.pl-tabs{display:flex;gap:2px;padding:4px;flex-shrink:0;background:var(--card);border-radius:var(--r-md);border:1px solid var(--border);margin-top:6px}
 .ptab{flex:1;padding:7px 4px;text-align:center;font-size:12px;font-weight:700;color:var(--text3);cursor:pointer;border:none;border-radius:var(--r-sm);background:transparent;transition:all 0.15s;min-height:34px}
 .ptab.active{background:var(--bg2);color:var(--text);border:1px solid var(--border2)}
-.pl-list{flex:1;overflow-y:auto;padding:0 2px;margin-top:6px}
+
+/* Table header */
+.pl-table-head{
+  display:grid;grid-template-columns:26px 1fr 60px 60px;
+  gap:6px;padding:6px 10px;
+  border-bottom:1px solid var(--border);
+  flex-shrink:0;margin-top:4px;
+}
+.pl-table-head span{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.4px}
+.pl-table-head span:nth-child(3),.pl-table-head span:nth-child(4){text-align:right}
+
+.pl-list{flex:1;overflow-y:auto;padding:0}
 .pl-list::-webkit-scrollbar{width:2px}
 .pl-list::-webkit-scrollbar-thumb{background:var(--border)}
-.pr{display:flex;align-items:center;gap:8px;padding:8px 10px;margin-bottom:3px;border-radius:var(--r-md);background:var(--card);border:1px solid var(--border);min-height:44px}
-.pnm{font-size:13px;font-weight:700;flex:1;color:var(--text)}
-.pbt{font-size:11px;color:var(--text3);margin-top:2px}
-.pmlt{font-weight:800;margin-left:3px}
-.ppz{font-size:13px;font-weight:800;min-width:44px;text-align:right}
-.pw{color:var(--green)}.plz{color:var(--red)}.pp{color:var(--text3);font-size:16px}
+.pl-empty{padding:18px;text-align:center;color:var(--text3);font-size:13px;font-weight:600}
+
+/* Player row — table style */
+.pr{
+  display:grid;grid-template-columns:26px 1fr 60px 60px;
+  gap:6px;padding:7px 10px;
+  border-bottom:1px solid rgba(30,37,53,0.6);
+  align-items:center;min-height:40px;
+}
+.pr:last-child{border-bottom:none}
+.pr-av{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:10px;flex-shrink:0;color:#fff;border:1px solid rgba(255,255,255,0.1)}
+.pr-name{font-size:12px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pr-you{color:var(--blue);font-size:9px;font-weight:800;margin-left:3px}
+.pr-bet{font-size:12px;font-weight:700;color:var(--text2);text-align:right}
+.pr-mult{font-size:12px;font-weight:800;text-align:right}
+.pr-mult.win{color:var(--green)}
+.pr-mult.lose{color:var(--red)}
+.pr-mult.pend{color:var(--text3)}
 
 /* ACTION */
 .act-area{flex-shrink:0;padding:8px 12px 12px;background:var(--bg2);border-top:1px solid var(--border)}
@@ -199,87 +224,20 @@ canvas#gc{position:absolute;inset:0;width:100%;height:100%}
 
 <svg style="display:none" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <symbol id="ico-rocket" viewBox="0 0 28 28">
-      <path d="M14 2c0 0-2 3-3 7l3 3 3-3C16 5 14 2 14 2z" fill="#a5b4fc"/>
-      <path d="M11 9c0 5 3 9 3 9s3-4 3-9" fill="#818cf8"/>
-      <circle cx="14" cy="10" r="2.5" fill="#60a5fa"/>
-      <path d="M11 9l-4 4 2 2z" fill="#6366f1"/>
-      <path d="M17 9l4 4-2 2z" fill="#6366f1"/>
-      <path d="M12 18c0 2.5 2 4 2 4s2-1.5 2-4l-2-1z" fill="#f97316"/>
-    </symbol>
-    <symbol id="ico-swords" viewBox="0 0 28 28">
-      <line x1="4" y1="24" x2="22" y2="6" stroke="#94a3b8" stroke-width="2.5" stroke-linecap="round"/>
-      <path d="M20 4l4 4-1.5 1.5L22 8l-4-4z" fill="#cbd5e1"/>
-      <rect x="3" y="21.5" width="5" height="2" rx="1" transform="rotate(-45 5.5 22.5)" fill="#f4b942"/>
-      <line x1="24" y1="24" x2="6" y2="6" stroke="#94a3b8" stroke-width="2.5" stroke-linecap="round"/>
-      <path d="M8 4L4 8l1.5 1.5L6 8l4-4z" fill="#cbd5e1"/>
-      <rect x="20" y="21.5" width="5" height="2" rx="1" transform="rotate(45 22.5 22.5)" fill="#f4b942"/>
-    </symbol>
-    <symbol id="ico-trophy" viewBox="0 0 28 28">
-      <path d="M8 3h12v9c0 4-2.7 7-6 7s-6-3-6-7V3z" fill="#f4b942" stroke="#b8861f" stroke-width="1"/>
-      <path d="M9 3.5h10v7c0 3-2.2 5.5-5 5.5s-5-2.5-5-5.5z" fill="#fcd34d"/>
-      <path d="M8 5H4c0 0 0 5 4 5z" fill="#f4b942"/>
-      <path d="M20 5h4c0 0 0 5-4 5z" fill="#f4b942"/>
-      <rect x="12" y="19" width="4" height="3" fill="#b8861f"/>
-      <rect x="9" y="22" width="10" height="3" rx="1.5" fill="#b8861f"/>
-      <rect x="10" y="22.5" width="8" height="2" rx="1" fill="#f4b942"/>
-    </symbol>
-    <symbol id="ico-person" viewBox="0 0 28 28">
-      <circle cx="14" cy="9" r="5" fill="#6366f1"/>
-      <circle cx="14" cy="9" r="3.5" fill="#818cf8"/>
-      <path d="M5 26c0-5 4-8 9-8s9 3 9 8" fill="#6366f1"/>
-      <path d="M7 26c0-3.5 3.1-6 7-6s7 2.5 7 6" fill="#818cf8"/>
-    </symbol>
-    <symbol id="ico-calendar" viewBox="0 0 28 28">
-      <rect x="3" y="5" width="22" height="20" rx="3" fill="#1e2535" stroke="#4f6ef7" stroke-width="1.5"/>
-      <rect x="3" y="5" width="22" height="7" rx="3" fill="#4f6ef7"/>
-      <rect x="3" y="9" width="22" height="3" fill="#4f6ef7"/>
-      <circle cx="9" cy="4" r="2" fill="#818cf8" stroke="#4f6ef7" stroke-width="1"/>
-      <circle cx="19" cy="4" r="2" fill="#818cf8" stroke="#4f6ef7" stroke-width="1"/>
-      <rect x="7" y="14" width="4" height="3" rx="1" fill="#f4b942"/>
-      <rect x="12" y="14" width="4" height="3" rx="1" fill="#60a5fa"/>
-      <rect x="17" y="14" width="4" height="3" rx="1" fill="#60a5fa"/>
-      <rect x="7" y="19" width="4" height="3" rx="1" fill="#60a5fa"/>
-      <rect x="12" y="19" width="4" height="3" rx="1" fill="#60a5fa"/>
-    </symbol>
-    <symbol id="ico-friends" viewBox="0 0 28 28">
-      <circle cx="10" cy="9" r="4" fill="#6366f1"/>
-      <circle cx="10" cy="9" r="2.8" fill="#818cf8"/>
-      <path d="M2 24c0-4.4 3.6-7 8-7s8 2.6 8 7" fill="#6366f1"/>
-      <path d="M4 24c0-2.8 2.7-5 6-5s6 2.2 6 5" fill="#818cf8"/>
-      <circle cx="20" cy="8" r="3.5" fill="#f4b942"/>
-      <circle cx="20" cy="8" r="2.3" fill="#fcd34d"/>
-      <path d="M14.5 23c0-3.5 2.5-6 5.5-6s5.5 2.5 5.5 6" fill="#f4b942"/>
-      <path d="M16 23c0-2 1.8-4 4-4s4 2 4 4" fill="#fcd34d"/>
-    </symbol>
-    <symbol id="ico-gamepad" viewBox="0 0 28 28">
-      <rect x="3" y="9" width="22" height="13" rx="6" fill="#1e2535" stroke="#4f6ef7" stroke-width="1.5"/>
-      <rect x="9" y="14" width="6" height="2" rx="1" fill="#818cf8"/>
-      <rect x="11" y="12" width="2" height="6" rx="1" fill="#818cf8"/>
-      <circle cx="19" cy="13.5" r="1.3" fill="#22c55e"/>
-      <circle cx="21.5" cy="15.5" r="1.3" fill="#ef4444"/>
-      <circle cx="19" cy="17.5" r="1.3" fill="#f4b942"/>
-      <circle cx="16.5" cy="15.5" r="1.3" fill="#60a5fa"/>
-      <ellipse cx="7" cy="15.5" rx="2" ry="1" fill="#6366f1"/>
-    </symbol>
-    <symbol id="ico-coinbag" viewBox="0 0 28 28">
-      <path d="M14 5c-2 0-5 2-5 2l1 3h8l1-3c0 0-3-2-5-2z" fill="#f4b942" stroke="#b8861f" stroke-width="1"/>
-      <ellipse cx="14" cy="17" rx="8" ry="9" fill="#f4b942" stroke="#b8861f" stroke-width="1.5"/>
-      <ellipse cx="14" cy="16" rx="6.5" ry="7.5" fill="#fcd34d"/>
-      <text x="14" y="20" text-anchor="middle" font-size="11" fill="#b8861f" font-weight="bold" font-family="sans-serif">$</text>
-    </symbol>
-    <symbol id="ico-flame" viewBox="0 0 28 28">
-      <path d="M14 2c0 0-1 5-4 8 0 0 0-3-2-4 0 0-2 4-1 8 1 5 5 9 7 9s6-4 7-9c1-4-1-8-1-8-2 1-2 4-2 4-3-3-4-8-4-8z" fill="#f97316"/>
-      <path d="M14 6c0 0-.5 4-3 6.5 0 0 0-2-1.5-3 0 0-1.5 3-.5 6 .7 2.5 3 5.5 5 5.5s4.3-3 5-5.5c1-3-.5-6-.5-6-1.5 1-1.5 3-1.5 3-2.5-2.5-3-6.5-3-6.5z" fill="#ef4444"/>
-      <path d="M14 10c0 0 0 3-2 5 0 0 0-1.5-1-2 0 0-1 2 0 4.5.5 1.5 2 3 3 3s2.5-1.5 3-3c1-2.5 0-4.5 0-4.5-1 .5-1 2-1 2-2-2-2-5-2-5z" fill="#fcd34d"/>
-    </symbol>
-    <symbol id="ico-star" viewBox="0 0 24 24">
-      <path d="M12 2l2.7 5.5 6 .9-4.4 4.2 1.1 6-5.4-2.8-5.4 2.8 1.1-6L3.3 8.4l6-.9z" fill="#f4b942" stroke="#b8861f" stroke-width="0.8"/>
-    </symbol>
+    <symbol id="ico-rocket" viewBox="0 0 28 28"><path d="M14 2c0 0-2 3-3 7l3 3 3-3C16 5 14 2 14 2z" fill="#a5b4fc"/><path d="M11 9c0 5 3 9 3 9s3-4 3-9" fill="#818cf8"/><circle cx="14" cy="10" r="2.5" fill="#60a5fa"/><path d="M11 9l-4 4 2 2z" fill="#6366f1"/><path d="M17 9l4 4-2 2z" fill="#6366f1"/><path d="M12 18c0 2.5 2 4 2 4s2-1.5 2-4l-2-1z" fill="#f97316"/></symbol>
+    <symbol id="ico-swords" viewBox="0 0 28 28"><line x1="4" y1="24" x2="22" y2="6" stroke="#94a3b8" stroke-width="2.5" stroke-linecap="round"/><path d="M20 4l4 4-1.5 1.5L22 8l-4-4z" fill="#cbd5e1"/><rect x="3" y="21.5" width="5" height="2" rx="1" transform="rotate(-45 5.5 22.5)" fill="#f4b942"/><line x1="24" y1="24" x2="6" y2="6" stroke="#94a3b8" stroke-width="2.5" stroke-linecap="round"/><path d="M8 4L4 8l1.5 1.5L6 8l4-4z" fill="#cbd5e1"/><rect x="20" y="21.5" width="5" height="2" rx="1" transform="rotate(45 22.5 22.5)" fill="#f4b942"/></symbol>
+    <symbol id="ico-trophy" viewBox="0 0 28 28"><path d="M8 3h12v9c0 4-2.7 7-6 7s-6-3-6-7V3z" fill="#f4b942" stroke="#b8861f" stroke-width="1"/><path d="M9 3.5h10v7c0 3-2.2 5.5-5 5.5s-5-2.5-5-5.5z" fill="#fcd34d"/><path d="M8 5H4c0 0 0 5 4 5z" fill="#f4b942"/><path d="M20 5h4c0 0 0 5-4 5z" fill="#f4b942"/><rect x="12" y="19" width="4" height="3" fill="#b8861f"/><rect x="9" y="22" width="10" height="3" rx="1.5" fill="#b8861f"/><rect x="10" y="22.5" width="8" height="2" rx="1" fill="#f4b942"/></symbol>
+    <symbol id="ico-person" viewBox="0 0 28 28"><circle cx="14" cy="9" r="5" fill="#6366f1"/><circle cx="14" cy="9" r="3.5" fill="#818cf8"/><path d="M5 26c0-5 4-8 9-8s9 3 9 8" fill="#6366f1"/><path d="M7 26c0-3.5 3.1-6 7-6s7 2.5 7 6" fill="#818cf8"/></symbol>
+    <symbol id="ico-calendar" viewBox="0 0 28 28"><rect x="3" y="5" width="22" height="20" rx="3" fill="#1e2535" stroke="#4f6ef7" stroke-width="1.5"/><rect x="3" y="5" width="22" height="7" rx="3" fill="#4f6ef7"/><rect x="3" y="9" width="22" height="3" fill="#4f6ef7"/><circle cx="9" cy="4" r="2" fill="#818cf8" stroke="#4f6ef7" stroke-width="1"/><circle cx="19" cy="4" r="2" fill="#818cf8" stroke="#4f6ef7" stroke-width="1"/><rect x="7" y="14" width="4" height="3" rx="1" fill="#f4b942"/><rect x="12" y="14" width="4" height="3" rx="1" fill="#60a5fa"/><rect x="17" y="14" width="4" height="3" rx="1" fill="#60a5fa"/><rect x="7" y="19" width="4" height="3" rx="1" fill="#60a5fa"/><rect x="12" y="19" width="4" height="3" rx="1" fill="#60a5fa"/></symbol>
+    <symbol id="ico-friends" viewBox="0 0 28 28"><circle cx="10" cy="9" r="4" fill="#6366f1"/><circle cx="10" cy="9" r="2.8" fill="#818cf8"/><path d="M2 24c0-4.4 3.6-7 8-7s8 2.6 8 7" fill="#6366f1"/><path d="M4 24c0-2.8 2.7-5 6-5s6 2.2 6 5" fill="#818cf8"/><circle cx="20" cy="8" r="3.5" fill="#f4b942"/><circle cx="20" cy="8" r="2.3" fill="#fcd34d"/><path d="M14.5 23c0-3.5 2.5-6 5.5-6s5.5 2.5 5.5 6" fill="#f4b942"/><path d="M16 23c0-2 1.8-4 4-4s4 2 4 4" fill="#fcd34d"/></symbol>
+    <symbol id="ico-gamepad" viewBox="0 0 28 28"><rect x="3" y="9" width="22" height="13" rx="6" fill="#1e2535" stroke="#4f6ef7" stroke-width="1.5"/><rect x="9" y="14" width="6" height="2" rx="1" fill="#818cf8"/><rect x="11" y="12" width="2" height="6" rx="1" fill="#818cf8"/><circle cx="19" cy="13.5" r="1.3" fill="#22c55e"/><circle cx="21.5" cy="15.5" r="1.3" fill="#ef4444"/><circle cx="19" cy="17.5" r="1.3" fill="#f4b942"/><circle cx="16.5" cy="15.5" r="1.3" fill="#60a5fa"/><ellipse cx="7" cy="15.5" rx="2" ry="1" fill="#6366f1"/></symbol>
+    <symbol id="ico-coinbag" viewBox="0 0 28 28"><path d="M14 5c-2 0-5 2-5 2l1 3h8l1-3c0 0-3-2-5-2z" fill="#f4b942" stroke="#b8861f" stroke-width="1"/><ellipse cx="14" cy="17" rx="8" ry="9" fill="#f4b942" stroke="#b8861f" stroke-width="1.5"/><ellipse cx="14" cy="16" rx="6.5" ry="7.5" fill="#fcd34d"/><text x="14" y="20" text-anchor="middle" font-size="11" fill="#b8861f" font-weight="bold" font-family="sans-serif">$</text></symbol>
+    <symbol id="ico-flame" viewBox="0 0 28 28"><path d="M14 2c0 0-1 5-4 8 0 0 0-3-2-4 0 0-2 4-1 8 1 5 5 9 7 9s6-4 7-9c1-4-1-8-1-8-2 1-2 4-2 4-3-3-4-8-4-8z" fill="#f97316"/><path d="M14 6c0 0-.5 4-3 6.5 0 0 0-2-1.5-3 0 0-1.5 3-.5 6 .7 2.5 3 5.5 5 5.5s4.3-3 5-5.5c1-3-.5-6-.5-6-1.5 1-1.5 3-1.5 3-2.5-2.5-3-6.5-3-6.5z" fill="#ef4444"/><path d="M14 10c0 0 0 3-2 5 0 0 0-1.5-1-2 0 0-1 2 0 4.5.5 1.5 2 3 3 3s2.5-1.5 3-3c1-2.5 0-4.5 0-4.5-1 .5-1 2-1 2-2-2-2-5-2-5z" fill="#fcd34d"/></symbol>
+    <symbol id="ico-star" viewBox="0 0 24 24"><path d="M12 2l2.7 5.5 6 .9-4.4 4.2 1.1 6-5.4-2.8-5.4 2.8 1.1-6L3.3 8.4l6-.9z" fill="#f4b942" stroke="#b8861f" stroke-width="0.8"/></symbol>
   </defs>
 </svg>
 
-<!-- TOP HUD -->
+<!-- HUD -->
 <div class="top-hud">
   <div class="hud-logo">
     <svg width="20" height="20"><use href="#ico-rocket"/></svg>
@@ -297,24 +255,34 @@ canvas#gc{position:absolute;inset:0;width:100%;height:100%}
   <div class="game-wrap">
     <canvas id="gc"></canvas>
     <div class="mult-overlay">
-      <div class="mn wait" id="mn">1</div>
-      <div class="ms" id="ms">WAITING FOR BETS</div>
+      <div class="mn" id="mn"></div>
+      <div class="ms" id="ms"></div>
     </div>
   </div>
+
   <div class="hist-bar" id="hist-bar">
-    <span style="color:var(--text3);font-size:12px;font-weight:700">No rounds yet</span>
+    <span style="color:var(--text3);font-size:12px;font-weight:600">No rounds yet</span>
   </div>
+
   <div class="rb" id="rb"></div>
+
   <div class="pl-wrap">
     <div class="pl-tabs">
       <button class="ptab active" id="ptab-all" onclick="swTab('all')">All Bets</button>
-      <button class="ptab" id="ptab-result" onclick="swTab('result')">Result</button>
-      <button class="ptab" id="ptab-top" onclick="swTab('top')">Top</button>
+      <button class="ptab" id="ptab-top" onclick="swTab('top')">Best Bets</button>
+      <button class="ptab" id="ptab-result" onclick="swTab('result')">My Results</button>
+    </div>
+    <div class="pl-table-head">
+      <span></span>
+      <span>Player</span>
+      <span style="text-align:right">Bet</span>
+      <span style="text-align:right">Mult</span>
     </div>
     <div class="pl-list" id="pl-list">
-      <div style="padding:18px;text-align:center;color:var(--text3);font-size:13px;font-weight:600">Place a bet to join the round</div>
+      <div class="pl-empty">Place a bet to join the round</div>
     </div>
   </div>
+
   <div class="act-area">
     <div class="placed-row" id="placed-row">
       <span class="placed-lbl">Bet placed</span>
@@ -367,71 +335,33 @@ canvas#gc{position:absolute;inset:0;width:100%;height:100%}
     <div class="ibtns">
       <button class="btn btn-primary ibtn" onclick="doInvite()">Invite Friend</button>
       <button class="cpbtn" onclick="copyLink()">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="9" y="9" width="13" height="13" rx="2"></rect>
-          <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"></path>
-        </svg>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"></path></svg>
       </button>
     </div>
   </div>
 </div>
 
-<!-- BOTTOM NAV -->
+<!-- NAV -->
 <nav class="nav">
   <button class="nb active" id="nav-crash" onclick="switchNav('crash')">
-    <div class="niw">
-      <svg class="ni-svg" viewBox="0 0 28 28">
-        <path d="M14 2c0 0-2 3-3 7l3 3 3-3C16 5 14 2 14 2z" fill="#94a3b8"/>
-        <path d="M11 9c0 5 3 9 3 9s3-4 3-9" fill="#64748b"/>
-        <circle cx="14" cy="10" r="2.5" fill="#7dd3fc"/>
-        <path d="M11 9l-4 4 2 2z" fill="#818cf8"/>
-        <path d="M17 9l4 4-2 2z" fill="#818cf8"/>
-        <path d="M12 18c0 2.5 2 4 2 4s2-1.5 2-4l-2-1z" fill="#f97316"/>
-      </svg>
-    </div>
+    <div class="niw"><svg class="ni-svg" viewBox="0 0 28 28"><path d="M14 2c0 0-2 3-3 7l3 3 3-3C16 5 14 2 14 2z" fill="#94a3b8"/><path d="M11 9c0 5 3 9 3 9s3-4 3-9" fill="#64748b"/><circle cx="14" cy="10" r="2.5" fill="#7dd3fc"/><path d="M11 9l-4 4 2 2z" fill="#818cf8"/><path d="M17 9l4 4-2 2z" fill="#818cf8"/><path d="M12 18c0 2.5 2 4 2 4s2-1.5 2-4l-2-1z" fill="#f97316"/></svg></div>
     <span>CRASH</span>
   </button>
   <button class="nb" id="nav-tasks" onclick="switchNav('tasks')">
-    <div class="niw">
-      <svg class="ni-svg" viewBox="0 0 28 28">
-        <line x1="4" y1="24" x2="22" y2="6" stroke="#64748b" stroke-width="2.5" stroke-linecap="round"/>
-        <path d="M20 4l4 4-1.5 1.5L22 8l-4-4z" fill="#94a3b8"/>
-        <rect x="2.5" y="21" width="5" height="2.5" rx="1.2" transform="rotate(-45 5 22.2)" fill="#f4b942"/>
-        <line x1="24" y1="24" x2="6" y2="6" stroke="#64748b" stroke-width="2.5" stroke-linecap="round"/>
-        <path d="M8 4L4 8l1.5 1.5L6 8l4-4z" fill="#94a3b8"/>
-        <rect x="20.5" y="21" width="5" height="2.5" rx="1.2" transform="rotate(45 23 22.2)" fill="#f4b942"/>
-      </svg>
-      <span class="nbdg">3</span>
-    </div>
+    <div class="niw"><svg class="ni-svg" viewBox="0 0 28 28"><line x1="4" y1="24" x2="22" y2="6" stroke="#64748b" stroke-width="2.5" stroke-linecap="round"/><path d="M20 4l4 4-1.5 1.5L22 8l-4-4z" fill="#94a3b8"/><rect x="2.5" y="21" width="5" height="2.5" rx="1.2" transform="rotate(-45 5 22.2)" fill="#f4b942"/><line x1="24" y1="24" x2="6" y2="6" stroke="#64748b" stroke-width="2.5" stroke-linecap="round"/><path d="M8 4L4 8l1.5 1.5L6 8l4-4z" fill="#94a3b8"/><rect x="20.5" y="21" width="5" height="2.5" rx="1.2" transform="rotate(45 23 22.2)" fill="#f4b942"/></svg><span class="nbdg">3</span></div>
     <span>TASKS</span>
   </button>
   <button class="nb" id="nav-leaderboard" onclick="switchNav('leaderboard')">
-    <div class="niw">
-      <svg class="ni-svg" viewBox="0 0 28 28">
-        <path d="M8 4h12v8c0 3.5-2.7 6.5-6 6.5S8 15.5 8 12V4z" fill="#f4b942" stroke="#b8861f" stroke-width="1"/>
-        <path d="M9 4.5h10v6.5c0 2.8-2.2 5-5 5s-5-2.2-5-5z" fill="#fcd34d"/>
-        <path d="M8 6H4.5c0 0 .2 4.5 3.5 4.5z" fill="#f4b942"/>
-        <path d="M20 6h3.5c0 0-.2 4.5-3.5 4.5z" fill="#f4b942"/>
-        <rect x="12.5" y="18.5" width="3" height="2.5" fill="#b8861f"/>
-        <rect x="9.5" y="21" width="9" height="3" rx="1.5" fill="#b8861f"/>
-      </svg>
-    </div>
+    <div class="niw"><svg class="ni-svg" viewBox="0 0 28 28"><path d="M8 4h12v8c0 3.5-2.7 6.5-6 6.5S8 15.5 8 12V4z" fill="#f4b942" stroke="#b8861f" stroke-width="1"/><path d="M9 4.5h10v6.5c0 2.8-2.2 5-5 5s-5-2.2-5-5z" fill="#fcd34d"/><path d="M8 6H4.5c0 0 .2 4.5 3.5 4.5z" fill="#f4b942"/><path d="M20 6h3.5c0 0-.2 4.5-3.5 4.5z" fill="#f4b942"/><rect x="12.5" y="18.5" width="3" height="2.5" fill="#b8861f"/><rect x="9.5" y="21" width="9" height="3" rx="1.5" fill="#b8861f"/></svg></div>
     <span>TOP</span>
   </button>
   <button class="nb" id="nav-profile" onclick="switchNav('profile')">
-    <div class="niw">
-      <svg class="ni-svg" viewBox="0 0 28 28">
-        <circle cx="14" cy="9" r="5" fill="#64748b"/>
-        <circle cx="14" cy="9" r="3.5" fill="#94a3b8"/>
-        <path d="M5 26c0-5 4-8 9-8s9 3 9 8" fill="#64748b"/>
-        <path d="M7 26c0-3.5 3.1-6 7-6s7 2.5 7 6" fill="#94a3b8"/>
-      </svg>
-    </div>
+    <div class="niw"><svg class="ni-svg" viewBox="0 0 28 28"><circle cx="14" cy="9" r="5" fill="#64748b"/><circle cx="14" cy="9" r="3.5" fill="#94a3b8"/><path d="M5 26c0-5 4-8 9-8s9 3 9 8" fill="#64748b"/><path d="M7 26c0-3.5 3.1-6 7-6s7 2.5 7 6" fill="#94a3b8"/></svg></div>
     <span>PROFILE</span>
   </button>
 </nav>
 
-<!-- BET MODAL — no Auto tab -->
+<!-- BET MODAL -->
 <div class="ov" id="bet-ov" onclick="bgCl('bet-ov',event)">
   <div class="sh">
     <button class="sh-cls" onclick="closeSh('bet-ov')">✕</button>
@@ -475,7 +405,7 @@ canvas#gc{position:absolute;inset:0;width:100%;height:100%}
     <button class="sh-cls" onclick="closeSh('topup-ov')">✕</button>
     <div class="sh-hnd"></div>
     <div class="sh-ttl"><svg width="18" height="18"><use href="#ico-star"/></svg>Top Up Stars</div>
-    <div style="font-size:12px;color:var(--text3);font-weight:600;margin-bottom:14px">Telegram Stars · Instant</div>
+    <div style="font-size:12px;color:var(--text3);font-weight:600;margin-bottom:14px">Telegram Stars · Instant · Official payment</div>
     <div class="tp-grid">
       <div class="tpc sel" onclick="selTP(100,this)"><div class="tpa">⭐ 100</div><div class="tpu">≈$1.30</div></div>
       <div class="tpc" onclick="selTP(200,this)"><div class="tpa">⭐ 200</div><div class="tpu">≈$2.60</div></div>
@@ -485,7 +415,7 @@ canvas#gc{position:absolute;inset:0;width:100%;height:100%}
       <div class="tpc" onclick="selTP(5000,this)"><div class="tpa">⭐ 5,000</div><div class="tpu">≈$65</div></div>
     </div>
     <button class="btn btn-gold" onclick="doTopup()" style="width:100%;font-size:16px;min-height:50px;font-weight:800">
-      Top Up ⭐ <span id="tplbl">100</span> Stars
+      Buy ⭐ <span id="tplbl">100</span> Stars via Telegram
     </button>
   </div>
 </div>
@@ -524,122 +454,57 @@ let myBet=0,myCashedOut=false,gameInterval=null,crashPoint=1;
 let startTime=0,autoMult=2,autoOn=true,topupSel=100;
 let initData=tg?.initData||'';
 let fakePlayers=[],crashHistory=[],points=[];
+let myResults=[]; /* track own round results */
 let gamesPlayed=0,bestMult=0,starsWon=0,roundsToday=0;
+let curTab='all';
 
 const gc=document.getElementById('gc');
 const ctx=gc.getContext('2d');
 
-function resizeGC(){
-  const w=document.querySelector('.game-wrap');
-  if(!w)return;
-  gc.width=w.clientWidth;
-  gc.height=w.clientHeight;
-}
+function resizeGC(){const w=document.querySelector('.game-wrap');if(!w)return;gc.width=w.clientWidth;gc.height=w.clientHeight;}
 
-/* ══ IMPROVED CANVAS — proper exponential curve ══ */
+/* ══ CANVAS ══ */
 function drawCanvas(){
   ctx.clearRect(0,0,gc.width,gc.height);
   const W=gc.width,H=gc.height;
   const pad={l:46,b:28,r:14,t:14};
   const gW=W-pad.l-pad.r,gH=H-pad.t-pad.b;
-
-  /* subtle grid */
   ctx.strokeStyle='rgba(255,255,255,0.035)';ctx.lineWidth=1;
-  for(let i=0;i<=4;i++){
-    const y=pad.t+gH*(i/4);
-    ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(W-pad.r,y);ctx.stroke();
-  }
-  for(let i=0;i<=4;i++){
-    const x=pad.l+gW*(i/4);
-    ctx.beginPath();ctx.moveTo(x,pad.t);ctx.lineTo(x,H-pad.b);ctx.stroke();
-  }
-
-  /* idle — clean empty state */
-  if(gameState==='idle'||gameState==='countdown') return;
-  if(points.length<2) return;
-
+  for(let i=0;i<=4;i++){const y=pad.t+gH*(i/4);ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(W-pad.r,y);ctx.stroke();}
+  for(let i=0;i<=4;i++){const x=pad.l+gW*(i/4);ctx.beginPath();ctx.moveTo(x,pad.t);ctx.lineTo(x,H-pad.b);ctx.stroke();}
+  if(gameState==='idle'||gameState==='countdown')return;
+  if(points.length<2)return;
   const crashed=gameState==='crashed';
   const maxM=Math.max(currentMult,1.5);
-
-  /* map multiplier → canvas y using log scale for better curve shape */
-  const logScale=true;
   const logMax=Math.log(maxM);
-  const mapY=m=>{
-    if(logScale){
-      return pad.t+gH*(1-Math.log(Math.max(m,1))/logMax);
-    }
-    return pad.t+gH-(m-1)/(maxM-1)*gH;
-  };
-  /* map index → canvas x — use square root to spread early points */
+  const mapY=m=>pad.t+gH*(1-Math.log(Math.max(m,1))/logMax);
   const n=points.length;
   const mapX=i=>pad.l+(Math.sqrt(i/Math.max(n-1,1)))*gW;
-
   const lc=crashed?'#ef4444':'#22c55e';
-  const lcDim=crashed?'rgba(239,68,68,0.5)':'rgba(34,197,94,0.5)';
-
-  /* filled area under curve */
-  ctx.beginPath();
-  ctx.moveTo(mapX(0),mapY(1));
-  for(let i=1;i<n;i++) ctx.lineTo(mapX(i),mapY(points[i]));
-  ctx.lineTo(mapX(n-1),H-pad.b);
-  ctx.lineTo(mapX(0),H-pad.b);
-  ctx.closePath();
+  const lcDim=crashed?'rgba(239,68,68,0.4)':'rgba(34,197,94,0.35)';
+  ctx.beginPath();ctx.moveTo(mapX(0),mapY(1));
+  for(let i=1;i<n;i++)ctx.lineTo(mapX(i),mapY(points[i]));
+  ctx.lineTo(mapX(n-1),H-pad.b);ctx.lineTo(mapX(0),H-pad.b);ctx.closePath();
   const g=ctx.createLinearGradient(0,pad.t,0,H-pad.b);
-  g.addColorStop(0,crashed?'rgba(239,68,68,0.28)':'rgba(34,197,94,0.22)');
-  g.addColorStop(0.5,crashed?'rgba(239,68,68,0.08)':'rgba(34,197,94,0.07)');
+  g.addColorStop(0,crashed?'rgba(239,68,68,0.25)':'rgba(34,197,94,0.18)');
+  g.addColorStop(0.6,crashed?'rgba(239,68,68,0.06)':'rgba(34,197,94,0.05)');
   g.addColorStop(1,'rgba(0,0,0,0)');
   ctx.fillStyle=g;ctx.fill();
-
-  /* outer glow pass */
-  ctx.beginPath();
-  ctx.moveTo(mapX(0),mapY(1));
-  for(let i=1;i<n;i++) ctx.lineTo(mapX(i),mapY(points[i]));
-  ctx.strokeStyle=lcDim;ctx.lineWidth=6;ctx.lineJoin='round';ctx.lineCap='round';
-  ctx.shadowColor=lc;ctx.shadowBlur=0;
-  ctx.stroke();
-
-  /* main crisp line */
-  ctx.beginPath();
-  ctx.moveTo(mapX(0),mapY(1));
-  for(let i=1;i<n;i++) ctx.lineTo(mapX(i),mapY(points[i]));
-  ctx.strokeStyle=lc;ctx.lineWidth=2.5;ctx.lineJoin='round';ctx.lineCap='round';
-  ctx.shadowColor=lc;ctx.shadowBlur=10;
-  ctx.stroke();ctx.shadowBlur=0;
-
-  /* bright thin highlight on top */
-  ctx.beginPath();
-  ctx.moveTo(mapX(0),mapY(1));
-  for(let i=1;i<n;i++) ctx.lineTo(mapX(i),mapY(points[i]));
-  ctx.strokeStyle=crashed?'rgba(255,180,180,0.9)':'rgba(180,255,200,0.9)';
-  ctx.lineWidth=1;ctx.shadowBlur=0;
-  ctx.stroke();
-
-  /* glowing dot at tip */
+  ctx.beginPath();ctx.moveTo(mapX(0),mapY(1));
+  for(let i=1;i<n;i++)ctx.lineTo(mapX(i),mapY(points[i]));
+  ctx.strokeStyle=lcDim;ctx.lineWidth=6;ctx.lineJoin='round';ctx.lineCap='round';ctx.stroke();
+  ctx.beginPath();ctx.moveTo(mapX(0),mapY(1));
+  for(let i=1;i<n;i++)ctx.lineTo(mapX(i),mapY(points[i]));
+  ctx.strokeStyle=lc;ctx.lineWidth=2.5;ctx.shadowColor=lc;ctx.shadowBlur=10;ctx.stroke();ctx.shadowBlur=0;
+  ctx.beginPath();ctx.moveTo(mapX(0),mapY(1));
+  for(let i=1;i<n;i++)ctx.lineTo(mapX(i),mapY(points[i]));
+  ctx.strokeStyle=crashed?'rgba(255,180,180,0.85)':'rgba(180,255,200,0.85)';ctx.lineWidth=1;ctx.shadowBlur=0;ctx.stroke();
   const tx=mapX(n-1),ty=mapY(points[n-1]);
-  /* outer ring */
-  ctx.beginPath();ctx.arc(tx,ty,7,0,Math.PI*2);
-  ctx.fillStyle=crashed?'rgba(239,68,68,0.2)':'rgba(34,197,94,0.2)';
-  ctx.fill();
-  /* dot */
-  ctx.beginPath();ctx.arc(tx,ty,4,0,Math.PI*2);
-  ctx.fillStyle=lc;ctx.shadowColor=lc;ctx.shadowBlur=16;
-  ctx.fill();ctx.shadowBlur=0;
-  /* white center */
-  ctx.beginPath();ctx.arc(tx,ty,1.8,0,Math.PI*2);
-  ctx.fillStyle='#ffffff';ctx.fill();
-
-  /* y-axis labels */
-  ctx.fillStyle='rgba(148,163,184,0.45)';
-  ctx.font='600 10px -apple-system,sans-serif';
-  ctx.textAlign='right';
-  const labelCount=4;
-  for(let i=0;i<=labelCount;i++){
-    const frac=i/labelCount;
-    const m=Math.exp(frac*logMax);
-    const y=mapY(m);
-    if(y<pad.t+4||y>H-pad.b-4) continue;
-    ctx.fillText(m.toFixed(2)+'×',pad.l-6,y+4);
-  }
+  ctx.beginPath();ctx.arc(tx,ty,7,0,Math.PI*2);ctx.fillStyle=crashed?'rgba(239,68,68,0.18)':'rgba(34,197,94,0.18)';ctx.fill();
+  ctx.beginPath();ctx.arc(tx,ty,4,0,Math.PI*2);ctx.fillStyle=lc;ctx.shadowColor=lc;ctx.shadowBlur=14;ctx.fill();ctx.shadowBlur=0;
+  ctx.beginPath();ctx.arc(tx,ty,1.8,0,Math.PI*2);ctx.fillStyle='#fff';ctx.fill();
+  ctx.fillStyle='rgba(148,163,184,0.45)';ctx.font='600 10px -apple-system,sans-serif';ctx.textAlign='right';
+  for(let i=0;i<=4;i++){const frac=i/4;const m=Math.exp(frac*logMax);const y=mapY(m);if(y<pad.t+4||y>H-pad.b-4)continue;ctx.fillText(m.toFixed(2)+'×',pad.l-6,y+4);}
 }
 
 function fmt(n){return Number(Math.round(n)).toLocaleString();}
@@ -650,14 +515,35 @@ function openSh(id){document.getElementById(id).classList.add('open');}
 function closeSh(id){document.getElementById(id).classList.remove('open');}
 function bgCl(id,e){if(e.target===document.getElementById(id))closeSh(id);}
 
+/* ══ MULTIPLIER DISPLAY — fixed: hidden when idle, no "1" showing ══ */
+function showMult(text,cls){
+  const mn=document.getElementById('mn');
+  const ms=document.getElementById('ms');
+  if(!text){mn.classList.remove('visible');mn.textContent='';return;}
+  mn.className='mn visible '+cls;
+  mn.textContent=text;
+}
+function showSub(text){
+  const ms=document.getElementById('ms');
+  if(!text){ms.classList.remove('visible');ms.textContent='';return;}
+  ms.className='ms visible';ms.textContent=text;
+}
+
+/* ══ BUTTON STATE ══ */
 function setBtn(type,text){
   const btn=document.getElementById('mbtn');
-  const map={place:'btn btn-primary',wait:'btn btn-ghost',cash:'btn btn-danger',won:'btn btn-success',off:'btn btn-off'};
+  const map={
+    place:'btn btn-primary',
+    wait:'btn btn-wait',
+    cash:'btn btn-danger',
+    won:'btn btn-success',
+    off:'btn btn-off'
+  };
   btn.className=map[type]||map.off;
   btn.style.cssText='width:100%;font-size:17px;min-height:52px;font-weight:800;letter-spacing:0.2px';
   btn.disabled=(type==='off'||type==='wait');
   btn.style.pointerEvents=(type==='off'||type==='wait')?'none':'all';
-  btn.textContent=text;
+  btn.textContent=text; /* plain text only — no emoji, no icon */
 }
 
 function switchNav(name){
@@ -670,6 +556,7 @@ function switchNav(name){
 }
 
 function swTab(t){
+  curTab=t;
   document.querySelectorAll('.ptab').forEach(p=>p.classList.remove('active'));
   document.getElementById('ptab-'+t).classList.add('active');
   renderPlayers();
@@ -712,30 +599,36 @@ function cashOut(){
   const win=Math.floor(myBet*currentMult);const profit=win-myBet;
   stars+=win;updateStars();starsWon+=Math.max(0,profit);
   if(currentMult>bestMult)bestMult=currentMult;
+  myResults.unshift({bet:myBet,mult:currentMult,profit,won:true,time:Date.now()});
+  if(myResults.length>20)myResults.pop();
   if(currentMult>=3){const b=document.getElementById('tbigwin');if(b&&b.textContent!=='Done'){b.className='btn btn-ghost';b.textContent='Done';stars+=5;updateStars();toast('+5 ⭐ Big win task!');}}
-  setBtn('won','✅ Won ×'+currentMult.toFixed(2)+'!');
+  /* plain text button — no emoji icon */
+  setBtn('won','Won ×'+currentMult.toFixed(2)+'  +⭐'+fmt(profit));
   document.getElementById('placed-row').classList.remove('show');
   const rb=document.getElementById('rb');rb.className='rb rb-w show';
   rb.textContent='Won ×'+currentMult.toFixed(2)+' — ⭐'+fmt(win)+' (+'+fmt(profit)+')';
   saveBet(myBet,currentMult);renderPlayers();toast('Won ⭐'+fmt(win)+'!');
 }
 
+/* ══ COUNTDOWN — 5,4,3,2,1,GO!! only, nothing shown before ══ */
 function startCountdown(){
   crashPoint=genCrash();genFakePlayers();gameState='countdown';points=[];
   document.getElementById('rb').classList.remove('show');
-  const mn=document.getElementById('mn');mn.className='mn cd';document.getElementById('ms').textContent='';
+  showMult('','cd');showSub('');
   drawCanvas();
   const seq=['5','4','3','2','1','GO!!'];let i=0;
-  const cd=setInterval(()=>{if(i<seq.length){mn.textContent=seq[i];i++;}else{clearInterval(cd);startRound();}},550);
+  const cd=setInterval(()=>{
+    if(i<seq.length){
+      showMult(seq[i],'cd');
+      i++;
+    } else {
+      clearInterval(cd);
+      startRound();
+    }
+  },550);
 }
 
-function genCrash(){
-  const r=Math.random();
-  if(r<.35)return parseFloat((1+Math.random()*.6).toFixed(2));
-  if(r<.65)return parseFloat((1.6+Math.random()*1.4).toFixed(2));
-  if(r<.85)return parseFloat((3+Math.random()*5).toFixed(2));
-  return parseFloat((8+Math.random()*22).toFixed(2));
-}
+function genCrash(){const r=Math.random();if(r<.35)return parseFloat((1+Math.random()*.6).toFixed(2));if(r<.65)return parseFloat((1.6+Math.random()*1.4).toFixed(2));if(r<.85)return parseFloat((3+Math.random()*5).toFixed(2));return parseFloat((8+Math.random()*22).toFixed(2));}
 
 function startRound(){
   gameState='running';currentMult=1;myCashedOut=false;points=[1];startTime=Date.now();
@@ -743,28 +636,23 @@ function startRound(){
   const tr=document.getElementById('trounds');
   if(tr&&roundsToday<=5)tr.textContent=Math.min(roundsToday,5)+'/5';
   if(roundsToday>=5&&tr&&tr.textContent!=='Done'){tr.className='btn btn-ghost';tr.textContent='Done';stars+=3;updateStars();}
-  document.getElementById('mn').className='mn run';
-  document.getElementById('mn').textContent='1.00×';
-  document.getElementById('ms').textContent='FLYING';
+  showMult('1.00×','run');showSub('FLYING');
   if(myBet>0&&!myCashedOut)setBtn('cash','CASH OUT  ×1.00');
   gameInterval=setInterval(tick,50);
 }
 
 function tick(){
   const e=(Date.now()-startTime)/1000;
-  /* exponential growth: starts slow, accelerates */
   currentMult=parseFloat((Math.pow(Math.E,0.12*e*Math.pow(e,0.3))).toFixed(2));
   if(currentMult<1)currentMult=1;
-  points.push(currentMult);
-  if(points.length>200)points=points.slice(-200);
-  document.getElementById('mn').textContent=currentMult.toFixed(2)+'×';
+  points.push(currentMult);if(points.length>200)points=points.slice(-200);
+  showMult(currentMult.toFixed(2)+'×','run');
   if(myBet>0&&!myCashedOut){
     document.getElementById('mbtn').textContent='CASH OUT  ×'+currentMult.toFixed(2);
     if(autoOn&&currentMult>=autoMult)cashOut();
   }
   fakePlayers.forEach(fp=>{if(!fp.cashedAt&&!fp.lost&&currentMult>=fp.autoOut)fp.cashedAt=currentMult;});
-  renderPlayers();drawCanvas();
-  if(currentMult>=crashPoint)doCrash();
+  renderPlayers();drawCanvas();if(currentMult>=crashPoint)doCrash();
 }
 
 function doCrash(){
@@ -772,11 +660,11 @@ function doCrash(){
   const f=parseFloat(crashPoint.toFixed(2));
   crashHistory.unshift(f);if(crashHistory.length>15)crashHistory.pop();
   renderHistory();
-  document.getElementById('mn').textContent=f+'×';
-  document.getElementById('mn').className='mn crash';
-  document.getElementById('ms').textContent='CRASHED';
+  showMult(f+'×','crash');showSub('CRASHED');
   fakePlayers.forEach(fp=>{if(!fp.cashedAt)fp.lost=true;});
   if(myBet>0&&!myCashedOut){
+    myResults.unshift({bet:myBet,mult:f,profit:-myBet,won:false,time:Date.now()});
+    if(myResults.length>20)myResults.pop();
     const rb=document.getElementById('rb');rb.className='rb rb-l show';
     rb.textContent='Crashed at ×'+f+' — lost ⭐'+fmt(myBet);
     saveBet(myBet,null);
@@ -789,9 +677,8 @@ function doCrash(){
 
 function resetGame(){
   gameState='idle';currentMult=1;points=[];
-  document.getElementById('mn').textContent='1';
-  document.getElementById('mn').className='mn wait';
-  document.getElementById('ms').textContent='WAITING FOR BETS';
+  /* ← NOTHING shown in idle state */
+  showMult('','');showSub('');
   document.getElementById('rb').classList.remove('show');
   drawCanvas();
 }
@@ -801,32 +688,73 @@ const PCOLORS=['#e74c3c','#3b82f6','#10b981','#f59e0b','#8b5cf6','#06b6d4','#ec4
 
 function genFakePlayers(){
   fakePlayers=[];
-  for(let i=0;i<rnd(4,9);i++)fakePlayers.push({name:PNAMES[rnd(0,PNAMES.length-1)],bet:rnd(1,40)*50,color:PCOLORS[rnd(0,PCOLORS.length-1)],cashedAt:null,lost:false,autoOut:parseFloat((rnd(120,500)/100).toFixed(2))});
+  for(let i=0;i<rnd(5,10);i++)fakePlayers.push({name:PNAMES[rnd(0,PNAMES.length-1)],bet:rnd(1,40)*50,color:PCOLORS[rnd(0,PCOLORS.length-1)],cashedAt:null,lost:false,autoOut:parseFloat((rnd(120,500)/100).toFixed(2))});
 }
 
+/* ══ RENDER PLAYERS — proper table with content in all tabs ══ */
 function renderPlayers(){
   const el=document.getElementById('pl-list');
-  const all=[];
-  if(myBet>0)all.push({name:tg?.initDataUnsafe?.user?.first_name||'You',bet:myBet,color:'#4f6ef7',cashedAt:myCashedOut?currentMult:null,lost:!myCashedOut&&gameState==='crashed',isMe:true});
-  all.push(...fakePlayers);
-  if(!all.length){el.innerHTML='<div style="padding:18px;text-align:center;color:var(--text3);font-size:13px;font-weight:600">Place a bet to join</div>';return;}
-  el.innerHTML=all.map(p=>{
-    let prize,mc='var(--text3)';
-    if(p.cashedAt){prize=`<span class="ppz pw">+${fmt(Math.floor(p.bet*(p.cashedAt-1)))}</span>`;mc='var(--green)';}
-    else if(p.lost||gameState==='crashed'){prize=`<span class="ppz plz">−${fmt(p.bet)}</span>`;mc='var(--red)';}
-    else prize=`<span class="ppz pp">⭐</span>`;
-    return `<div class="pr">
-      <div class="avatar" style="width:28px;height:28px;font-size:11px;background:${p.color}">${p.name[0]}</div>
-      <div style="flex:1;min-width:0">
-        <div class="pnm">${p.name}${p.isMe?` <span style="color:var(--blue);font-size:10px;font-weight:800">(YOU)</span>`:''}</div>
-        <div class="pbt">⭐${fmt(p.bet)} <span class="pmlt" style="color:${mc}">×${(p.cashedAt||currentMult).toFixed(2)}</span></div>
-      </div>${prize}</div>`;
-  }).join('');
+  let rows=[];
+
+  if(curTab==='all'){
+    /* All current round players */
+    const all=[];
+    if(myBet>0){
+      all.push({name:tg?.initDataUnsafe?.user?.first_name||'You',bet:myBet,color:'#4f6ef7',cashedAt:myCashedOut?currentMult:null,lost:!myCashedOut&&gameState==='crashed',isMe:true});
+    }
+    all.push(...fakePlayers);
+    if(!all.length){el.innerHTML=`<div class="pl-empty">Place a bet to join the round</div>`;return;}
+    rows=all.map(p=>{
+      let multTxt,multCls;
+      if(p.cashedAt){multTxt='×'+p.cashedAt.toFixed(2);multCls='win';}
+      else if(p.lost||gameState==='crashed'){multTxt='×'+currentMult.toFixed(2);multCls='lose';}
+      else{multTxt=gameState==='running'?'×'+currentMult.toFixed(2):'—';multCls='pend';}
+      return `<div class="pr">
+        <div class="pr-av" style="background:${p.color}">${p.name[0]}</div>
+        <div><div class="pr-name">${p.name}${p.isMe?`<span class="pr-you">(YOU)</span>`:''}</div></div>
+        <div class="pr-bet">⭐${fmt(p.bet)}</div>
+        <div class="pr-mult ${multCls}">${multTxt}</div>
+      </div>`;
+    });
+
+  } else if(curTab==='top'){
+    /* Best cashouts — sorted by multiplier */
+    const all2=[...fakePlayers.filter(p=>p.cashedAt)];
+    if(myBet>0&&myCashedOut)all2.push({name:tg?.initDataUnsafe?.user?.first_name||'You',bet:myBet,cashedAt:currentMult,color:'#4f6ef7',isMe:true});
+    all2.sort((a,b)=>b.cashedAt-a.cashedAt);
+    if(!all2.length){
+      el.innerHTML=`<div class="pl-empty">${gameState==='idle'?'Best cashouts will appear here':'No cashouts yet this round'}</div>`;return;
+    }
+    rows=all2.slice(0,10).map((p,i)=>{
+      const profit=Math.floor(p.bet*(p.cashedAt-1));
+      return `<div class="pr">
+        <div class="pr-av" style="background:${p.color}">${p.name[0]}</div>
+        <div><div class="pr-name">${p.name}${p.isMe?`<span class="pr-you">(YOU)</span>`:''}</div></div>
+        <div class="pr-bet">⭐${fmt(p.bet)}</div>
+        <div class="pr-mult win">×${p.cashedAt.toFixed(2)}</div>
+      </div>`;
+    });
+
+  } else if(curTab==='result'){
+    /* My personal history */
+    if(!myResults.length){el.innerHTML=`<div class="pl-empty">Your results will appear here after each round</div>`;return;}
+    rows=myResults.map(r=>{
+      const timeStr=new Date(r.time).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+      return `<div class="pr">
+        <div class="pr-av" style="background:${r.won?'#15803d':'#991b1b'}">${r.won?'W':'L'}</div>
+        <div><div class="pr-name">${timeStr}</div><div style="font-size:10px;color:var(--text3);margin-top:1px">Bet ⭐${fmt(r.bet)}</div></div>
+        <div class="pr-bet" style="color:${r.won?'var(--green)':'var(--red)'}">${r.won?'+':'-'}⭐${fmt(Math.abs(r.profit))}</div>
+        <div class="pr-mult ${r.won?'win':'lose'}">×${r.mult.toFixed(2)}</div>
+      </div>`;
+    });
+  }
+
+  el.innerHTML=rows.join('');
 }
 
 function renderHistory(){
   const el=document.getElementById('hist-bar');
-  if(!crashHistory.length){el.innerHTML='<span style="color:var(--text3);font-size:12px;font-weight:700">No rounds yet</span>';return;}
+  if(!crashHistory.length){el.innerHTML='<span style="color:var(--text3);font-size:12px;font-weight:600">No rounds yet</span>';return;}
   el.innerHTML=crashHistory.map(m=>{const c=m<1.5?'pill-red':m<3?'pill-gold':'pill-green';return `<span class="pill ${c}">×${m.toFixed(2)}</span>`;}).join('');
 }
 
@@ -878,14 +806,58 @@ function claimDaily(){
 }
 function claimDailyTask(){if(localStorage.getItem('orb_dl_'+(tg?.initDataUnsafe?.user?.id||'guest'))===new Date().toDateString()){toast('Already claimed today!');return;}checkDaily();}
 
+/* ══ TOPUP — calls real Telegram Stars invoice via server ══ */
 function selTP(n,el){topupSel=n;document.querySelectorAll('.tpc').forEach(c=>c.classList.remove('sel'));el.classList.add('sel');document.getElementById('tplbl').textContent=fmt(n);}
-function doTopup(){stars+=topupSel;updateStars();closeSh('topup-ov');toast('+'+fmt(topupSel)+' ⭐ stars added!');}
 
-async function saveBet(bet,co){try{await fetch(SERVER+'/api/bet',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({initData,betAmount:bet,cashedOutAt:co})});}catch(e){}}
+async function doTopup(){
+  closeSh('topup-ov');
+  toast('Opening Telegram payment…');
+  try{
+    /* Server creates a Telegram Stars invoice and returns invoice link */
+    const r=await fetch(SERVER+'/api/create-invoice',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({initData,stars:topupSel})
+    });
+    const d=await r.json();
+    if(d.invoiceLink){
+      /* Opens native Telegram Stars payment sheet */
+      tg.openInvoice(d.invoiceLink,(status)=>{
+        if(status==='paid'){
+          stars+=topupSel;updateStars();
+          toast('+'+fmt(topupSel)+' ⭐ stars added!');
+        } else if(status==='cancelled'){
+          toast('Payment cancelled');
+        } else if(status==='failed'){
+          toast('Payment failed. Try again.');
+        }
+      });
+    } else {
+      /* Demo fallback when server not set up yet */
+      stars+=topupSel;updateStars();
+      toast('+'+fmt(topupSel)+' ⭐ stars added! (demo)');
+    }
+  }catch(e){
+    /* Demo fallback */
+    stars+=topupSel;updateStars();
+    toast('+'+fmt(topupSel)+' ⭐ stars added! (demo)');
+  }
+}
+
+async function saveBet(bet,co){
+  try{await fetch(SERVER+'/api/bet',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({initData,betAmount:bet,cashedOutAt:co})});}catch(e){}
+}
 
 async function loadUser(){
-  try{const c=new AbortController();setTimeout(()=>c.abort(),5000);const r=await fetch(SERVER+'/api/user',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({initData}),signal:c.signal});const d=await r.json();stars=d.coins||1000;}catch(e){stars=1000;}
+  try{
+    const c=new AbortController();setTimeout(()=>c.abort(),5000);
+    const r=await fetch(SERVER+'/api/user',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({initData}),signal:c.signal});
+    const d=await r.json();
+    stars=d.coins||1000;
+  }catch(e){stars=1000;}
   updateStars();setBtn('place','Place Bet');
+  /* hide mult display on initial load */
+  showMult('','');showSub('');
   const user=tg?.initDataUnsafe?.user;
   if(user){document.getElementById('pav').textContent=user.first_name[0]?.toUpperCase()||'?';document.getElementById('pnm').textContent=user.first_name;}
   setTimeout(checkDaily,900);
