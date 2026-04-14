@@ -735,8 +735,14 @@ function startCountdown(){
   const seq=['5','4','3','2','1','GO!!'];let i=0;
   const cd=setInterval(()=>{if(i<seq.length){showMult(seq[i],'cd');i++;}else{clearInterval(cd);startRound();}},550);
 }
-function genCrash(){const r=Math.random();if(r<.35)return parseFloat((1+Math.random()*.6).toFixed(2));if(r<.65)return parseFloat((1.6+Math.random()*1.4).toFixed(2));if(r<.85)return parseFloat((3+Math.random()*5).toFixed(2));return parseFloat((8+Math.random()*22).toFixed(2));}
-
+function genCrash(){
+  const r=Math.random();
+  if(r<0.45) return parseFloat((1+Math.random()*0.4).toFixed(2));  /* 45% crash below 1.40x */
+  if(r<0.70) return parseFloat((1.4+Math.random()*0.8).toFixed(2)); /* 25% crash 1.40–2.20x */
+  if(r<0.88) return parseFloat((2.2+Math.random()*2.8).toFixed(2)); /* 18% crash 2.20–5.00x */
+  if(r<0.97) return parseFloat((5+Math.random()*10).toFixed(2));    /* 9%  crash 5–15x */
+  return parseFloat((15+Math.random()*35).toFixed(2));               /* 3%  crash 15–50x */
+}
 function startRound(){
   gameState='running';currentMult=1;myCashedOut=false;points=[1];startTime=Date.now();
   gamesPlayed++;roundsToday++;
