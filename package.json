@@ -1,18 +1,13 @@
 {
   "name": "orbit-casino-server",
   "version": "1.0.0",
-  "description": "Orbit Crash backend",
   "main": "server.js",
-  "scripts": {
-    "start": "node server.js"
-  },
+  "scripts": { "start": "node server.js" },
   "dependencies": {
     "@supabase/supabase-js": "^2.0.0",
     "cors": "^2.8.5",
     "express": "^4.18.0",
-    "node-fetch": "^2.7.0"
+    "ws": "^8.16.0"
   },
-  "engines": {
-    "node": ">=18.0.0"
-  }
+  "engines": { "node": ">=18.0.0" }
 }
