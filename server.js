@@ -90,21 +90,68 @@ function startRound() {
   gameState.startTime = Date.now();
   broadcast({ type: 'state', game: getPublicState() });
 
-  gameInterval = setInterval(() => {
+  gameInterval = setInterval(async () => {
     const elapsed = (Date.now() - gameState.startTime) / 1000;
     gameState.multiplier = parseFloat(
       Math.pow(Math.E, 0.12 * elapsed * Math.pow(elapsed, 0.3)).toFixed(2)
     );
     if (gameState.multiplier < 1) gameState.multiplier = 1;
 
-    /* Auto cashout for bets */
-    gameState.bets.forEach(bet => {
-      if (!bet.cashedAt && !bet.lost && bet.autoCashout && gameState.multiplier >= bet.autoCashout) {
+    /* ══ AUTO CASHOUT — check every tick ══ */
+    for (const bet of gameState.bets) {
+      if (
+        !bet.cashedAt &&
+        !bet.lost &&
+        bet.autoCashout &&
+        gameState.multiplier >= bet.autoCashout
+      ) {
         bet.cashedAt = gameState.multiplier;
-        creditWin(bet);
+        const payout = Math.floor(bet.amount * bet.cashedAt);
+        const profit = payout - bet.amount;
+
+        /* Credit immediately */
+        try {
+          const { data: user } = await supabase
+            .from('users')
+            .select('coins, stars_won')
+            .eq('telegram_id', bet.userId)
+            .single();
+
+          if (user) {
+            await supabase.from('users').update({
+              coins: (user.coins || 0) + payout,
+              stars_won: (user.stars_won || 0) + Math.max(0, profit)
+            }).eq('telegram_id', bet.userId);
+
+            await supabase.from('transactions').insert({
+              telegram_id: bet.userId,
+              description: `Auto cashout x${bet.cashedAt}`,
+              delta: profit,
+              bet: bet.amount,
+              cashed_out_at: bet.cashedAt,
+              won: true
+            });
+          }
+        } catch (e) {
+          console.error('Auto cashout credit error:', e);
+        }
+
+        /* Notify the specific client */
+        wss.clients.forEach(client => {
+          if (client.readyState === WebSocket.OPEN) {
+            client.send(JSON.stringify({
+              type: 'cashout_ok',
+              userId: bet.userId,
+              mult: bet.cashedAt,
+              payout
+            }));
+          }
+        });
+
         broadcast({ type: 'cashout', userId: bet.userId, mult: bet.cashedAt });
+        console.log(`Auto cashout: user ${bet.userId} at x${bet.cashedAt}, payout ${payout}`);
       }
-    });
+    }
 
     broadcast({ type: 'tick', mult: gameState.multiplier, bets: gameState.bets });
 
@@ -116,42 +163,27 @@ function startRound() {
 
 function doCrash() {
   clearInterval(gameInterval);
+  gameInterval = null;
   gameState.phase = 'crashed';
+
   gameState.bets.forEach(bet => {
-    if (!bet.cashedAt) bet.lost = true;
+    if (!bet.cashedAt) {
+      bet.lost = true;
+      /* Log lost bets */
+      supabase.from('transactions').insert({
+        telegram_id: bet.userId,
+        description: `Lost at x${gameState.crashPoint}`,
+        delta: -bet.amount,
+        bet: bet.amount,
+        cashed_out_at: null,
+        won: false
+      }).then(() => {}).catch(() => {});
+    }
   });
+
   broadcast({ type: 'crashed', mult: gameState.crashPoint, bets: gameState.bets });
   saveCrashHistory(gameState.crashPoint);
   setTimeout(startWaiting, 4000);
-}
-
-async function creditWin(bet) {
-  try {
-    const payout = Math.floor(bet.amount * bet.cashedAt);
-    const profit = payout - bet.amount;
-    const { data: user } = await supabase
-      .from('users')
-      .select('coins, stars_won')
-      .eq('telegram_id', bet.userId)
-      .single();
-    if (user) {
-      await supabase.from('users').update({
-        coins: (user.coins || 0) + payout,
-        stars_won: (user.stars_won || 0) + Math.max(0, profit)
-      }).eq('telegram_id', bet.userId);
-
-      await supabase.from('transactions').insert({
-        telegram_id: bet.userId,
-        description: `Won x${bet.cashedAt}`,
-        delta: profit,
-        bet: bet.amount,
-        cashed_out_at: bet.cashedAt,
-        won: true
-      });
-    }
-  } catch (e) {
-    console.error('Credit error:', e);
-  }
 }
 
 async function saveCrashHistory(point) {
@@ -163,9 +195,11 @@ async function saveCrashHistory(point) {
   } catch (e) {}
 }
 
-/* ══ WEBSOCKET ══ */
+/* ══ WEBSOCKET CONNECTIONS ══ */
 wss.on('connection', (ws) => {
-  /* Send current state on connect */
+  console.log('Client connected, total:', wss.clients.size);
+
+  /* Send current state immediately */
   ws.send(JSON.stringify({ type: 'state', game: getPublicState() }));
 
   ws.on('message', async (msg) => {
@@ -175,22 +209,23 @@ wss.on('connection', (ws) => {
       /* ── PLACE BET ── */
       if (data.type === 'bet') {
         const { userId, username, photoUrl, amount, autoCashout } = data;
-        if (!userId || !amount || amount < 50) return;
 
-        /* Only allow bets during waiting or countdown */
+        if (!userId || !amount || amount < 50) {
+          ws.send(JSON.stringify({ type: 'bet_error', msg: 'Invalid bet' }));
+          return;
+        }
+
         if (gameState.phase !== 'waiting' && gameState.phase !== 'countdown') {
           ws.send(JSON.stringify({ type: 'bet_error', msg: 'Round already started' }));
           return;
         }
 
-        /* Check if already bet this round */
         const existing = gameState.bets.find(b => String(b.userId) === String(userId));
         if (existing) {
           ws.send(JSON.stringify({ type: 'bet_error', msg: 'Already bet this round' }));
           return;
         }
 
-        /* Check balance */
         const { data: user } = await supabase
           .from('users')
           .select('coins')
@@ -207,22 +242,12 @@ wss.on('connection', (ws) => {
           .update({ coins: user.coins - amount })
           .eq('telegram_id', userId);
 
-        /* Log transaction */
-        await supabase.from('transactions').insert({
-          telegram_id: userId,
-          description: 'Bet placed',
-          delta: -amount,
-          bet: amount,
-          cashed_out_at: null,
-          won: false
-        });
-
         const bet = {
           userId,
           username,
           photoUrl: photoUrl || null,
           amount,
-          autoCashout: autoCashout || null,
+          autoCashout: autoCashout ? parseFloat(autoCashout) : null,
           cashedAt: null,
           lost: false
         };
@@ -230,22 +255,64 @@ wss.on('connection', (ws) => {
 
         ws.send(JSON.stringify({ type: 'bet_ok', amount }));
         broadcast({ type: 'bets_update', bets: gameState.bets });
+        console.log(`Bet placed: user ${userId}, amount ${amount}, autoCashout ${autoCashout}`);
       }
 
-      /* ── CASH OUT ── */
+      /* ── MANUAL CASH OUT ── */
       if (data.type === 'cashout') {
         const { userId } = data;
         const bet = gameState.bets.find(b => String(b.userId) === String(userId));
 
-        if (!bet || bet.cashedAt || bet.lost || gameState.phase !== 'running') {
-          ws.send(JSON.stringify({ type: 'bet_error', msg: 'Cannot cash out' }));
+        if (!bet) {
+          ws.send(JSON.stringify({ type: 'bet_error', msg: 'No bet found' }));
           return;
         }
 
+        if (bet.cashedAt) {
+          ws.send(JSON.stringify({ type: 'bet_error', msg: 'Already cashed out' }));
+          return;
+        }
+
+        if (bet.lost) {
+          ws.send(JSON.stringify({ type: 'bet_error', msg: 'Round already crashed' }));
+          return;
+        }
+
+        if (gameState.phase !== 'running') {
+          ws.send(JSON.stringify({ type: 'bet_error', msg: 'Game not running' }));
+          return;
+        }
+
+        /* Lock cashout immediately */
         bet.cashedAt = gameState.multiplier;
         const payout = Math.floor(bet.amount * bet.cashedAt);
+        const profit = payout - bet.amount;
 
-        await creditWin(bet);
+        try {
+          const { data: user } = await supabase
+            .from('users')
+            .select('coins, stars_won')
+            .eq('telegram_id', userId)
+            .single();
+
+          if (user) {
+            await supabase.from('users').update({
+              coins: (user.coins || 0) + payout,
+              stars_won: (user.stars_won || 0) + Math.max(0, profit)
+            }).eq('telegram_id', userId);
+
+            await supabase.from('transactions').insert({
+              telegram_id: userId,
+              description: `Won x${bet.cashedAt}`,
+              delta: profit,
+              bet: bet.amount,
+              cashed_out_at: bet.cashedAt,
+              won: true
+            });
+          }
+        } catch (e) {
+          console.error('Cashout credit error:', e);
+        }
 
         ws.send(JSON.stringify({
           type: 'cashout_ok',
@@ -254,17 +321,26 @@ wss.on('connection', (ws) => {
         }));
 
         broadcast({ type: 'cashout', userId, mult: bet.cashedAt });
+        console.log(`Manual cashout: user ${userId} at x${bet.cashedAt}, payout ${payout}`);
       }
 
     } catch (e) {
       console.error('WS message error:', e);
     }
   });
+
+  ws.on('close', () => {
+    console.log('Client disconnected, total:', wss.clients.size);
+  });
+
+  ws.on('error', (err) => {
+    console.error('WS client error:', err.message);
+  });
 });
 
 /* ══ HTTP ENDPOINTS ══ */
 
-app.get('/', (req, res) => res.json({ status: 'Geco API running' }));
+app.get('/', (req, res) => res.json({ status: 'Geco API running', clients: wss.clients.size }));
 
 function getUserData(initData) {
   try {
@@ -393,7 +469,6 @@ app.post('/webhook', async (req, res) => {
   const update = req.body;
   console.log('Webhook:', JSON.stringify(update).substring(0, 200));
 
-  /* Pre-checkout — must approve within 10 seconds */
   if (update.pre_checkout_query) {
     await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/answerPreCheckoutQuery`, {
       method: 'POST',
@@ -406,14 +481,12 @@ app.post('/webhook', async (req, res) => {
     return res.json({ ok: true });
   }
 
-  /* Successful payment — credit user */
   if (update.message?.successful_payment) {
     const payment = update.message.successful_payment;
     const telegramUserId = update.message.from.id;
     const starsAmount = payment.total_amount;
     const chargeId = payment.telegram_payment_charge_id;
 
-    /* Prevent double crediting */
     const { data: existing } = await supabase
       .from('payments')
       .select('id')
@@ -443,4 +516,62 @@ app.post('/webhook', async (req, res) => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           chat_id: telegramUserId,
-          text: `✅ Payment confirmed!\n\n⭐ +${starsAmount} stars
+          text: `✅ Payment confirmed!\n\n⭐ +${starsAmount} stars added to your Geco balance.\n\nReceipt: ${chargeId}`
+        })
+      });
+    }
+    return res.json({ ok: true });
+  }
+
+  if (update.message?.text?.startsWith('/start')) {
+    const parts = update.message.text.split(' ');
+    if (parts[1]?.startsWith('ref_')) {
+      const referrerId = parts[1].replace('ref_', '');
+      const newUserId = update.message.from.id;
+
+      if (String(referrerId) !== String(newUserId)) {
+        const { data: referrer } = await supabase
+          .from('users')
+          .select('coins')
+          .eq('telegram_id', referrerId)
+          .single();
+
+        if (referrer) {
+          await supabase.from('users')
+            .update({ coins: (referrer.coins || 0) + 5 })
+            .eq('telegram_id', referrerId);
+
+          await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              chat_id: referrerId,
+              text: `🎉 A friend joined Geco!\n\n⭐ +5 stars added to your balance!`
+            })
+          });
+        }
+      }
+    }
+    return res.json({ ok: true });
+  }
+
+  if (update.message?.text === '/paysupport') {
+    await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        chat_id: update.message.from.id,
+        text: 'For payment support, please contact @your_support_username'
+      })
+    });
+    return res.json({ ok: true });
+  }
+
+  res.json({ ok: true });
+});
+
+/* ══ START GAME LOOP ══ */
+startWaiting();
+
+const PORT = process.env.PORT || 8080;
+server.listen(PORT, () => console.log(`Geco server running on port ${PORT}`));
