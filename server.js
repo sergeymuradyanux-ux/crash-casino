@@ -570,6 +570,90 @@ app.post('/webhook', async (req, res) => {
   res.json({ ok: true });
 });
 
+/* ── DAILY STATUS im avelacrac── */
+app.post('/api/daily-status', async (req, res) => {
+  const userId = getUserId(req.body.initData);
+  if (!userId) return res.json({ claimed_today: false, streak: 0 });
+  try {
+    const { data } = await supabase
+      .from('users')
+      .select('last_daily_claim, daily_streak')
+      .eq('telegram_id', userId)
+      .single();
+    const today = new Date().toISOString().slice(0, 10);
+    const claimed_today = data?.last_daily_claim === today;
+    res.json({ claimed_today, streak: data?.daily_streak || 0 });
+  } catch (e) {
+    res.json({ claimed_today: false, streak: 0 });
+  }
+});
+
+/* ── DAILY CLAIM ── */
+app.post('/api/daily-claim', async (req, res) => {
+  const userId = getUserId(req.body.initData);
+  if (!userId) return res.status(400).json({ success: false, error: 'Invalid user' });
+  try {
+    const { data: user } = await supabase
+      .from('users')
+      .select('coins, last_daily_claim, daily_streak')
+      .eq('telegram_id', userId)
+      .single();
+    if (!user) return res.json({ success: false, error: 'User not found' });
+
+    const today = new Date().toISOString().slice(0, 10);
+    if (user.last_daily_claim === today) {
+      return res.json({ success: false, error: 'Already claimed today' });
+    }
+
+    /* Check streak — if last claim was yesterday, continue streak */
+    const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
+    const streak = user.last_daily_claim === yesterday
+      ? (user.daily_streak || 0) + 1
+      : 1;
+
+    const reward = streak >= 7 ? 3 : streak >= 4 ? 2 : 1;
+
+    await supabase.from('users').update({
+      coins: (user.coins || 0) + reward,
+      last_daily_claim: today,
+      daily_streak: streak
+    }).eq('telegram_id', userId);
+
+    res.json({ success: true, reward, streak });
+  } catch (e) {
+    console.error('Daily claim error:', e);
+    res.json({ success: false, error: 'Server error' });
+  }
+});
+
+/* ── STREAK BONUS ── */
+app.post('/api/streak-bonus', async (req, res) => {
+  const userId = getUserId(req.body.initData);
+  if (!userId) return res.status(400).json({ success: false });
+  try {
+    const { data: user } = await supabase
+      .from('users')
+      .select('coins, daily_streak, last_streak_bonus')
+      .eq('telegram_id', userId)
+      .single();
+    if (!user || user.daily_streak < 7) {
+      return res.json({ success: false, error: 'Streak not complete' });
+    }
+    /* Prevent double claim — one bonus per 7-day cycle */
+    const week = Math.floor(Date.now() / (7 * 86400000));
+    if (user.last_streak_bonus === week) {
+      return res.json({ success: false, error: 'Already claimed this week' });
+    }
+    await supabase.from('users').update({
+      coins: (user.coins || 0) + 10,
+      last_streak_bonus: week
+    }).eq('telegram_id', userId);
+    res.json({ success: true });
+  } catch (e) {
+    res.json({ success: false, error: 'Server error' });
+  }
+});
+
 /* ══ START GAME LOOP ══ */
 startWaiting();
 
