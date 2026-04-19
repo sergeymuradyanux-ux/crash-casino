@@ -565,7 +565,11 @@ function _updateShooting(){
     if(s._life<=0){s.remove();_rShooting.splice(i,1);}
   }
 }
-function _spawnMeteor(){_rMeteor={x:_rW+60,y:-50,vx:(_rX-_rW-60)/45,vy:(_rY+50)/45,trail:[],size:16};_rMeteorActive=true;}
+function _spawnMeteor(crashMult,lostBet){
+  /* Fast meteor — arrives in ~20 frames (~330ms) */
+  _rMeteor={x:_rW+60,y:-50,vx:(_rX-_rW-60)/20,vy:(_rY+50)/20,trail:[],size:18,crashMult,lostBet};
+  _rMeteorActive=true;
+}
 function _drawMeteor(){
   while(_rGM.firstChild)_rGM.removeChild(_rGM.firstChild);
   if(!_rMeteorActive||!_rMeteor)return;
@@ -576,10 +580,23 @@ function _drawMeteor(){
   _rGM.appendChild(_svgEl('circle',{cx:m.x,cy:m.y,r:m.size,fill:'#8B7355'}));
   _rGM.appendChild(_svgEl('circle',{cx:m.x-m.size*0.2,cy:m.y-m.size*0.15,r:m.size*0.42,fill:'#6B5535'}));
   _rGM.appendChild(_svgEl('circle',{cx:m.x-m.size*0.3,cy:m.y-m.size*0.28,r:m.size*0.16,fill:'rgba(255,210,140,0.3)'}));
-  if(Math.sqrt((m.x-_rX)**2+(m.y-_rY)**2)<45){_rMeteorActive=false;_rMeteor=null;_rGM.innerHTML='';_rExplode();}
+  if(Math.sqrt((m.x-_rX)**2+(m.y-_rY)**2)<50){
+    const crashMult=m.crashMult,lostBet=m.lostBet;
+    _rMeteorActive=false;_rMeteor=null;_rGM.innerHTML='';
+    _rExplode(crashMult,lostBet);
+  }
 }
-function _rExplode(){
+function _rExplode(crashMult,lostBet){
   _rBroken=true;_rFl1.style.opacity='0';_rFl2.style.opacity='0';
+  /* NOW show crash UI — all at once on impact */
+  showMult(crashMult.toFixed(2)+'×','crash');showSub('CRASHED');
+  hapticError();
+  if(lostBet){
+    const rb=document.getElementById('rb');rb.className='rb rb-l show';
+    rb.textContent='Crashed at ×'+crashMult.toFixed(2)+' — lost ⭐'+fmt(lostBet);
+  }
+  setBtn('place','Place Bet');
+  document.getElementById('placed-row').classList.remove('show');
   _rParticles=[];while(_rGP.firstChild)_rGP.removeChild(_rGP.firstChild);
   for(let i=0;i<100;i++){
     const a=Math.random()*Math.PI*2,sp=Math.random()*7+1,isD=Math.random()<0.35;
@@ -591,7 +608,7 @@ function _rExplode(){
   const fl=_svgEl('circle',{cx:_rX,cy:_rY,r:8,fill:'rgba(255,240,180,0.95)'});
   _rGSh.appendChild(fl);let fr=8;
   const fa=setInterval(()=>{fr+=14;fl.setAttribute('r',fr);fl.setAttribute('fill',`rgba(255,220,120,${Math.max(0,0.85-(fr/90))})`);if(fr>90){clearInterval(fa);fl.remove();}},16);
-  _rShakePow=16;
+  _rShakePow=18;
 }
 function _updateParticles(){
   _rParticles=_rParticles.filter(p=>p.life>0);
@@ -706,16 +723,15 @@ function handleWsMsg(msg){
       game.phase='crashed';game.crashPoint=msg.mult;game.bets=msg.bets;
       crashHistory.unshift(msg.mult);if(crashHistory.length>15)crashHistory.pop();
       if(inGame){
-        renderHistory();showMult(msg.mult.toFixed(2)+'×','crash');showSub('CRASHED');
-        if(!_rMeteorActive&&!_rMeteor&&!_rBroken)_spawnMeteor();
-        if(myBetPlaced&&!myCashedOut){
+        renderHistory();renderBets();
+        /* Keep multiplier green — explosion will flip to red on impact */
+        const _lostBet=(myBetPlaced&&!myCashedOut)?myBet:0;
+        if(_lostBet){
           myResults.unshift({bet:myBet,mult:msg.mult,profit:-myBet,won:false,time:Date.now()});
           if(myResults.length>20)myResults.pop();
-          const rb=document.getElementById('rb');rb.className='rb rb-l show';
-          rb.textContent='Crashed at ×'+msg.mult.toFixed(2)+' — lost ⭐'+fmt(myBet);
-          hapticError();
         }
-        setBtn('place','Place Bet');document.getElementById('placed-row').classList.remove('show');renderBets();
+        /* Launch meteor — crash UI triggers on impact */
+        if(!_rMeteorActive&&!_rMeteor&&!_rBroken)_spawnMeteor(msg.mult,_lostBet);
       }
       myBetPlaced=false;myCashedOut=false;myBet=0;updateLobbyPlayers();
       break;
