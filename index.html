@@ -620,7 +620,6 @@ function _hoverRocket(ts){
 }
 function _rocketLoop(ts){
   _driftStars();_doFlames(ts);_hoverRocket(ts);_maybeShoot();_updateShooting();
-  if(game.phase==='crashed'&&!_rMeteorActive&&!_rMeteor&&!_rBroken)_spawnMeteor();
   if(_rMeteorActive)_drawMeteor();
   if(_rParticles.length>0)_updateParticles();
   _rRaf=requestAnimationFrame(_rocketLoop);
@@ -692,7 +691,7 @@ function handleWsMsg(msg){
       break;
     case 'countdown':
       game.countdown=msg.value;game.phase='countdown';
-      if(inGame){showMult(msg.value.toString(),'cd');showSub('');hapticLight();if(myBetPlaced)setBtn('wait','Bet placed — starting…');else setBtn('place','Place Bet');}
+      if(inGame){showMult(msg.value.toString(),'cd');showSub('');hapticLight();_resetRocket();if(myBetPlaced)setBtn('wait','Bet placed — starting…');else setBtn('place','Place Bet');}
       break;
     case 'tick':
       game.multiplier=msg.mult;game.bets=msg.bets;game.phase='running';
@@ -708,6 +707,7 @@ function handleWsMsg(msg){
       crashHistory.unshift(msg.mult);if(crashHistory.length>15)crashHistory.pop();
       if(inGame){
         renderHistory();showMult(msg.mult.toFixed(2)+'×','crash');showSub('CRASHED');
+        if(!_rMeteorActive&&!_rMeteor&&!_rBroken)_spawnMeteor();
         if(myBetPlaced&&!myCashedOut){
           myResults.unshift({bet:myBet,mult:msg.mult,profit:-myBet,won:false,time:Date.now()});
           if(myResults.length>20)myResults.pop();
