@@ -38,7 +38,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Inter',sans-serif;color:var(-
 .page.active{display:flex}
 .label{font-size:11px;font-weight:700;color:var(--text3);letter-spacing:0.6px;text-transform:uppercase}
 .top-hud{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;flex-shrink:0;background:var(--bg);border-bottom:1px solid var(--border)}
-.hud-logo{font-size:19px;font-weight:900;color:var(--text);display:flex;align-items:center;gap:8px;letter-spacing:-0.5px}
+.hud-logo{font-size:19px;font-weight:500;color:var(--text);display:flex;align-items:center;gap:8px;letter-spacing:0}
 .hud-logo-dot{color:var(--blue)}
 .hud-bal{display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--border2);border-radius:var(--r-lg);padding:6px 8px 6px 12px;cursor:pointer}
 .hud-bal-num{font-size:15px;font-weight:800;color:var(--gold)}
@@ -222,8 +222,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Inter',sans-serif;color:var(-
 <div id="lobby-shell" style="display:flex;flex-direction:column;flex:1;overflow:hidden;background:var(--bg)">
   <div class="top-hud">
     <div class="hud-logo">
-      <svg width="24" height="24"><use href="#ico-geco"/></svg>
-      Geco<span class="hud-logo-dot">.</span>
+      Geco
     </div>
     <div class="hud-bal" onclick="openSh('topup-ov')">
       <svg width="16" height="16"><use href="#ico-star"/></svg>
@@ -348,7 +347,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Inter',sans-serif;color:var(-
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
       Back
     </div>
-    <div class="game-hud-title"><svg width="18" height="18"><use href="#ico-geco"/></svg>Geco <span>Crash</span></div>
+    <div class="game-hud-title">Geco <span>Crash</span></div>
     <div class="game-hud-bal" onclick="openSh('topup-ov')">
       <svg width="13" height="13"><use href="#ico-star"/></svg>
       <span class="game-hud-bal-num" id="stars-disp2">...</span>
@@ -833,8 +832,12 @@ function setBtn(type,text){
   const map={place:'btn btn-primary',wait:'btn btn-wait',cash:'btn btn-danger',won:'btn btn-success',off:'btn btn-off'};
   btn.className=map[type]||map.off;
   btn.style.cssText='width:100%;font-size:17px;min-height:54px;font-weight:800;border-radius:16px';
-  btn.disabled=(type==='off'||type==='wait');
-  btn.style.pointerEvents=(type==='off'||type==='wait')?'none':'all';
+  const isDisabled=(type==='off'||type==='wait');
+  btn.disabled=isDisabled;
+  btn.removeAttribute('disabled');
+  if(isDisabled)btn.setAttribute('disabled','');
+  btn.style.pointerEvents=isDisabled?'none':'all';
+  btn.style.cursor=isDisabled?'not-allowed':'pointer';
   btn.textContent=text;
 }
 
