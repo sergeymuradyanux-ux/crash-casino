@@ -318,6 +318,60 @@ wss.on('connection', (ws) => {
 
 app.get('/', (req, res) => res.json({ status: 'Geco API running', clients: wss.clients.size }));
 
+/* ── REST CASHOUT FALLBACK — used when WebSocket is disconnected ── */
+app.post('/api/cashout-confirm', async (req, res) => {
+  const userId = getUserId(req.body.initData);
+  if (!userId) return res.status(400).json({ success: false, error: 'Invalid user' });
+
+  /* Use same logic as WS cashout */
+  if (gameState.phase !== 'running') {
+    return res.json({ success: false, error: 'Game not running' });
+  }
+
+  const bet = gameState.bets.find(b => String(b.userId) === String(userId));
+  if (!bet) return res.json({ success: false, error: 'No bet found' });
+  if (bet.cashedAt) {
+    /* Already cashed out — return existing result */
+    return res.json({ success: true, mult: bet.cashedAt, payout: Math.floor(bet.amount * bet.cashedAt), alreadyDone: true });
+  }
+  if (bet.lost) return res.json({ success: false, error: 'Already crashed' });
+  if (cashoutInProgress.has(String(userId))) {
+    return res.json({ success: false, error: 'Processing' });
+  }
+
+  /* Lock and cashout */
+  cashoutInProgress.add(String(userId));
+  const lockedMult = gameState.multiplier;
+  bet.cashedAt = lockedMult;
+  const payout = Math.floor(bet.amount * lockedMult);
+  const profit  = payout - bet.amount;
+
+  broadcast({ type: 'cashout', userId, mult: lockedMult });
+
+  try {
+    const { data: user } = await supabase
+      .from('users').select('coins, stars_won').eq('telegram_id', userId).single();
+    if (user) {
+      await supabase.from('users').update({
+        coins: (user.coins || 0) + payout,
+        stars_won: (user.stars_won || 0) + Math.max(0, profit)
+      }).eq('telegram_id', userId);
+      await supabase.from('transactions').insert({
+        telegram_id: userId, description: `Won x${lockedMult} (REST)`,
+        delta: profit, bet: bet.amount, cashed_out_at: lockedMult, won: true
+      });
+    }
+    broadcast({ type: 'cashout_ok', userId, mult: lockedMult, payout });
+    res.json({ success: true, mult: lockedMult, payout });
+    console.log(`REST cashout: user ${userId} at x${lockedMult}, payout ${payout}`);
+  } catch (e) {
+    console.error('REST cashout error:', e);
+    res.json({ success: true, mult: lockedMult, payout }); /* still confirm */
+  } finally {
+    cashoutInProgress.delete(String(userId));
+  }
+});
+
 function getUserData(initData) {
   try { return JSON.parse(new URLSearchParams(initData).get('user')); }
   catch { return null; }
