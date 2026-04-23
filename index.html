@@ -714,7 +714,13 @@ function handleWsMsg(msg){
       game.multiplier=msg.mult;game.bets=msg.bets;game.phase='running';
       if(inGame){
         showMult(msg.mult.toFixed(2)+'×','run');showSub('FLYING');
-        if(myBetPlaced&&!myCashedOut)document.getElementById('mbtn').textContent='CASH OUT  ×'+msg.mult.toFixed(2);
+        if(myBetPlaced&&!myCashedOut){
+          /* setBtn not just textContent — ensures button is RED and enabled */
+          setBtn('cash','CASH OUT  ×'+msg.mult.toFixed(2));
+        } else if(!myBetPlaced&&!myCashedOut){
+          /* Not in this round — show disabled Place Bet */
+          setBtn('off','Next round…');
+        }
         if(Math.round(msg.mult*10)%5===0)renderBets();
       }
       updateLobbyPlayers();
@@ -733,7 +739,7 @@ function handleWsMsg(msg){
         /* Launch meteor — crash UI triggers on impact */
         if(!_rMeteorActive&&!_rMeteor&&!_rBroken)_spawnMeteor(msg.mult,_lostBet);
       }
-      myBetPlaced=false;myCashedOut=false;myBet=0;updateLobbyPlayers();
+      myBetPlaced=false;myCashedOut=false;myBet=0;cashoutLock=false;updateLobbyPlayers();
       break;
     case 'bets_update':
       game.bets=msg.bets;updateLobbyPlayers();if(inGame)renderBets();
@@ -771,10 +777,16 @@ function handleWsMsg(msg){
       document.getElementById('stat-won').textContent=fmt(starsWon);}
       break;
     case 'cashout_error':
-      cashoutLock=false;myCashedOut=false;
-      if(inGame&&game.phase==='running'&&myBetPlaced){
+      cashoutLock=false;
+      /* Only re-enable and show toast if game still running — if crashed, stay silent */
+      if(inGame&&game.phase==='running'&&myBetPlaced&&!myCashedOut){
+        myCashedOut=false;
         setBtn('cash','CASH OUT  ×'+game.multiplier.toFixed(2));
         toast('Cashout failed — tap again');
+        hapticError();
+      } else {
+        /* Round already crashed or no bet — just reset state silently */
+        myCashedOut=false;
       }
       break;
   }
@@ -783,7 +795,12 @@ function handleWsMsg(msg){
 function applyGameState(){
   if(game.phase==='waiting'){showMult('','');showSub('');setBtn('place','Place Bet');document.getElementById('rb').classList.remove('show');}
   else if(game.phase==='countdown'){showMult(game.countdown.toString(),'cd');showSub('');if(myBetPlaced)setBtn('wait','Bet placed — starting…');else setBtn('place','Place Bet');}
-  else if(game.phase==='running'){showMult(game.multiplier.toFixed(2)+'×','run');showSub('FLYING');if(myBetPlaced&&!myCashedOut)setBtn('cash','CASH OUT  ×'+game.multiplier.toFixed(2));else if(!myBetPlaced)setBtn('place','Place Bet');}
+  else if(game.phase==='running'){
+    showMult(game.multiplier.toFixed(2)+'×','run');showSub('FLYING');
+    if(myBetPlaced&&!myCashedOut)setBtn('cash','CASH OUT  ×'+game.multiplier.toFixed(2));
+    else if(myCashedOut)setBtn('won','Cashed out ✓');
+    else setBtn('off','Next round…');
+  }
   else if(game.phase==='crashed'){showMult(game.crashPoint.toFixed(2)+'×','crash');showSub('CRASHED');setBtn('place','Place Bet');}
   renderBets();
 }
