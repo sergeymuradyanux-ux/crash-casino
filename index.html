@@ -499,6 +499,7 @@ let stars=0,myBet=0,myBetPlaced=false,myCashedOut=false;
 let autoMult=2,autoOn=true,topupSel=100;
 let invitedCount=0,earnedFromInvites=0;
 let myResults=[],gamesPlayed=0,bestMult=0,starsWon=0,roundsToday=0;
+let streakBonusClaimed=false;
 let game={phase:'waiting',countdown:10,multiplier:1,crashPoint:null,bets:[]};
 let crashHistory=[];
 let ws=null,wsReconnectTimer=null,inGame=false;
@@ -751,10 +752,9 @@ function handleWsMsg(msg){
       if(inGame)setBtn('place','Place Bet');
       break;
     case 'cashout_ok':
-      /* Server broadcasts cashout_ok to ALL clients — filter to only act if it's ours */
-      if (msg.userId && String(msg.userId) !== uid) break;
-      cashoutLock = false; /* clear lock — got confirmation */
-      { const win=msg.payout,profit=win-myBet;
+      if(msg.userId&&String(msg.userId)!==uid)break;
+      cashoutLock=false;
+      {const win=msg.payout,profit=win-myBet;
       stars+=win;updateStars();starsWon+=Math.max(0,profit);
       if(msg.mult>bestMult)bestMult=msg.mult;
       myResults.unshift({bet:myBet,mult:msg.mult,profit,won:true,time:Date.now()});
@@ -768,17 +768,19 @@ function handleWsMsg(msg){
         renderBets();
       }
       hapticSuccess();toast('Won ⭐'+fmt(win)+'!');
-      document.getElementById('stat-won').textContent=fmt(starsWon); }
+      document.getElementById('stat-won').textContent=fmt(starsWon);}
       break;
     case 'cashout_error':
-      /* Server rejected cashout — unlock and let user retry */
-      cashoutLock = false;
-      myCashedOut = false;
-      if(inGame && game.phase === 'running' && myBetPlaced) {
-        setBtn('cash', 'CASH OUT  ×' + game.multiplier.toFixed(2));
-        toast('Cashout failed: ' + (msg.msg || 'Try again'));
+      cashoutLock=false;myCashedOut=false;
+      if(inGame&&game.phase==='running'&&myBetPlaced){
+        setBtn('cash','CASH OUT  ×'+game.multiplier.toFixed(2));
+        toast('Cashout failed — tap again');
       }
-      break;{
+      break;
+  }
+}
+
+function applyGameState(){
   if(game.phase==='waiting'){showMult('','');showSub('');setBtn('place','Place Bet');document.getElementById('rb').classList.remove('show');}
   else if(game.phase==='countdown'){showMult(game.countdown.toString(),'cd');showSub('');if(myBetPlaced)setBtn('wait','Bet placed — starting…');else setBtn('place','Place Bet');}
   else if(game.phase==='running'){showMult(game.multiplier.toFixed(2)+'×','run');showSub('FLYING');if(myBetPlaced&&!myCashedOut)setBtn('cash','CASH OUT  ×'+game.multiplier.toFixed(2));else if(!myBetPlaced)setBtn('place','Place Bet');}
@@ -849,92 +851,43 @@ function setBtn(type,text){
   btn.textContent=text;
 }
 
-/* ══ MAIN BUTTON — desktop + mobile safe ══
- *
- * FIXES:
- * 1. mousedown fires ~80ms before click — critical for cashout timing on desktop
- * 2. touchstart fires immediately on mobile
- * 3. cashoutLock prevents double-fire from rapid taps / desktop double-click
- * 4. Backup REST call if WS is slow or stalled on desktop
- * 5. Re-enables button on network error so user can retry
- */
-let cashoutLock = false;
+/* ══ MAIN BUTTON — desktop + mobile safe ══ */
+let cashoutLock=false;
 
-function _doCashout() {
-  if (cashoutLock) return;               /* already processing */
-  if (!myBetPlaced || myCashedOut) return;
-  if (game.phase !== 'running') return;
-
-  cashoutLock  = true;
-  myCashedOut  = true;
-  hapticHeavy();
-  setBtn('won', 'Cashing out…');
-
-  /* PRIMARY — WebSocket (fastest, real-time) */
-  wsSend({ type: 'cashout', userId: uid });
-
-  /* BACKUP — REST call after 400ms in case WS message was dropped.
-     Server is idempotent: if already cashed out it silently re-confirms. */
-  setTimeout(() => {
-    if (!cashoutLock) return; /* already got cashout_ok, no need */
-    fetch(SERVER_HTTP + '/api/cashout-confirm', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ initData, userId: uid })
-    }).catch(() => {});
-  }, 400);
-
-  /* Safety unlock after 5s — allows retry if server never responded */
-  setTimeout(() => {
-    if (cashoutLock) {
-      cashoutLock = false;
-      /* If we still haven't got cashout_ok and game still running, re-enable */
-      if (game.phase === 'running' && myCashedOut) {
-        setBtn('cash', 'CASH OUT  ×' + game.multiplier.toFixed(2));
-        myCashedOut = false;
-        toast('Cashout timed out — tap again');
-      }
-    }
-  }, 5000);
-}
-
-function handleMain(e) {
-  /* Place bet flow */
-  if ((game.phase === 'waiting' || game.phase === 'countdown') && !myBetPlaced) {
-    hapticLight();
-    document.getElementById('binp').value = '50';
-    openSh('bet-ov');
-    setTimeout(() => { try { document.getElementById('binp').focus(); } catch(e) {} }, 300);
+function handleMain(){
+  /* Place bet */
+  if((game.phase==='waiting'||game.phase==='countdown')&&!myBetPlaced){
+    hapticLight();document.getElementById('binp').value='50';openSh('bet-ov');
+    setTimeout(()=>{try{document.getElementById('binp').focus();}catch(e){}},300);
     return;
   }
-  /* Cashout flow */
-  if (game.phase === 'running' && myBetPlaced && !myCashedOut) {
-    _doCashout();
+  /* Cashout */
+  if(game.phase==='running'&&myBetPlaced&&!myCashedOut){
+    if(cashoutLock)return;
+    cashoutLock=true;
+    myCashedOut=true;
+    hapticHeavy();
+    setBtn('won','Cashing out…');
+    wsSend({type:'cashout',userId:uid});
+    /* Backup REST after 400ms if WS dropped */
+    setTimeout(()=>{
+      if(!cashoutLock)return;
+      fetch(SERVER_HTTP+'/api/balance',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({initData})}).catch(()=>{});
+    },400);
+    /* Safety unlock after 5s */
+    setTimeout(()=>{
+      if(cashoutLock){cashoutLock=false;}
+    },5000);
   }
 }
 
-/* Wire up button with BOTH mousedown (desktop) and touchstart (mobile) */
-(function() {
-  const btn = document.getElementById('mbtn');
-
-  /* mousedown — fires ~80ms before click, critical for desktop precision */
-  btn.addEventListener('mousedown', function(e) {
-    e.preventDefault();
-    handleMain(e);
-  });
-
-  /* touchstart — immediate on mobile */
-  btn.addEventListener('touchstart', function(e) {
-    e.preventDefault();
-    handleMain(e);
-  }, { passive: false });
-
-  /* Fallback click — catches any edge cases */
-  btn.addEventListener('click', function(e) {
-    /* Only run if mousedown/touchstart didn't already fire */
-    handleMain(e);
-  });
-})();
+/* Wire mousedown (desktop) + touchstart (mobile) for fastest response */
+window.addEventListener('DOMContentLoaded',function(){
+  var btn=document.getElementById('mbtn');
+  if(!btn)return;
+  btn.addEventListener('mousedown',function(e){e.preventDefault();handleMain();});
+  btn.addEventListener('touchstart',function(e){e.preventDefault();handleMain();},{passive:false});
+});
 
 /* ══ CONFIRM BET — instant UI ══ */
 function confirmBet(){
@@ -1011,8 +964,9 @@ function renderTasks(){
   else{bwb.className='btn btn-gold';bwb.textContent='Play';bwb.disabled=false;bwp.textContent='Win at ×3.00+';bwb.onclick=()=>enterCrash();}
   const sb=document.getElementById('tstreak-btn');
   document.getElementById('streak-bar').style.width=(Math.min(dailyStreak,7)/7*100)+'%';
-  if(dailyStreak>=7){sb.className='btn btn-gold';sb.textContent='Claim +10 ⭐';sb.onclick=claimStreakBonus;sb.disabled=false;}
-  else{sb.className='btn btn-ghost';sb.textContent=dailyStreak+'/7';sb.disabled=true;}
+  if(streakBonusClaimed){sb.className='btn btn-ghost';sb.textContent='Done ✓';sb.disabled=true;sb.onclick=null;}
+  else if(dailyStreak>=7){sb.className='btn btn-gold';sb.textContent='Claim +10 ⭐';sb.onclick=claimStreakBonus;sb.disabled=false;}
+  else{sb.className='btn btn-ghost';sb.textContent=dailyStreak+'/7';sb.disabled=true;sb.onclick=null;}
   const incomplete=[!dailyClaimedToday,invitedCount===0,!roundsDone,!bigwinDone,dailyStreak<7].filter(Boolean).length;
   const badge=document.getElementById('tasks-badge');
   if(incomplete>0){badge.style.display='block';badge.textContent=incomplete;}else badge.style.display='none';
@@ -1056,13 +1010,22 @@ async function claimDaily(){
 }
 
 async function claimStreakBonus(){
-  if(dailyStreak<7)return;
+  if(dailyStreak<7||streakBonusClaimed)return;
+  const sb=document.getElementById('tstreak-btn');
+  sb.disabled=true;sb.textContent='Claiming…';
   try{
     const r=await fetch(SERVER_HTTP+'/api/streak-bonus',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({initData})});
     const d=await r.json();
-    if(d.success){stars+=10;updateStars();renderTasks();hapticSuccess();toast('🔥 +10 ⭐ streak bonus!');}
-    else toast(d.error||'Already claimed');
-  }catch(e){toast('Error');}
+    if(d.success){
+      streakBonusClaimed=true;
+      localStorage.setItem('streak_bonus_week_'+uid,Math.floor(Date.now()/(7*86400000)));
+      stars+=10;updateStars();renderTasks();hapticSuccess();toast('🔥 +10 ⭐ streak bonus!');
+    }else{
+      streakBonusClaimed=true;
+      localStorage.setItem('streak_bonus_week_'+uid,Math.floor(Date.now()/(7*86400000)));
+      renderTasks();toast(d.error||'Already claimed this week');
+    }
+  }catch(e){sb.disabled=false;sb.textContent='Claim +10 ⭐';toast('Network error — try again');}
 }
 
 function doInvite(){
@@ -1119,7 +1082,11 @@ async function loadUser(){
   await checkDailyFromServer();
 }
 
-window.addEventListener('load',()=>{loadUser();connectWS();});
+window.addEventListener('load',()=>{
+  const week=Math.floor(Date.now()/(7*86400000));
+  if(parseInt(localStorage.getItem('streak_bonus_week_'+uid)||'0')===week)streakBonusClaimed=true;
+  loadUser();connectWS();
+});
 window.addEventListener('resize',()=>{});
 </script>
 </body>
