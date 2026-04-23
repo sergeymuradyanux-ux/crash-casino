@@ -222,7 +222,7 @@ wss.on('connection', (ws) => {
         if (!userId || !amount || amount < 50) {
           return sendTo(ws, { type: 'bet_error', msg: 'Invalid bet' });
         }
-        if (gameState.phase !== 'waiting' && gameState.phase !== 'countdown') {
+        if (gameState.phase !== 'waiting' && gameState.phase !== 'countdown' && gameState.phase !== 'crashed') {
           return sendTo(ws, { type: 'bet_error', msg: 'Round already started' });
         }
         if (gameState.bets.find(b => String(b.userId) === String(userId))) {
