@@ -190,13 +190,30 @@ async function saveCrashHistory(point) {
 }
 
 /* ══ WEBSOCKET HANDLER ══ */
+/* ══ SERVER-SIDE WS HEARTBEAT — detects dead connections every 30s ══ */
+setInterval(() => {
+  wss.clients.forEach(ws => {
+    if (ws.isAlive === false) { ws.terminate(); return; }
+    ws.isAlive = false;
+    ws.ping();
+  });
+}, 30000);
+
 wss.on('connection', (ws) => {
+  ws.isAlive = true;
+  ws.on('pong', () => { ws.isAlive = true; });
   console.log('Client connected, total:', wss.clients.size);
   ws.send(JSON.stringify({ type: 'state', game: getPublicState() }));
 
   ws.on('message', async (msg) => {
     try {
       const data = JSON.parse(msg);
+
+      /* ── PING (keepalive from client) ── */
+      if (data.type === 'ping') {
+        sendTo(ws, { type: 'pong' });
+        return;
+      }
 
       /* ────────────────── PLACE BET ────────────────── */
       if (data.type === 'bet') {
