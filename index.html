@@ -927,8 +927,8 @@ function setBtn(type,text){
 let cashoutLock=false;
 
 function handleMain(){
-  /* Place bet */
-  if((game.phase==='waiting'||game.phase==='countdown')&&!myBetPlaced){
+  /* Place bet — allow during waiting, countdown AND crashed */
+  if((game.phase==='waiting'||game.phase==='countdown'||game.phase==='crashed')&&!myBetPlaced){
     hapticLight();document.getElementById('binp').value='50';openSh('bet-ov');
     setTimeout(()=>{try{document.getElementById('binp').focus();}catch(e){}},300);
     return;
@@ -1037,13 +1037,19 @@ function confirmBet(){
   const amt=Math.min(20000,Math.max(0,parseInt(document.getElementById('binp').value)||0));
   if(amt<50){hapticError();toast('Minimum bet is 50 stars');return;}
   if(amt>stars){hapticError();toast('Not enough stars!');return;}
-  if(game.phase!=='waiting'&&game.phase!=='countdown'){hapticError();toast('Wait for next round');return;}
+  /* Allow betting during crashed phase — server queues it for next round */
+  if(game.phase==='running'){hapticError();toast('Wait for next round');return;}
   closeSh('bet-ov');
   myBet=amt;myBetPlaced=true;stars-=myBet;updateStars();hapticMedium();
   document.getElementById('placed-row').classList.add('show');
   document.getElementById('placed-val').textContent='⭐ '+fmt(myBet);
   document.getElementById('rb').classList.remove('show');
-  setBtn('wait','Confirming bet…');
+  /* Show correct waiting message based on phase */
+  if(game.phase==='crashed'||game.phase==='waiting'){
+    setBtn('wait','Bet queued — next round…');
+  } else {
+    setBtn('wait','Confirming bet…');
+  }
   toast('Bet ⭐'+fmt(myBet)+' placed!');
   gamesPlayed++;roundsToday++;
   localStorage.setItem('rounds_today_'+uid,roundsToday);
