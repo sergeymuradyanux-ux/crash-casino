@@ -677,21 +677,71 @@ function exitCrash(){
 }
 
 /* ══ WEBSOCKET ══ */
+let _pendingCashout=false; /* true if cashout was attempted while WS was down */
+
 function connectWS(){
   if(ws&&(ws.readyState===WebSocket.OPEN||ws.readyState===WebSocket.CONNECTING))return;
   ws=new WebSocket(SERVER_WS);
+
   ws.onopen=()=>{
     clearTimeout(wsReconnectTimer);
+    /* Sync balance after reconnect */
     fetch(SERVER_HTTP+'/api/balance',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({initData})})
       .then(r=>r.json()).then(d=>{if(d.coins!==undefined){stars=d.coins;updateStars();}}).catch(()=>{});
-    if(inGame)setBtn('place','Place Bet');
+
+    /* If player had a pending cashout while disconnected — resend immediately */
+    if(_pendingCashout&&myBetPlaced&&!myCashedOut&&game.phase==='running'){
+      _pendingCashout=false;
+      ws.send(JSON.stringify({type:'cashout',userId:uid}));
+      setBtn('won','Cashing out…');
+      return;
+    }
+
+    /* Restore correct button state — do NOT blindly reset to Place Bet */
+    if(inGame){
+      if(myBetPlaced&&!myCashedOut&&game.phase==='running'){
+        setBtn('cash','CASH OUT  ×'+game.multiplier.toFixed(2));
+      } else if(myBetPlaced&&game.phase==='countdown'){
+        setBtn('wait','Bet placed — starting…');
+      } else {
+        setBtn('place','Place Bet');
+      }
+    }
     updateLobbyPlayers();
   };
+
   ws.onmessage=(e)=>{try{handleWsMsg(JSON.parse(e.data));}catch(err){}};
-  ws.onclose=()=>{if(inGame)setBtn('off','Reconnecting…');wsReconnectTimer=setTimeout(connectWS,2000);};
+
+  ws.onclose=()=>{
+    wsReconnectTimer=setTimeout(connectWS,1500); /* reconnect faster — 1.5s not 2s */
+    if(inGame){
+      /* If player was mid-cashout when WS dropped — mark pending */
+      if(cashoutLock&&myBetPlaced&&!myCashedOut){
+        _pendingCashout=true;
+        setBtn('won','Reconnecting…'); /* keep won-style, not disabled */
+      } else if(!myBetPlaced||myCashedOut){
+        /* Not in active bet — show reconnecting quietly */
+        setBtn('off','Reconnecting…');
+      }
+      /* If myBetPlaced but cashoutLock not set — keep CASH OUT button active */
+    }
+  };
+
   ws.onerror=()=>{ws.close();};
 }
-function wsSend(d){if(ws&&ws.readyState===WebSocket.OPEN)ws.send(JSON.stringify(d));}
+
+function wsSend(d){
+  if(ws&&ws.readyState===WebSocket.OPEN){
+    ws.send(JSON.stringify(d));
+  } else {
+    /* WS not ready — if this is a cashout, mark as pending so it resends on reconnect */
+    if(d.type==='cashout'){
+      _pendingCashout=true;
+      /* Try to reconnect immediately */
+      connectWS();
+    }
+  }
+}
 
 function updateLobbyPlayers(){
   const n=(game.bets||[]).length;
@@ -885,16 +935,35 @@ function handleMain(){
     myCashedOut=true;
     hapticHeavy();
     setBtn('won','Cashing out…');
-    wsSend({type:'cashout',userId:uid});
-    /* Backup REST after 400ms if WS dropped */
+
+    /* Try WebSocket first */
+    if(ws&&ws.readyState===WebSocket.OPEN){
+      ws.send(JSON.stringify({type:'cashout',userId:uid}));
+    } else {
+      /* WS down — go straight to REST */
+      _pendingCashout=false;
+      _doRestCashout();
+      return;
+    }
+
+    /* Backup REST after 600ms if no cashout_ok received */
     setTimeout(()=>{
-      if(!cashoutLock)return;
-      fetch(SERVER_HTTP+'/api/balance',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({initData})}).catch(()=>{});
-    },400);
-    /* Safety unlock after 5s */
+      if(cashoutLock&&myCashedOut){
+        _doRestCashout();
+      }
+    },600);
+
+    /* Safety unlock after 8s */
     setTimeout(()=>{
-      if(cashoutLock){cashoutLock=false;}
-    },5000);
+      if(cashoutLock){
+        cashoutLock=false;
+        if(game.phase==='running'&&myBetPlaced&&myCashedOut){
+          myCashedOut=false;
+          setBtn('cash','CASH OUT  ×'+game.multiplier.toFixed(2));
+          toast('Tap to cash out again');
+        }
+      }
+    },8000);
   }
 }
 
@@ -905,6 +974,58 @@ window.addEventListener('DOMContentLoaded',function(){
   btn.addEventListener('mousedown',function(e){e.preventDefault();handleMain();});
   btn.addEventListener('touchstart',function(e){e.preventDefault();handleMain();},{passive:false});
 });
+
+/* REST fallback cashout — called when WebSocket is unavailable */
+async function _doRestCashout(){
+  if(!cashoutLock)return; /* already resolved */
+  try{
+    const r=await fetch(SERVER_HTTP+'/api/cashout-confirm',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({initData,userId:uid})
+    });
+    const d=await r.json();
+    if(d.success){
+      cashoutLock=false;
+      if(d.alreadyDone){
+        /* WS already processed it — just make sure UI is updated */
+        return;
+      }
+      const win=d.payout,profit=win-myBet;
+      stars+=win;updateStars();starsWon+=Math.max(0,profit);
+      if(d.mult>bestMult)bestMult=d.mult;
+      myResults.unshift({bet:myBet,mult:d.mult,profit,won:true,time:Date.now()});
+      if(myResults.length>20)myResults.pop();
+      if(inGame){
+        setBtn('won','Won ×'+d.mult.toFixed(2)+'  +⭐'+fmt(profit));
+        document.getElementById('placed-row').classList.remove('show');
+        const rb=document.getElementById('rb');rb.className='rb rb-w show';
+        rb.textContent='Won ×'+d.mult.toFixed(2)+' — ⭐'+fmt(win)+' (+'+fmt(profit)+')';
+      }
+      hapticSuccess();toast('Won ⭐'+fmt(win)+'!');
+      document.getElementById('stat-won').textContent=fmt(starsWon);
+    } else if(d.error==='Game not running'||d.error==='Already crashed'){
+      /* Crashed before REST reached server — loss is real, reset cleanly */
+      cashoutLock=false;
+    } else {
+      /* Other error — re-enable button */
+      cashoutLock=false;
+      myCashedOut=false;
+      if(inGame&&game.phase==='running'&&myBetPlaced){
+        setBtn('cash','CASH OUT  ×'+game.multiplier.toFixed(2));
+        toast('Tap again to cash out');
+      }
+    }
+  }catch(e){
+    /* Network error — unlock and let user retry */
+    cashoutLock=false;
+    myCashedOut=false;
+    if(inGame&&game.phase==='running'&&myBetPlaced){
+      setBtn('cash','CASH OUT  ×'+game.multiplier.toFixed(2));
+      toast('Network error — tap again');
+    }
+  }
+}
 
 /* ══ CONFIRM BET — instant UI ══ */
 function confirmBet(){
