@@ -677,7 +677,8 @@ function exitCrash(){
 }
 
 /* ══ WEBSOCKET ══ */
-let _pendingCashout=false; /* true if cashout was attempted while WS was down */
+let _pendingCashout=false;
+let _wsPingInterval=null;
 
 function connectWS(){
   if(ws&&(ws.readyState===WebSocket.OPEN||ws.readyState===WebSocket.CONNECTING))return;
@@ -685,11 +686,22 @@ function connectWS(){
 
   ws.onopen=()=>{
     clearTimeout(wsReconnectTimer);
-    /* Sync balance after reconnect */
+
+    /* ── KEEPALIVE PING every 20s — prevents Railway idle timeout ── */
+    clearInterval(_wsPingInterval);
+    _wsPingInterval=setInterval(()=>{
+      if(ws&&ws.readyState===WebSocket.OPEN){
+        ws.send(JSON.stringify({type:'ping'}));
+      } else {
+        clearInterval(_wsPingInterval);
+      }
+    },20000);
+
+    /* Sync balance */
     fetch(SERVER_HTTP+'/api/balance',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({initData})})
       .then(r=>r.json()).then(d=>{if(d.coins!==undefined){stars=d.coins;updateStars();}}).catch(()=>{});
 
-    /* If player had a pending cashout while disconnected — resend immediately */
+    /* Resend pending cashout immediately on reconnect */
     if(_pendingCashout&&myBetPlaced&&!myCashedOut&&game.phase==='running'){
       _pendingCashout=false;
       ws.send(JSON.stringify({type:'cashout',userId:uid}));
@@ -697,15 +709,11 @@ function connectWS(){
       return;
     }
 
-    /* Restore correct button state — do NOT blindly reset to Place Bet */
+    /* Restore correct button state */
     if(inGame){
-      if(myBetPlaced&&!myCashedOut&&game.phase==='running'){
-        setBtn('cash','CASH OUT  ×'+game.multiplier.toFixed(2));
-      } else if(myBetPlaced&&game.phase==='countdown'){
-        setBtn('wait','Bet placed — starting…');
-      } else {
-        setBtn('place','Place Bet');
-      }
+      if(myBetPlaced&&!myCashedOut&&game.phase==='running') setBtn('cash','CASH OUT  ×'+game.multiplier.toFixed(2));
+      else if(myBetPlaced&&game.phase==='countdown') setBtn('wait','Bet placed — starting…');
+      else setBtn('place','Place Bet');
     }
     updateLobbyPlayers();
   };
@@ -713,17 +721,18 @@ function connectWS(){
   ws.onmessage=(e)=>{try{handleWsMsg(JSON.parse(e.data));}catch(err){}};
 
   ws.onclose=()=>{
-    wsReconnectTimer=setTimeout(connectWS,1500); /* reconnect faster — 1.5s not 2s */
-    if(inGame){
-      /* If player was mid-cashout when WS dropped — mark pending */
-      if(cashoutLock&&myBetPlaced&&!myCashedOut){
-        _pendingCashout=true;
-        setBtn('won','Reconnecting…'); /* keep won-style, not disabled */
-      } else if(!myBetPlaced||myCashedOut){
-        /* Not in active bet — show reconnecting quietly */
-        setBtn('off','Reconnecting…');
-      }
-      /* If myBetPlaced but cashoutLock not set — keep CASH OUT button active */
+    clearInterval(_wsPingInterval);
+    wsReconnectTimer=setTimeout(connectWS,1000);
+
+    if(inGame&&cashoutLock&&myBetPlaced&&!myCashedOut){
+      /* Cashout was in-flight when WS dropped — fire REST immediately, don't wait */
+      _pendingCashout=false;
+      _doRestCashout();
+    } else if(inGame&&myBetPlaced&&!myCashedOut&&game.phase==='running'){
+      /* Had a bet but cashout not started — keep button active */
+      /* Button stays as-is, connectWS will restore it on reconnect */
+    } else if(inGame){
+      setBtn('off','Reconnecting…');
     }
   };
 
@@ -733,13 +742,9 @@ function connectWS(){
 function wsSend(d){
   if(ws&&ws.readyState===WebSocket.OPEN){
     ws.send(JSON.stringify(d));
-  } else {
-    /* WS not ready — if this is a cashout, mark as pending so it resends on reconnect */
-    if(d.type==='cashout'){
-      _pendingCashout=true;
-      /* Try to reconnect immediately */
-      connectWS();
-    }
+  } else if(d.type==='cashout'){
+    /* WS not ready — go straight to REST, don't wait for reconnect */
+    _doRestCashout();
   }
 }
 
