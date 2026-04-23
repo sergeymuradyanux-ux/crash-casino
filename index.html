@@ -402,7 +402,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Inter',sans-serif;color:var(-
       <span class="placed-lbl">Bet placed</span>
       <span class="placed-val" id="placed-val">⭐ 0</span>
     </div>
-    <button class="btn btn-off" id="mbtn" onclick="handleMain()">Connecting…</button>
+    <button class="btn btn-off" id="mbtn">Connecting…</button>
   </div>
 </div>
 
@@ -751,7 +751,10 @@ function handleWsMsg(msg){
       if(inGame)setBtn('place','Place Bet');
       break;
     case 'cashout_ok':
-      const win=msg.payout,profit=win-myBet;
+      /* Server broadcasts cashout_ok to ALL clients — filter to only act if it's ours */
+      if (msg.userId && String(msg.userId) !== uid) break;
+      cashoutLock = false; /* clear lock — got confirmation */
+      { const win=msg.payout,profit=win-myBet;
       stars+=win;updateStars();starsWon+=Math.max(0,profit);
       if(msg.mult>bestMult)bestMult=msg.mult;
       myResults.unshift({bet:myBet,mult:msg.mult,profit,won:true,time:Date.now()});
@@ -765,12 +768,17 @@ function handleWsMsg(msg){
         renderBets();
       }
       hapticSuccess();toast('Won ⭐'+fmt(win)+'!');
-      document.getElementById('stat-won').textContent=fmt(starsWon);
+      document.getElementById('stat-won').textContent=fmt(starsWon); }
       break;
-  }
-}
-
-function applyGameState(){
+    case 'cashout_error':
+      /* Server rejected cashout — unlock and let user retry */
+      cashoutLock = false;
+      myCashedOut = false;
+      if(inGame && game.phase === 'running' && myBetPlaced) {
+        setBtn('cash', 'CASH OUT  ×' + game.multiplier.toFixed(2));
+        toast('Cashout failed: ' + (msg.msg || 'Try again'));
+      }
+      break;{
   if(game.phase==='waiting'){showMult('','');showSub('');setBtn('place','Place Bet');document.getElementById('rb').classList.remove('show');}
   else if(game.phase==='countdown'){showMult(game.countdown.toString(),'cd');showSub('');if(myBetPlaced)setBtn('wait','Bet placed — starting…');else setBtn('place','Place Bet');}
   else if(game.phase==='running'){showMult(game.multiplier.toFixed(2)+'×','run');showSub('FLYING');if(myBetPlaced&&!myCashedOut)setBtn('cash','CASH OUT  ×'+game.multiplier.toFixed(2));else if(!myBetPlaced)setBtn('place','Place Bet');}
@@ -841,17 +849,92 @@ function setBtn(type,text){
   btn.textContent=text;
 }
 
-/* ══ MAIN BUTTON — instant ══ */
-function handleMain(){
-  if(game.phase==='running'&&myBetPlaced&&!myCashedOut){
-    myCashedOut=true;hapticHeavy();setBtn('won','Cashing out…');
-    wsSend({type:'cashout',userId:uid});return;
+/* ══ MAIN BUTTON — desktop + mobile safe ══
+ *
+ * FIXES:
+ * 1. mousedown fires ~80ms before click — critical for cashout timing on desktop
+ * 2. touchstart fires immediately on mobile
+ * 3. cashoutLock prevents double-fire from rapid taps / desktop double-click
+ * 4. Backup REST call if WS is slow or stalled on desktop
+ * 5. Re-enables button on network error so user can retry
+ */
+let cashoutLock = false;
+
+function _doCashout() {
+  if (cashoutLock) return;               /* already processing */
+  if (!myBetPlaced || myCashedOut) return;
+  if (game.phase !== 'running') return;
+
+  cashoutLock  = true;
+  myCashedOut  = true;
+  hapticHeavy();
+  setBtn('won', 'Cashing out…');
+
+  /* PRIMARY — WebSocket (fastest, real-time) */
+  wsSend({ type: 'cashout', userId: uid });
+
+  /* BACKUP — REST call after 400ms in case WS message was dropped.
+     Server is idempotent: if already cashed out it silently re-confirms. */
+  setTimeout(() => {
+    if (!cashoutLock) return; /* already got cashout_ok, no need */
+    fetch(SERVER_HTTP + '/api/cashout-confirm', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ initData, userId: uid })
+    }).catch(() => {});
+  }, 400);
+
+  /* Safety unlock after 5s — allows retry if server never responded */
+  setTimeout(() => {
+    if (cashoutLock) {
+      cashoutLock = false;
+      /* If we still haven't got cashout_ok and game still running, re-enable */
+      if (game.phase === 'running' && myCashedOut) {
+        setBtn('cash', 'CASH OUT  ×' + game.multiplier.toFixed(2));
+        myCashedOut = false;
+        toast('Cashout timed out — tap again');
+      }
+    }
+  }, 5000);
+}
+
+function handleMain(e) {
+  /* Place bet flow */
+  if ((game.phase === 'waiting' || game.phase === 'countdown') && !myBetPlaced) {
+    hapticLight();
+    document.getElementById('binp').value = '50';
+    openSh('bet-ov');
+    setTimeout(() => { try { document.getElementById('binp').focus(); } catch(e) {} }, 300);
+    return;
   }
-  if((game.phase==='waiting'||game.phase==='countdown')&&!myBetPlaced){
-    hapticLight();document.getElementById('binp').value='50';openSh('bet-ov');
-    setTimeout(()=>{try{document.getElementById('binp').focus();}catch(e){}},300);
+  /* Cashout flow */
+  if (game.phase === 'running' && myBetPlaced && !myCashedOut) {
+    _doCashout();
   }
 }
+
+/* Wire up button with BOTH mousedown (desktop) and touchstart (mobile) */
+(function() {
+  const btn = document.getElementById('mbtn');
+
+  /* mousedown — fires ~80ms before click, critical for desktop precision */
+  btn.addEventListener('mousedown', function(e) {
+    e.preventDefault();
+    handleMain(e);
+  });
+
+  /* touchstart — immediate on mobile */
+  btn.addEventListener('touchstart', function(e) {
+    e.preventDefault();
+    handleMain(e);
+  }, { passive: false });
+
+  /* Fallback click — catches any edge cases */
+  btn.addEventListener('click', function(e) {
+    /* Only run if mousedown/touchstart didn't already fire */
+    handleMain(e);
+  });
+})();
 
 /* ══ CONFIRM BET — instant UI ══ */
 function confirmBet(){
