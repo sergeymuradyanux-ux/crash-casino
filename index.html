@@ -44,7 +44,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Inter',sans-serif;color:var(-
 .hud-bal-num{font-size:15px;font-weight:800;color:var(--gold)}
 .hud-plus{width:26px;height:26px;border-radius:var(--r-sm);background:var(--blue);border:none;color:#fff;font-size:16px;font-weight:800;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0}
 .game-hud{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;flex-shrink:0;background:var(--bg);border-bottom:1px solid var(--border)}
-.back-btn{display:flex;align-items:center;gap:5px;background:var(--card);border:1px solid var(--border2);border-radius:var(--r-lg);padding:7px 14px;font-size:14px;font-weight:700;color:var(--text);cursor:pointer;transition:background 0.1s,transform 0.08s}
+.back-btn{display:inline-flex;align-items:center;gap:6px;background:var(--card);border:1px solid var(--border2);border-radius:var(--r-lg);padding:8px 14px;font-size:14px;font-weight:700;color:var(--text);cursor:pointer;transition:background 0.1s,transform 0.08s;flex-shrink:0;-webkit-tap-highlight-color:transparent}
 .back-btn:active{background:var(--card2);transform:scale(0.96)}
 .game-hud-title{font-size:16px;font-weight:900;color:var(--text);display:flex;align-items:center;gap:6px;letter-spacing:-0.3px}
 .game-hud-title span{color:var(--blue)}
@@ -72,7 +72,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Inter',sans-serif;color:var(-
 .badge-soon{background:rgba(74,85,104,0.25);color:var(--text3);border:1px solid var(--border2)}
 .live-dot{width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 5px rgba(34,197,94,0.7)}
 .players-badge{font-size:11px;color:var(--text3);font-weight:700;display:flex;align-items:center;gap:3px}
-.game-arrow{width:28px;height:28px;border-radius:var(--r-md);background:var(--card2);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--text3);font-size:16px}
+.game-arrow{width:32px;height:32px;border-radius:var(--r-md);background:var(--card2);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--text3)}
 .game-wrap{margin:10px 12px 0;border-radius:var(--r-lg);overflow:hidden;position:relative;border:1px solid var(--border);background:#060910;flex-shrink:0;height:55.4vw;max-height:277px;min-height:192px;-webkit-transform:translateZ(0);transform:translateZ(0)}
 .mult-overlay{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding-bottom:14px;pointer-events:none;z-index:5}
 .mn{font-size:52px;font-weight:900;line-height:1;letter-spacing:-2px;display:none;-webkit-transform:translateZ(0);transform:translateZ(0)}
@@ -256,22 +256,32 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Inter',sans-serif;color:var(-
               <span class="players-badge" id="lobby-players"><span style="width:5px;height:5px;border-radius:50%;background:var(--text3);display:inline-block"></span> — playing</span>
             </div>
           </div>
-          <div class="game-arrow">›</div>
+          <div class="game-arrow"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></div>
         </div>
         <div class="game-card" style="opacity:0.5;cursor:default">
           <div class="game-icon" style="background:linear-gradient(135deg,#1a1200,#100c00)">🎰</div>
           <div class="game-info"><div class="game-name">Slots</div><div class="game-meta"><span class="badge badge-soon">Coming soon</span></div></div>
-          <div class="game-arrow" style="opacity:0.3">›</div>
+          <div class="game-arrow" style="opacity:0.3"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></div>
         </div>
         <div class="game-card" style="opacity:0.5;cursor:default">
           <div class="game-icon" style="background:linear-gradient(135deg,#001a12,#000d09)">🃏</div>
           <div class="game-info"><div class="game-name">Blackjack</div><div class="game-meta"><span class="badge badge-soon">Coming soon</span></div></div>
-          <div class="game-arrow" style="opacity:0.3">›</div>
+          <div class="game-arrow" style="opacity:0.3"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></div>
         </div>
         <div class="game-card" style="opacity:0.5;cursor:default">
           <div class="game-icon" style="background:linear-gradient(135deg,#1a0010,#0d0009)">🎲</div>
           <div class="game-info"><div class="game-name">Dice</div><div class="game-meta"><span class="badge badge-soon">Coming soon</span></div></div>
-          <div class="game-arrow" style="opacity:0.3">›</div>
+          <div class="game-arrow" style="opacity:0.3"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></div>
+        </div>
+
+        <!-- About the game button -->
+        <div style="display:flex;justify-content:center;margin-top:8px">
+          <button onclick="switchTab('about')" style="display:inline-flex;align-items:center;gap:10px;background:var(--card2);border:1px solid var(--border);border-radius:999px;padding:10px 20px;cursor:pointer">
+            <div style="width:26px;height:26px;border-radius:50%;background:var(--card);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            </div>
+            <span style="font-size:14px;font-weight:600;color:var(--text2)">About the game</span>
+          </button>
         </div>
       </div>
     </div>
@@ -343,10 +353,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Inter',sans-serif;color:var(-
 <!-- CRASH SHELL -->
 <div id="crash-shell" style="display:none;flex-direction:column;flex:1;overflow:hidden;background:var(--bg)">
   <div class="game-hud">
-    <div class="back-btn" onclick="exitCrash()">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+    <button class="back-btn" onclick="exitCrash()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
       Back
-    </div>
+    </button>
     <div class="game-hud-title">Geco <span>Crash</span></div>
     <div class="game-hud-bal" onclick="openSh('topup-ov')">
       <svg width="13" height="13"><use href="#ico-star"/></svg>
@@ -439,7 +449,47 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Inter',sans-serif;color:var(-
   </div>
 </div>
 
-<!-- TOPUP MODAL -->
+  <!-- ABOUT PAGE — body-level full screen overlay -->
+  <div id="page-about" style="display:none;flex-direction:column;position:fixed;top:0;bottom:0;left:0;right:0;width:100%;max-width:480px;margin:0 auto;z-index:200;background:var(--bg);overflow:hidden">
+
+    <!-- Top bar with back arrow -->
+    <div class="top-hud">
+      <button onclick="switchTab('games')" class="back-btn">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        Back
+      </button>
+      <div class="hud-logo">About the game</div>
+      <div style="width:72px"></div>
+    </div>
+
+    <div class="page-scroll">
+
+      <!-- Channel + Chat -->
+      <div style="display:flex;gap:8px;margin:12px 12px 4px">
+        <button onclick="tg?.openTelegramLink('https://t.me/GecoCrashNews')" style="flex:1;padding:13px 10px;background:rgba(79,110,247,0.08);border:1px solid rgba(79,110,247,0.25);border-radius:var(--r-lg);cursor:pointer;display:flex;align-items:center;gap:10px">
+          <span style="font-size:22px;flex-shrink:0">📢</span>
+          <div style="text-align:left">
+            <div style="font-size:11px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:0.4px">Channel</div>
+            <div style="font-size:14px;font-weight:800;color:var(--blue)">News & Wins</div>
+          </div>
+        </button>
+        <button onclick="tg?.openTelegramLink('https://t.me/GecoCrashChat')" style="flex:1;padding:13px 10px;background:rgba(79,110,247,0.08);border:1px solid rgba(79,110,247,0.25);border-radius:var(--r-lg);cursor:pointer;display:flex;align-items:center;gap:10px">
+          <span style="font-size:22px;flex-shrink:0">💬</span>
+          <div style="text-align:left">
+            <div style="font-size:11px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:0.4px">Chat</div>
+            <div style="font-size:14px;font-weight:800;color:var(--blue)">Community</div>
+          </div>
+        </button>
+      </div>
+
+      <!-- FAQ label -->
+      <div style="padding:14px 14px 6px;font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.6px">FAQ</div>
+
+      <!-- FAQ accordion -->
+      <div style="display:flex;flex-direction:column;gap:6px;padding:0 12px 24px" id="faq-list"></div>
+
+    </div>
+  </div>
 <div class="ov" id="topup-ov" onclick="bgCl('topup-ov',event)">
   <div class="sh">
     <button class="sh-cls" onclick="closeSh('topup-ov')">✕</button>
@@ -654,12 +704,77 @@ function _resetRocket(){
 
 /* ══ TABS ══ */
 function switchTab(name){
-  ['games','tasks','leaderboard','profile'].forEach(p=>document.getElementById('page-'+p).classList.toggle('active',p===name));
+  /* About page is a fixed full-screen overlay — handle separately */
+  const aboutEl = document.getElementById('page-about');
+  if(name === 'about'){
+    aboutEl.style.display = 'flex';
+    renderFAQ();
+    return;
+  }
+  aboutEl.style.display = 'none';
+
+  ['games','tasks','leaderboard','profile'].forEach(p=>{
+    const el=document.getElementById('page-'+p);
+    if(el) el.classList.toggle('active', p===name);
+  });
   document.querySelectorAll('.nb').forEach(b=>b.classList.remove('active'));
-  document.getElementById('nav-'+name).classList.add('active');
-  if(name==='leaderboard')renderLB();
-  if(name==='profile')renderProfile();
-  if(name==='tasks')renderTasks();
+  const navEl=document.getElementById('nav-'+name);
+  if(navEl) navEl.classList.add('active');
+  if(name==='leaderboard') renderLB();
+  if(name==='profile') renderProfile();
+  if(name==='tasks') renderTasks();
+}
+
+/* ══ FAQ ══ */
+const FAQ_ITEMS=[
+  {q:'What is Geco?',a:'Geco is a crash game inside Telegram. Bet Stars, watch the multiplier fly, and cash out before it crashes. Win big or lose it all — every round.'},
+  {q:'How do I play?',a:'Go to Geco Crash → Place your bet → Watch the multiplier rise → Tap CASH OUT before it crashes. The multiplier can go from ×1.01 up to ×50 or more.'},
+  {q:'Is it fair?',a:'Yes. Every round uses a provably fair system — the crash point is determined by a server seed committed before the round starts. You can verify any result independently.'},
+  {q:'Is it free?',a:'You start with 1,000 free stars. After that, top up your balance using Telegram Stars to keep playing.'},
+  {q:'What are Stars?',a:'Stars are the in-game currency. Their value equals Telegram Stars. Top up from the Profile screen using the + button.'},
+  {q:'How do I get more Stars?',a:'Tap the + button in the top right → choose a package → pay with Telegram Stars. You also earn Stars from daily login, tasks, and inviting friends.'},
+  {q:'Can I withdraw Stars?',a:'Stars are in-game currency used for playing. They cannot be withdrawn as real money.'},
+  {q:'Is this a scam?',a:'No. Geco uses a provably fair algorithm — every crash point is cryptographically verifiable. Join our community chat @GecoCrashChat to see real players sharing their wins.'},
+  {q:'Why is my cashout not working?',a:'The round may have crashed before your tap reached the server. We have both WebSocket and REST backup to minimize this. If it keeps happening, check your connection.'},
+  {q:'My balance is wrong',a:'Your balance is stored on our server and syncs on every app open. If something looks wrong, close and reopen the app. Contact support in our chat if the issue persists.'},
+];
+
+function renderFAQ(){
+  const list=document.getElementById('faq-list');
+  if(!list||list.dataset.rendered)return;
+  list.dataset.rendered='1';
+  FAQ_ITEMS.forEach((item,i)=>{
+    const wrap=document.createElement('div');
+    wrap.style.cssText='background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden;transition:border-color 0.15s';
+    wrap.innerHTML=`
+      <button onclick="toggleFAQ(${i})" style="width:100%;display:flex;align-items:center;justify-content:space-between;padding:16px;background:none;border:none;cursor:pointer;text-align:left;gap:12px;-webkit-tap-highlight-color:transparent">
+        <span style="font-size:15px;font-weight:700;color:var(--text);flex:1">${item.q}</span>
+        <span id="faq-icon-${i}" style="flex-shrink:0;display:flex;align-items:center;color:var(--text3);transition:transform 0.2s">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </span>
+      </button>
+      <div id="faq-body-${i}" style="display:none;padding:12px 16px 16px;font-size:14px;color:var(--text2);line-height:1.6;border-top:1px solid var(--border)">${item.a}</div>
+    `;
+    list.appendChild(wrap);
+  });
+}
+
+function toggleFAQ(i){
+  const body=document.getElementById('faq-body-'+i);
+  const icon=document.getElementById('faq-icon-'+i);
+  const open=body.style.display==='block';
+  /* Close all */
+  FAQ_ITEMS.forEach((_,j)=>{
+    const b=document.getElementById('faq-body-'+j);
+    const ic=document.getElementById('faq-icon-'+j);
+    if(b) b.style.display='none';
+    if(ic) ic.style.transform='rotate(0deg)';
+  });
+  /* Toggle clicked */
+  if(!open){
+    body.style.display='block';
+    icon.style.transform='rotate(90deg)';
+  }
 }
 
 /* ══ ENTER/EXIT ══ */
@@ -1090,8 +1205,9 @@ function renderProfile(){
   document.getElementById('sw').textContent=fmt(starsWon);
   document.getElementById('ss').textContent=dailyStreak;
   document.getElementById('prof-balance').textContent=fmt(stars)+' ⭐';
-  document.getElementById('icnt').textContent=parseInt(localStorage.getItem('invited_count_'+uid)||'0');
-  document.getElementById('iern').textContent=parseInt(localStorage.getItem('invited_earned_'+uid)||'0');
+  /* Use server-side invite data — NOT localStorage */
+  document.getElementById('icnt').textContent=invitedCount;
+  document.getElementById('iern').textContent=fmt(earnedFromInvites);
 }
 
 /* ══ TASKS ══ */
@@ -1099,7 +1215,8 @@ function renderTasks(){
   const bigwinDone=localStorage.getItem('task_bigwin_'+uid)==='1';
   const rtoday=parseInt(localStorage.getItem('rounds_today_'+uid)||'0');
   const roundsDone=rtoday>=5;
-  invitedCount=parseInt(localStorage.getItem('invited_count_'+uid)||'0');
+  /* invitedCount already loaded from server in loadUser — no localStorage needed */
+  document.getElementById('tinvite-prog').textContent=invitedCount+' friend'+(invitedCount!==1?'s':'')+' invited';
   const db=document.getElementById('tdaily-btn'),dp=document.getElementById('tdaily-prog');
   if(dailyClaimedToday){db.className='btn btn-ghost';db.textContent='Done ✓';db.disabled=true;dp.textContent='Claimed today ✓';}
   else{db.className='btn btn-primary';db.textContent='Claim';db.disabled=false;dp.textContent='Tap to claim';}
@@ -1179,12 +1296,8 @@ async function claimStreakBonus(){
 
 function doInvite(){
   const link=`https://t.me/${BOT_USERNAME}?start=ref_${uid}`;
-  try{tg?.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(link)}&text=${encodeURIComponent('🎮 Play Geco Crash — win Telegram Stars!')}`);}catch(e){}
-  invitedCount=parseInt(localStorage.getItem('invited_count_'+uid)||'0')+1;
-  earnedFromInvites=parseInt(localStorage.getItem('invited_earned_'+uid)||'0')+5;
-  localStorage.setItem('invited_count_'+uid,invitedCount);
-  localStorage.setItem('invited_earned_'+uid,earnedFromInvites);
-  stars+=5;updateStars();renderTasks();hapticSuccess();toast('+5 ⭐ invite reward!');
+  try{tg?.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(link)}&text=${encodeURIComponent('🦎 Play Geco Crash — bet Stars, cash out before the crash!\n📢 News: @GecoCrashNews')}`);}catch(e){}
+  hapticLight();toast('Link shared! You earn ⭐5 when they join.');
 }
 
 function copyLink(){
@@ -1220,6 +1333,9 @@ async function loadUser(){
     const r=await fetch(SERVER_HTTP+'/api/user',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({initData}),signal:c.signal});
     const d=await r.json();
     stars=d.coins||1000;
+    /* Load invite stats from server — single source of truth across all devices */
+    invitedCount=d.invite_count||0;
+    earnedFromInvites=d.invite_earned||0;
     const storedDate=localStorage.getItem('rounds_date_'+uid);
     const today=new Date().toDateString();
     if(storedDate===today){roundsToday=parseInt(localStorage.getItem('rounds_today_'+uid)||'0');}
@@ -1228,6 +1344,7 @@ async function loadUser(){
   updateStars();loadAvatar();
   document.getElementById('stat-games').textContent=gamesPlayed;
   document.getElementById('stat-won').textContent=fmt(starsWon);
+  renderProfile();
   await checkDailyFromServer();
 }
 
