@@ -320,6 +320,10 @@ wss.on('connection', (ws) => {
         /* Send cashout_ok ONLY to the player who cashed out */
         sendTo(ws, { type: 'cashout_ok', mult: lockedMult, payout });
         console.log(`Manual cashout: user ${userId} at x${lockedMult}, payout ${payout}`);
+
+        /* Notify channel on big wins */
+        const winBet = gameState.bets.find(b => String(b.userId) === String(userId));
+        notifyWin(winBet?.username, userId, lockedMult, payout);
       }
 
     } catch (e) {
@@ -332,6 +336,21 @@ wss.on('connection', (ws) => {
 });
 
 /* ══ REST ENDPOINTS ══ */
+
+const ANNOUNCE_CHANNEL = process.env.ANNOUNCE_CHANNEL || '@GecoCrashNews';
+
+async function notifyWin(username, userId, mult, payout) {
+  if (!ANNOUNCE_CHANNEL || mult < 3) return; /* only notify big wins ×3+ */
+  const maskedId = String(userId).slice(0, 6) + '****';
+  const name = username ? `@${username}` : `user ${maskedId}`;
+  const text = `🏆 ${name} just won ⭐${payout.toLocaleString()} at ×${mult.toFixed(2)}!\n\n🚀 Play Geco Crash → @OrbitCrashBot\n💬 Join our chat → @GecoCrashChat`;
+  try {
+    await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ chat_id: ANNOUNCE_CHANNEL, text, parse_mode: 'HTML' })
+    });
+  } catch (e) {}
+}
 
 app.get('/', (req, res) => res.json({ status: 'Geco API running', clients: wss.clients.size }));
 
@@ -408,16 +427,21 @@ app.post('/api/user', async (req, res) => {
   const userName  = userInfo?.username   || null;
   try {
     const { data: existing } = await supabase
-      .from('users').select('coins, stars_won').eq('telegram_id', userId).single();
+      .from('users').select('coins, stars_won, invite_count, invite_earned').eq('telegram_id', userId).single();
     if (existing) {
       await supabase.from('users')
         .update({ first_name: firstName, username: userName }).eq('telegram_id', userId);
-      return res.json({ coins: existing.coins || 1000, stars_won: existing.stars_won || 0 });
+      return res.json({
+        coins: existing.coins || 1000,
+        stars_won: existing.stars_won || 0,
+        invite_count: existing.invite_count || 0,
+        invite_earned: existing.invite_earned || 0
+      });
     }
     const { data: newUser } = await supabase.from('users')
-      .insert({ telegram_id: userId, first_name: firstName, username: userName, coins: 1000, stars_won: 0 })
+      .insert({ telegram_id: userId, first_name: firstName, username: userName, coins: 1000, stars_won: 0, invite_count: 0, invite_earned: 0 })
       .select().single();
-    return res.json({ coins: newUser?.coins || 1000, stars_won: 0 });
+    return res.json({ coins: newUser?.coins || 1000, stars_won: 0, invite_count: 0, invite_earned: 0 });
   } catch (e) {
     console.error('User error:', e);
     return res.json({ coins: 1000 });
@@ -518,10 +542,14 @@ app.post('/webhook', async (req, res) => {
       const newUserId  = update.message.from.id;
       if (String(referrerId) !== String(newUserId)) {
         const { data: referrer } = await supabase
-          .from('users').select('coins').eq('telegram_id', referrerId).single();
+          .from('users').select('coins, invite_count, invite_earned').eq('telegram_id', referrerId).single();
         if (referrer) {
           await supabase.from('users')
-            .update({ coins: (referrer.coins || 0) + 5 }).eq('telegram_id', referrerId);
+            .update({
+              coins: (referrer.coins || 0) + 5,
+              invite_count: (referrer.invite_count || 0) + 1,
+              invite_earned: (referrer.invite_earned || 0) + 5
+            }).eq('telegram_id', referrerId);
           await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
             method: 'POST', headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ chat_id: referrerId, text: `🎉 A friend joined Geco!\n\n⭐ +5 stars added to your balance!` })
