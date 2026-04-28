@@ -571,54 +571,6 @@ app.post('/webhook', async (req, res) => {
   res.json({ ok: true });
 });
 
-/* ── CHECK CHANNEL/CHAT MEMBERSHIP ── */
-const CHANNEL_ID = process.env.CHANNEL_ID || '@GecoCrashNews';
-const CHAT_ID    = process.env.CHAT_ID    || '@GecoCrashChat';
-
-app.post('/api/check-join', async (req, res) => {
-  const { initData, target } = req.body;
-  const userId = getUserId(initData);
-  if (!userId) return res.status(400).json({ joined: false, error: 'Invalid user' });
-
-  const chatTarget = target === 'chat' ? CHAT_ID : CHANNEL_ID;
-  const rewardKey  = target === 'chat' ? 'joined_chat' : 'joined_channel';
-
-  try {
-    /* Check if already rewarded in DB */
-    const { data: user } = await supabase
-      .from('users').select('coins, joined_channel, joined_chat').eq('telegram_id', userId).single();
-
-    if (user && user[rewardKey]) {
-      return res.json({ joined: true, alreadyRewarded: true });
-    }
-
-    /* Check membership via Telegram Bot API */
-    const tgRes = await fetch(
-      `https://api.telegram.org/bot${BOT_TOKEN}/getChatMember?chat_id=${encodeURIComponent(chatTarget)}&user_id=${userId}`
-    );
-    const tgData = await tgRes.json();
-    const status = tgData?.result?.status;
-    const isMember = ['member','administrator','creator'].includes(status);
-
-    if (!isMember) {
-      return res.json({ joined: false });
-    }
-
-    /* Credit +1 star if not already rewarded */
-    if (user && !user[rewardKey]) {
-      await supabase.from('users').update({
-        coins: (user.coins || 0) + 1,
-        [rewardKey]: true
-      }).eq('telegram_id', userId);
-    }
-
-    return res.json({ joined: true });
-  } catch (e) {
-    console.error('check-join error:', e);
-    return res.json({ joined: false, error: 'Server error' });
-  }
-});
-
 app.post('/api/daily-status', async (req, res) => {
   const userId = getUserId(req.body.initData);
   if (!userId) return res.json({ claimed_today: false, streak: 0 });
