@@ -292,6 +292,18 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Inter',sans-serif;color:var(-
     <div class="page-scroll">
       <div class="pg-ttl"><svg width="22" height="22"><use href="#ico-swords"/></svg>Tasks</div>
       <div class="tc card"><div class="task-ico"><svg width="28" height="28"><use href="#ico-calendar"/></svg></div><div style="flex:1"><div class="tnm">Daily login</div><div class="trw">+1 ⭐ per day</div><div class="tprog" id="tdaily-prog">Loading…</div></div><button class="btn btn-primary" id="tdaily-btn" onclick="claimDailyTask()" style="min-height:38px;padding:0 16px;font-size:13px" disabled>…</button></div>
+      <!-- Join channel task -->
+      <div class="tc card" id="task-join-channel">
+        <div class="task-ico" style="background:rgba(79,110,247,0.15);border-color:rgba(79,110,247,0.3)">📢</div>
+        <div style="flex:1"><div class="tnm">Join our channel</div><div class="trw">+1 ⭐ reward</div><div class="tprog">@GecoCrashNews</div></div>
+        <button class="btn btn-primary" id="tjoin-channel-btn" onclick="joinChannel()" style="min-height:38px;padding:0 14px;font-size:13px">Join</button>
+      </div>
+      <!-- Join chat task -->
+      <div class="tc card" id="task-join-chat">
+        <div class="task-ico" style="background:rgba(79,110,247,0.15);border-color:rgba(79,110,247,0.3)">💬</div>
+        <div style="flex:1"><div class="tnm">Join our chat</div><div class="trw">+1 ⭐ reward</div><div class="tprog">@GecoCrashChat</div></div>
+        <button class="btn btn-primary" id="tjoin-chat-btn" onclick="joinChat()" style="min-height:38px;padding:0 14px;font-size:13px">Join</button>
+      </div>
       <div class="tc card"><div class="task-ico"><svg width="28" height="28"><use href="#ico-friends"/></svg></div><div style="flex:1"><div class="tnm">Invite a friend</div><div class="trw">+5 ⭐ per friend</div><div class="tprog" id="tinvite-prog">0 friends invited</div></div><button class="btn btn-primary" onclick="doInvite()" style="min-height:38px;padding:0 16px;font-size:13px">Invite</button></div>
       <div class="tc card"><div class="task-ico"><svg width="28" height="28"><use href="#ico-gamepad"/></svg></div><div style="flex:1"><div class="tnm">Play 5 rounds today</div><div class="trw">+3 ⭐</div><div class="tbar"><div class="tbar-fill" id="rounds-bar" style="width:0%"></div></div></div><button class="btn btn-ghost" id="trounds-btn" style="min-height:38px;padding:0 14px;font-size:13px">0/5</button></div>
       <div class="tc card"><div class="task-ico"><svg width="28" height="28"><use href="#ico-coinbag"/></svg></div><div style="flex:1"><div class="tnm">Win with ×3.00+</div><div class="trw">+5 ⭐</div><div class="tprog" id="tbigwin-prog">Not done yet</div></div><button class="btn btn-gold" id="tbigwin-btn" onclick="enterCrash()" style="min-height:38px;padding:0 16px;font-size:13px">Play</button></div>
@@ -1212,6 +1224,30 @@ function renderProfile(){
 
 /* ══ TASKS ══ */
 function renderTasks(){
+  /* Join channel task */
+  const chDone=localStorage.getItem('task_join_channel_'+uid)==='1';
+  const chCard=document.getElementById('task-join-channel');
+  const chBtn=document.getElementById('tjoin-channel-btn');
+  if(chCard){
+    if(chDone){
+      chCard.style.opacity='0.55';
+      chBtn.className='btn btn-ghost';chBtn.textContent='Done ✓';chBtn.disabled=true;chBtn.onclick=null;
+    } else {
+      chBtn.className='btn btn-primary';chBtn.textContent='Join';chBtn.disabled=false;chBtn.onclick=joinChannel;
+    }
+  }
+  /* Join chat task */
+  const ctDone=localStorage.getItem('task_join_chat_'+uid)==='1';
+  const ctCard=document.getElementById('task-join-chat');
+  const ctBtn=document.getElementById('tjoin-chat-btn');
+  if(ctCard){
+    if(ctDone){
+      ctCard.style.opacity='0.55';
+      ctBtn.className='btn btn-ghost';ctBtn.textContent='Done ✓';ctBtn.disabled=true;ctBtn.onclick=null;
+    } else {
+      ctBtn.className='btn btn-primary';ctBtn.textContent='Join';ctBtn.disabled=false;ctBtn.onclick=joinChat;
+    }
+  }
   const bigwinDone=localStorage.getItem('task_bigwin_'+uid)==='1';
   const rtoday=parseInt(localStorage.getItem('rounds_today_'+uid)||'0');
   const roundsDone=rtoday>=5;
@@ -1275,7 +1311,58 @@ async function claimDaily(){
   }catch(e){closeSh('daily-ov');toast('Error claiming bonus');}
 }
 
-async function claimStreakBonus(){
+async function joinChannel(){
+  /* Open channel first */
+  tg?.openTelegramLink('https://t.me/GecoCrashNews');
+  /* After 3 seconds verify membership on server */
+  const btn=document.getElementById('tjoin-channel-btn');
+  btn.textContent='Checking…';btn.disabled=true;
+  setTimeout(async()=>{
+    try{
+      const r=await fetch(SERVER_HTTP+'/api/check-join',{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({initData,target:'channel'})
+      });
+      const d=await r.json();
+      if(d.joined){
+        localStorage.setItem('task_join_channel_'+uid,'1');
+        stars+=1;updateStars();hapticSuccess();
+        toast('✅ +1 ⭐ Welcome to the channel!');
+        renderTasks();
+      } else {
+        btn.textContent='Join';btn.disabled=false;
+        toast('Join the channel first, then tap again');
+      }
+    }catch(e){btn.textContent='Join';btn.disabled=false;}
+  },3000);
+}
+
+async function joinChat(){
+  /* Open chat first */
+  tg?.openTelegramLink('https://t.me/GecoCrashChat');
+  const btn=document.getElementById('tjoin-chat-btn');
+  btn.textContent='Checking…';btn.disabled=true;
+  setTimeout(async()=>{
+    try{
+      const r=await fetch(SERVER_HTTP+'/api/check-join',{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({initData,target:'chat'})
+      });
+      const d=await r.json();
+      if(d.joined){
+        localStorage.setItem('task_join_chat_'+uid,'1');
+        stars+=1;updateStars();hapticSuccess();
+        toast('✅ +1 ⭐ Welcome to the community!');
+        renderTasks();
+      } else {
+        btn.textContent='Join';btn.disabled=false;
+        toast('Join the chat first, then tap again');
+      }
+    }catch(e){btn.textContent='Join';btn.disabled=false;}
+  },3000);
+}
   if(dailyStreak<7||streakBonusClaimed)return;
   const sb=document.getElementById('tstreak-btn');
   sb.disabled=true;sb.textContent='Claiming…';
