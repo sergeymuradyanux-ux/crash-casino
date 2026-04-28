@@ -1311,6 +1311,25 @@ async function claimDaily(){
   }catch(e){closeSh('daily-ov');toast('Error claiming bonus');}
 }
 
+async function claimStreakBonus(){
+  if(dailyStreak<7||streakBonusClaimed)return;
+  const sb=document.getElementById('tstreak-btn');
+  sb.disabled=true;sb.textContent='Claiming…';
+  try{
+    const r=await fetch(SERVER_HTTP+'/api/streak-bonus',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({initData})});
+    const d=await r.json();
+    if(d.success){
+      streakBonusClaimed=true;
+      localStorage.setItem('streak_bonus_week_'+uid,Math.floor(Date.now()/(7*86400000)));
+      stars+=10;updateStars();renderTasks();hapticSuccess();toast('🔥 +10 ⭐ streak bonus!');
+    }else{
+      streakBonusClaimed=true;
+      localStorage.setItem('streak_bonus_week_'+uid,Math.floor(Date.now()/(7*86400000)));
+      renderTasks();toast(d.error||'Already claimed this week');
+    }
+  }catch(e){sb.disabled=false;sb.textContent='Claim +10 ⭐';toast('Network error — try again');}
+}
+
 async function joinChannel(){
   /* Open channel first */
   tg?.openTelegramLink('https://t.me/GecoCrashNews');
@@ -1362,23 +1381,6 @@ async function joinChat(){
       }
     }catch(e){btn.textContent='Join';btn.disabled=false;}
   },3000);
-}
-  if(dailyStreak<7||streakBonusClaimed)return;
-  const sb=document.getElementById('tstreak-btn');
-  sb.disabled=true;sb.textContent='Claiming…';
-  try{
-    const r=await fetch(SERVER_HTTP+'/api/streak-bonus',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({initData})});
-    const d=await r.json();
-    if(d.success){
-      streakBonusClaimed=true;
-      localStorage.setItem('streak_bonus_week_'+uid,Math.floor(Date.now()/(7*86400000)));
-      stars+=10;updateStars();renderTasks();hapticSuccess();toast('🔥 +10 ⭐ streak bonus!');
-    }else{
-      streakBonusClaimed=true;
-      localStorage.setItem('streak_bonus_week_'+uid,Math.floor(Date.now()/(7*86400000)));
-      renderTasks();toast(d.error||'Already claimed this week');
-    }
-  }catch(e){sb.disabled=false;sb.textContent='Claim +10 ⭐';toast('Network error — try again');}
 }
 
 function doInvite(){
