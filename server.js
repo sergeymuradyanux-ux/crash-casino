@@ -537,19 +537,34 @@ app.post('/webhook', async (req, res) => {
 
   if (update.message?.text?.startsWith('/start')) {
     const parts = update.message.text.split(' ');
+    const chatId = update.message.from.id;
+
+    /* Always send welcome message with Open App button immediately */
+    await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        chat_id: chatId,
+        text: `🦎 Welcome to Geco!\n\nPredict the drop, react fast, climb the leaderboard.\n\n⚡ Live rounds 24/7\n🏆 Global leaderboard\n📢 @GecoCrashNews`,
+        reply_markup: {
+          inline_keyboard: [[
+            { text: '🚀 Open Geco', web_app: { url: process.env.WEBAPP_URL || 'https://geco-crash.vercel.app' } }
+          ]]
+        }
+      })
+    });
+
+    /* Handle referral */
     if (parts[1]?.startsWith('ref_')) {
       const referrerId = parts[1].replace('ref_', '');
-      const newUserId  = update.message.from.id;
-      if (String(referrerId) !== String(newUserId)) {
+      if (String(referrerId) !== String(chatId)) {
         const { data: referrer } = await supabase
           .from('users').select('coins, invite_count, invite_earned').eq('telegram_id', referrerId).single();
         if (referrer) {
-          await supabase.from('users')
-            .update({
-              coins: (referrer.coins || 0) + 5,
-              invite_count: (referrer.invite_count || 0) + 1,
-              invite_earned: (referrer.invite_earned || 0) + 5
-            }).eq('telegram_id', referrerId);
+          await supabase.from('users').update({
+            coins: (referrer.coins || 0) + 5,
+            invite_count: (referrer.invite_count || 0) + 1,
+            invite_earned: (referrer.invite_earned || 0) + 5
+          }).eq('telegram_id', referrerId);
           await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
             method: 'POST', headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ chat_id: referrerId, text: `🎉 A friend joined Geco!\n\n⭐ +5 stars added to your balance!` })
@@ -621,4 +636,17 @@ app.post('/api/streak-bonus', async (req, res) => {
 /* ══ START ══ */
 startWaiting();
 const PORT = process.env.PORT || 8080;
-server.listen(PORT, () => console.log(`Geco server running on port ${PORT}`));
+server.listen(PORT, () => {
+  console.log(`Geco server running on port ${PORT}`);
+
+  /* ── SELF-PING every 4 minutes — keeps Railway awake so bot responds instantly ── */
+  const SELF_URL = process.env.RAILWAY_PUBLIC_DOMAIN
+    ? `https://${process.env.RAILWAY_PUBLIC_DOMAIN}`
+    : null;
+  if (SELF_URL) {
+    setInterval(() => {
+      fetch(SELF_URL + '/').catch(() => {});
+    }, 4 * 60 * 1000);
+    console.log(`Self-ping active → ${SELF_URL}`);
+  }
+});
