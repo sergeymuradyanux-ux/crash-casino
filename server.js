@@ -547,7 +547,7 @@ app.post('/webhook', async (req, res) => {
         text: `🦎 Welcome to Geco!\n\nPredict the drop, react fast, climb the leaderboard.\n\n⚡ Live rounds 24/7\n🏆 Global leaderboard\n📢 @GecoCrashNews`,
         reply_markup: {
           inline_keyboard: [[
-            { text: '🚀 Open Geco', web_app: { url: process.env.WEBAPP_URL || 'https://geco-crash.vercel.app' } }
+            { text: '🚀 Open Geco', web_app: { url: process.env.WEBAPP_URL || 'https://crash-casino.vercel.app/' } }
           ]]
         }
       })
