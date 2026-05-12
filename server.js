@@ -522,6 +522,75 @@ app.post('/api/streak-bonus', async (req, res) => {
   } catch (e) { res.json({ success: false, error: 'Server error' }); }
 });
 
+/* ══ BROADCAST MESSAGE TO ALL USERS ══ */
+/* Protected by ADMIN_SECRET env variable */
+app.post('/api/admin/broadcast', async (req, res) => {
+  const { secret, message, addCoins } = req.body;
+
+  /* Security check */
+  const ADMIN_SECRET = process.env.ADMIN_SECRET || 'geco-admin-2024';
+  if (secret !== ADMIN_SECRET) {
+    return res.status(403).json({ success: false, error: 'Unauthorized' });
+  }
+
+  if (!message) return res.status(400).json({ success: false, error: 'No message provided' });
+
+  try {
+    /* Get all users */
+    const { data: users, error } = await supabase
+      .from('users')
+      .select('telegram_id, coins, first_name');
+
+    if (error || !users) return res.status(500).json({ success: false, error: 'DB error' });
+
+    /* Add coins if specified */
+    if (addCoins && addCoins > 0) {
+      await supabase.rpc('add_coins_to_all', { amount: addCoins }).catch(async () => {
+        /* fallback if RPC not available */
+        for (const user of users) {
+          await supabase.from('users')
+            .update({ coins: (user.coins || 0) + addCoins })
+            .eq('telegram_id', user.telegram_id);
+        }
+      });
+    }
+
+    /* Send Telegram message to each user */
+    let sent = 0, failed = 0;
+    for (const user of users) {
+      try {
+        const r = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            chat_id: user.telegram_id,
+            text: message,
+            parse_mode: 'HTML',
+            reply_markup: {
+              inline_keyboard: [[
+                { text: '🚀 Open Geco', web_app: { url: process.env.WEBAPP_URL || 'https://crash-casino.vercel.app' } }
+              ]]
+            }
+          })
+        });
+        const d = await r.json();
+        if (d.ok) sent++; else failed++;
+      } catch (e) {
+        failed++;
+      }
+      /* Small delay to avoid Telegram rate limiting */
+      await new Promise(resolve => setTimeout(resolve, 100));
+    }
+
+    console.log(`Broadcast: sent=${sent} failed=${failed}`);
+    res.json({ success: true, sent, failed, total: users.length });
+
+  } catch (e) {
+    console.error('Broadcast error:', e);
+    res.status(500).json({ success: false, error: 'Server error' });
+  }
+});
+
 /* ══ START ══ */
 startWaiting();
 const PORT = process.env.PORT || 8080;
