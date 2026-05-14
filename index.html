@@ -114,12 +114,56 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Inter',sans-serif;color:var(-
 .brow-star{font-size:20px;flex-shrink:0}
 .bets-empty{padding:20px;text-align:center;color:var(--text3);font-size:13px;background:var(--bg)}
 .act-area{flex-shrink:0;padding:8px 12px 12px;background:var(--bg);border-top:1px solid var(--border);padding-bottom:calc(12px + env(safe-area-inset-bottom))}
-.placed-row{display:none;justify-content:space-between;align-items:center;margin-bottom:6px}
+/* ══ FIX 1: Persistent bet card ══ */
+.placed-row{display:none;justify-content:space-between;align-items:center;margin-bottom:6px;padding:8px 12px;background:rgba(244,185,66,0.08);border:1px solid rgba(244,185,66,0.2);border-radius:var(--r-md)}
 .placed-row.show{display:flex}
 .placed-lbl{font-size:12px;color:var(--text3);font-weight:600}
 .placed-val{font-size:13px;font-weight:800;color:var(--gold)}
-#mbtn{width:100%;font-size:17px;min-height:54px;font-weight:800;border-radius:16px;-webkit-transform:translateZ(0);transform:translateZ(0);will-change:transform;transition:transform 0.06s!important}
+.placed-auto{font-size:11px;color:var(--text3);font-weight:600}
+
+/* ══ FIX 2: Transaction result card ══ */
+.tx-card{display:none;margin:4px 12px;padding:10px 14px;border-radius:var(--r-md);flex-shrink:0}
+.tx-card.show{display:block}
+.tx-card-win{background:rgba(34,197,94,0.08);border:1px solid rgba(34,197,94,0.25)}
+.tx-card-loss{background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.25)}
+.tx-row{display:flex;justify-content:space-between;align-items:center;font-size:13px;font-weight:700;line-height:1.8}
+.tx-label{color:var(--text3)}
+.tx-val-red{color:#fca5a5}
+.tx-val-green{color:#86efac}
+.tx-val-gold{color:var(--gold)}
+.tx-divider{border:none;border-top:1px solid rgba(255,255,255,0.06);margin:4px 0}
+.tx-profit{font-size:15px;font-weight:900}
+
+/* ══ FIX 3: Phase state background colors ══ */
+.game-wrap-betting{border-color:rgba(79,110,247,0.4)!important;box-shadow:0 0 0 1px rgba(79,110,247,0.15)}
+.game-wrap-flying{border-color:rgba(34,197,94,0.4)!important;box-shadow:0 0 0 1px rgba(34,197,94,0.1)}
+.game-wrap-crashed{border-color:rgba(239,68,68,0.4)!important;box-shadow:0 0 0 1px rgba(239,68,68,0.1)}
+
+/* ══ FIX 4: History pills stronger ══ */
+.hpill-low{background:rgba(239,68,68,0.15);color:#ff8a8a;border:1px solid rgba(239,68,68,0.3)}
+.hpill-mid{background:rgba(251,191,36,0.12);color:#fbbf24;border:1px solid rgba(251,191,36,0.25)}
+.hpill-high{background:rgba(52,211,153,0.12);color:#34d399;border:1px solid rgba(52,211,153,0.25)}
+
+/* ══ FIX 5: Win overlay ══ */
+.win-overlay{display:none;position:absolute;inset:0;z-index:10;align-items:center;justify-content:center;flex-direction:column;pointer-events:none}
+.win-overlay.show{display:flex;animation:winPop 0.4s cubic-bezier(0.34,1.56,0.64,1)}
+.win-amount{font-size:42px;font-weight:900;color:var(--gold);text-shadow:0 0 40px rgba(244,185,66,0.8);letter-spacing:-1px}
+.win-label{font-size:13px;color:#86efac;font-weight:700;margin-top:4px;letter-spacing:1px}
+@keyframes winPop{0%{transform:scale(0.5);opacity:0}100%{transform:scale(1);opacity:1}}
+
+/* ══ FIX 6: Crash phase sub-label ══ */
+.ms.visible{display:block}
+.ms.phase-betting{color:rgba(79,110,247,0.8)}
+.ms.phase-flying{color:rgba(34,197,94,0.8)}
+.ms.phase-crashed{color:rgba(239,68,68,0.8)}
+
+/* ══ FIX 7: Button reduced height ══ */
+#mbtn{width:100%;font-size:17px;min-height:46px;font-weight:800;border-radius:16px;-webkit-transform:translateZ(0);transform:translateZ(0);will-change:transform;transition:transform 0.06s!important}
 #mbtn:active{transform:scale(0.97) translateZ(0)!important}
+
+/* ══ FIX 8: Cashout btn pulse animation ══ */
+.btn-danger{background:var(--red);color:#fff;box-shadow:0 4px 20px rgba(239,68,68,0.5);pointer-events:all!important;transition:transform 0.06s,box-shadow 0.06s!important;will-change:transform;-webkit-transform:translateZ(0);transform:translateZ(0);animation:cashoutPulse 1.2s ease-in-out infinite}
+@keyframes cashoutPulse{0%,100%{box-shadow:0 4px 20px rgba(239,68,68,0.5)}50%{box-shadow:0 4px 32px rgba(239,68,68,0.85),0 0 0 4px rgba(239,68,68,0.15)}}
 .nav{display:flex;flex-shrink:0;background:var(--bg);border-top:1px solid var(--border);padding-bottom:env(safe-area-inset-bottom)}
 .nb{flex:1;display:flex;flex-direction:column;align-items:center;padding:9px 4px 11px;cursor:pointer;border:none;background:none;color:var(--text3);font-size:9px;font-weight:700;gap:4px;min-height:56px;transition:color 0.15s;letter-spacing:0.5px;text-transform:uppercase}
 .nb.active{color:var(--blue)}
@@ -395,12 +439,17 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Inter',sans-serif;color:var(-
       </g>
     </svg>
     <div class="mult-overlay">
+      <div class="win-overlay" id="win-overlay">
+        <div class="win-amount" id="win-overlay-amount"></div>
+        <div class="win-label">YOU WON</div>
+      </div>
       <div class="mn" id="mn"></div>
       <div class="ms" id="ms"></div>
     </div>
   </div>
   <div class="hist-bar" id="hist-bar"><span style="color:var(--text3);font-size:12px;font-weight:600">No rounds yet</span></div>
-  <div class="rb" id="rb"></div>
+  <!-- FIX: Transaction result card replacing rb -->
+  <div class="tx-card" id="tx-card"></div>
   <div class="bets-wrap">
     <div class="bets-header">
       <span class="bets-title">All bets</span>
@@ -410,8 +459,17 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Inter',sans-serif;color:var(-
   </div>
   <div class="act-area">
     <div class="placed-row" id="placed-row">
-      <span class="placed-lbl">Bet placed</span>
-      <span class="placed-val" id="placed-val">⭐ 0</span>
+      <div>
+        <span class="placed-lbl">Your bet</span>
+        <div style="display:flex;align-items:center;gap:8px;margin-top:2px">
+          <span class="placed-val" id="placed-val">⭐ 0</span>
+          <span class="placed-auto" id="placed-auto"></span>
+        </div>
+      </div>
+      <div style="text-align:right">
+        <span class="placed-lbl">Auto cashout</span>
+        <div class="placed-val" id="placed-auto-mult" style="margin-top:2px">—</div>
+      </div>
     </div>
     <button class="btn btn-off" id="mbtn">Connecting…</button>
   </div>
@@ -639,12 +697,14 @@ function _drawMeteor(){
 }
 function _rExplode(crashMult,lostBet){
   _rBroken=true;_rFl1.style.opacity='0';_rFl2.style.opacity='0';
-  /* NOW show crash UI — all at once on impact */
   showMult(crashMult.toFixed(2)+'×','crash');showSub('CRASHED');
   hapticError();
+  /* FIX: Show transaction card on loss */
   if(lostBet){
-    const rb=document.getElementById('rb');rb.className='rb rb-l show';
-    rb.textContent='Crashed at ×'+crashMult.toFixed(2)+' — lost ⭐'+fmt(lostBet);
+    showTxCard('loss',{bet:lostBet,mult:crashMult});
+    toast('Crashed at ×'+crashMult.toFixed(2)+' — lost ⭐'+fmt(lostBet),3000);
+  } else {
+    showTxCard(null);
   }
   setBtn('place','Place Bet');
   document.getElementById('placed-row').classList.remove('show');
@@ -783,7 +843,10 @@ function enterCrash(){
   hapticLight();inGame=true;
   document.getElementById('lobby-shell').style.display='none';
   document.getElementById('crash-shell').style.display='flex';
-  _resetRocket();_startRocket();applyGameState();
+  _resetRocket();_startRocket();
+  showTxCard(null);
+  updateGameWrap(game.phase);
+  applyGameState();
 }
 function exitCrash(){
   hapticLight();inGame=false;
@@ -879,17 +942,16 @@ function handleWsMsg(msg){
       break;
     case 'countdown':
       game.countdown=msg.value;game.phase='countdown';
-      if(inGame){showMult(msg.value.toString(),'cd');showSub('');hapticLight();_resetRocket();if(myBetPlaced)setBtn('wait','Bet placed — starting…');else setBtn('place','Place Bet');}
+      if(inGame){showMult(msg.value.toString(),'cd');showSub('BETTING OPEN');hapticLight();_resetRocket();updateGameWrap('countdown');if(myBetPlaced)setBtn('wait','Bet placed — starting…');else setBtn('place','Place Bet');}
       break;
     case 'tick':
       game.multiplier=msg.mult;game.bets=msg.bets;game.phase='running';
       if(inGame){
         showMult(msg.mult.toFixed(2)+'×','run');showSub('FLYING');
+        updateGameWrap('running');
         if(myBetPlaced&&!myCashedOut){
-          /* setBtn not just textContent — ensures button is RED and enabled */
           setBtn('cash','CASH OUT  ×'+msg.mult.toFixed(2));
         } else if(!myBetPlaced&&!myCashedOut){
-          /* Not in this round — show disabled Place Bet */
           setBtn('off','Next round…');
         }
         if(Math.round(msg.mult*10)%5===0)renderBets();
@@ -901,13 +963,12 @@ function handleWsMsg(msg){
       crashHistory.unshift(msg.mult);if(crashHistory.length>15)crashHistory.pop();
       if(inGame){
         renderHistory();renderBets();
-        /* Keep multiplier green — explosion will flip to red on impact */
+        updateGameWrap('crashed');
         const _lostBet=(myBetPlaced&&!myCashedOut)?myBet:0;
         if(_lostBet){
           myResults.unshift({bet:myBet,mult:msg.mult,profit:-myBet,won:false,time:Date.now()});
           if(myResults.length>20)myResults.pop();
         }
-        /* Launch meteor — crash UI triggers on impact */
         if(!_rMeteorActive&&!_rMeteor&&!_rBroken)_spawnMeteor(msg.mult,_lostBet);
       }
       myBetPlaced=false;myCashedOut=false;myBet=0;cashoutLock=false;updateLobbyPlayers();
@@ -940,11 +1001,15 @@ function handleWsMsg(msg){
       if(inGame){
         setBtn('won','Won ×'+msg.mult.toFixed(2)+'  +⭐'+fmt(profit));
         document.getElementById('placed-row').classList.remove('show');
-        const rb=document.getElementById('rb');rb.className='rb rb-w show';
-        rb.textContent='Won ×'+msg.mult.toFixed(2)+' — ⭐'+fmt(win)+' (+'+fmt(profit)+')';
+        /* FIX: Show transaction card with full breakdown */
+        showTxCard('win',{bet:myBet,win,mult:msg.mult});
+        /* FIX: Win overlay animation */
+        showWinOverlay(profit);
         renderBets();
       }
-      hapticSuccess();toast('Won ⭐'+fmt(win)+'!');
+      hapticSuccess();
+      /* FIX: Longer, more prominent win toast */
+      toast('🎉 Won ⭐'+fmt(win)+'! Profit +⭐'+fmt(profit),3000);
       document.getElementById('stat-won').textContent=fmt(starsWon);}
       break;
     case 'cashout_error':
@@ -964,15 +1029,15 @@ function handleWsMsg(msg){
 }
 
 function applyGameState(){
-  if(game.phase==='waiting'){showMult('','');showSub('');setBtn('place','Place Bet');document.getElementById('rb').classList.remove('show');}
-  else if(game.phase==='countdown'){showMult(game.countdown.toString(),'cd');showSub('');if(myBetPlaced)setBtn('wait','Bet placed — starting…');else setBtn('place','Place Bet');}
+  if(game.phase==='waiting'){showMult('','');showSub('');setBtn('place','Place Bet');showTxCard(null);updateGameWrap('waiting');document.getElementById('placed-row').classList.remove('show');}
+  else if(game.phase==='countdown'){showMult(game.countdown.toString(),'cd');showSub('BETTING OPEN');updateGameWrap('countdown');if(myBetPlaced)setBtn('wait','Bet placed — starting…');else setBtn('place','Place Bet');}
   else if(game.phase==='running'){
-    showMult(game.multiplier.toFixed(2)+'×','run');showSub('FLYING');
+    showMult(game.multiplier.toFixed(2)+'×','run');showSub('FLYING');updateGameWrap('running');
     if(myBetPlaced&&!myCashedOut)setBtn('cash','CASH OUT  ×'+game.multiplier.toFixed(2));
     else if(myCashedOut)setBtn('won','Cashed out ✓');
     else setBtn('off','Next round…');
   }
-  else if(game.phase==='crashed'){showMult(game.crashPoint.toFixed(2)+'×','crash');showSub('CRASHED');setBtn('place','Place Bet');}
+  else if(game.phase==='crashed'){showMult(game.crashPoint.toFixed(2)+'×','crash');showSub('CRASHED');updateGameWrap('crashed');setBtn('place','Place Bet');}
   renderBets();
 }
 
@@ -1001,14 +1066,59 @@ function renderBets(){
 function hsh(s){let h=0;for(let i=0;i<s.length;i++)h=(Math.imul(31,h)+s.charCodeAt(i))|0;return h;}
 function maskU(u){if(!u)return '@user*****';const s='*'.repeat(Math.floor(Math.random()*4)+5);const fe='abcdefghijklmnopqrstuvwxyz'[Math.floor(Math.random()*26)];return '@'+u[0]+s+fe;}
 
-/* ══ CANVAS stubs — replaced by SVG rocket ══ */
 function resizeGC(){}
 function drawCanvas(){}
+
+/* ══ FIX: Transaction card ══ */
+function showTxCard(type, data){
+  const card = document.getElementById('tx-card');
+  if(type === 'win'){
+    const profit = data.win - data.bet;
+    card.className = 'tx-card tx-card-win show';
+    card.innerHTML = `
+      <div class="tx-row"><span class="tx-label">Bet</span><span class="tx-val-red">−⭐${fmt(data.bet)}</span></div>
+      <div class="tx-row"><span class="tx-label">Won at ×${data.mult.toFixed(2)}</span><span class="tx-val-green">+⭐${fmt(data.win)}</span></div>
+      <hr class="tx-divider">
+      <div class="tx-row"><span class="tx-label" style="font-weight:800;color:var(--text)">Profit</span><span class="tx-val-gold tx-profit">+⭐${fmt(profit)}</span></div>`;
+  } else if(type === 'loss'){
+    card.className = 'tx-card tx-card-loss show';
+    card.innerHTML = `
+      <div class="tx-row"><span class="tx-label">Crashed at ×${data.mult.toFixed(2)}</span><span class="tx-val-red">−⭐${fmt(data.bet)}</span></div>`;
+  } else {
+    card.className = 'tx-card';
+    card.innerHTML = '';
+  }
+}
+
+/* ══ FIX: Phase border colors ══ */
+function updateGameWrap(phase){
+  const gw = document.querySelector('.game-wrap');
+  if(!gw) return;
+  gw.className = 'game-wrap';
+  if(phase === 'countdown' || phase === 'waiting') gw.classList.add('game-wrap-betting');
+  else if(phase === 'running') gw.classList.add('game-wrap-flying');
+  else if(phase === 'crashed') gw.classList.add('game-wrap-crashed');
+}
+
+/* ══ FIX: Win overlay ══ */
+function showWinOverlay(amount){
+  const ov = document.getElementById('win-overlay');
+  const amt = document.getElementById('win-overlay-amount');
+  if(!ov || !amt) return;
+  amt.textContent = '+⭐' + fmt(amount);
+  ov.classList.add('show');
+  setTimeout(() => ov.classList.remove('show'), 2000);
+}
 
 function renderHistory(){
   const el=document.getElementById('hist-bar');
   if(!crashHistory.length){el.innerHTML='<span style="color:var(--text3);font-size:12px;font-weight:600">No rounds yet</span>';return;}
-  el.innerHTML=crashHistory.map((m,i)=>{if(i===0)return `<span class="hpill hpill-latest">×${m.toFixed(2)}</span>`;const c=m<1.5?'hpill-low':m<3?'hpill-mid':'hpill-high';return `<span class="hpill ${c}">×${m.toFixed(2)}</span>`;}).join('');
+  el.innerHTML=crashHistory.map((m,i)=>{
+    if(i===0) return `<span class="hpill hpill-latest">×${m.toFixed(2)}</span>`;
+    const c=m<1.5?'hpill-low':m<3?'hpill-mid':'hpill-high';
+    const dot=m<1.5?'🔴':m<3?'🟡':'🟢';
+    return `<span class="hpill ${c}">${dot} ×${m.toFixed(2)}</span>`;
+  }).join('');
 }
 
 /* ══ UTILS ══ */
@@ -1120,11 +1230,10 @@ async function _doRestCashout(){
       if(inGame){
         setBtn('won','Won ×'+d.mult.toFixed(2)+'  +⭐'+fmt(profit));
         document.getElementById('placed-row').classList.remove('show');
-        const rb=document.getElementById('rb');rb.className='rb rb-w show';
-        rb.textContent='Won ×'+d.mult.toFixed(2)+' — ⭐'+fmt(win)+' (+'+fmt(profit)+')';
+        showTxCard('win',{bet:myBet,win,mult:d.mult});
+        showWinOverlay(profit);
       }
-      hapticSuccess();toast('Won ⭐'+fmt(win)+'!');
-      document.getElementById('stat-won').textContent=fmt(starsWon);
+      hapticSuccess();toast('🎉 Won ⭐'+fmt(win)+'! Profit +⭐'+fmt(profit),3000);
     } else if(d.error==='Game not running'||d.error==='Already crashed'){
       /* Crashed before REST reached server — loss is real, reset cleanly */
       cashoutLock=false;
@@ -1159,7 +1268,11 @@ function confirmBet(){
   myBet=amt;myBetPlaced=true;stars-=myBet;updateStars();hapticMedium();
   document.getElementById('placed-row').classList.add('show');
   document.getElementById('placed-val').textContent='⭐ '+fmt(myBet);
-  document.getElementById('rb').classList.remove('show');
+  /* FIX: Show auto cashout in persistent bet card */
+  const autoEl = document.getElementById('placed-auto-mult');
+  if(autoEl) autoEl.textContent = autoOn ? '×'+autoMult.toFixed(2) : 'Off';
+  showTxCard(null);
+  document.getElementById('rb') && (document.getElementById('rb').className='rb');
   /* Show correct waiting message based on phase */
   if(game.phase==='crashed'||game.phase==='waiting'){
     setBtn('wait','Bet queued — next round…');
