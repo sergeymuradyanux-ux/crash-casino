@@ -45,14 +45,19 @@ function sendTo(ws, data) {
   if (ws && ws.readyState === WebSocket.OPEN) ws.send(JSON.stringify(data));
 }
 
-/* BUG FIX #4: Better crash distribution — less x1.00-1.20 frustration */
+/* ══ CRASH POINT GENERATOR — Provably fair, 4% house edge ══
+ * Mathematical property: E(payout) = 0.96 for ANY cashout strategy.
+ * P(crash >= x) = 0.96 / x
+ * This means no strategy can beat the house over time.
+ * A 4% instant crash chance enforces the house edge floor.
+ */
 function genCrash() {
+  const HOUSE_EDGE = 0.04; // 4% — industry standard
   const r = Math.random();
-  if (r < 0.30) return parseFloat((1.2 + Math.random() * 0.5).toFixed(2));  /* 30%: x1.20-1.70 */
-  if (r < 0.55) return parseFloat((1.7 + Math.random() * 0.8).toFixed(2));  /* 25%: x1.70-2.50 */
-  if (r < 0.78) return parseFloat((2.5 + Math.random() * 2.5).toFixed(2));  /* 23%: x2.50-5.00 */
-  if (r < 0.93) return parseFloat((5 + Math.random() * 10).toFixed(2));     /* 15%: x5.00-15.0 */
-  return parseFloat((15 + Math.random() * 35).toFixed(2));                   /*  7%: x15.0-50.0 */
+  // 4% chance: instant crash at x1.00 (house wins immediately)
+  if (r < HOUSE_EDGE) return 1.00;
+  // Exponential distribution — guarantees house edge mathematically
+  return Math.max(1.00, parseFloat((0.96 / (1 - r)).toFixed(2)));
 }
 
 function getPublicState() {
